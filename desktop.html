@@ -206,7 +206,7 @@ body {
             <button class="chips-nav__btn" data-logo="circlelogo">圆形logo</button>
           </div>
         </div>
-        <div id="logoGridControls" style="display:flex;flex-direction:column;gap:36px;margin-top:36px;">
+        <div style="display:flex;flex-direction:column;gap:36px;margin-top:36px;">
           <div class="control-group">
             <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="logoScaleVal">100%</span></div>
             <input type="range" class="control-group__slider" id="logoScale" min="50" max="200" value="100" step="5">
@@ -305,11 +305,11 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   var ctrlCircle    = $('ctrlCircle');
   var cmpWidth      = $('cmpWidth');
   var cmpWidthVal   = $('cmpWidthVal');
-  var logoChipsNav  = $('logoChipsNav');
-  var logoBadgeCheck = $('logoBadgeCheck');
-  var logoGridControls = $('logoGridControls');
-  var logoScale     = $('logoScale');
-  var logoScaleVal  = $('logoScaleVal');
+  var logoChipsNav    = $('logoChipsNav');
+  var logoBadgeCheck   = $('logoBadgeCheck');
+  var logoGridBadgeGroup = $('logoGridBadgeGroup');
+  var logoScale       = $('logoScale');
+  var logoScaleVal    = $('logoScaleVal');
 
   // ========================================================================
   // Tab config
@@ -518,6 +518,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 
     if (tab === 'walletkit') {
       previewCanvas.style.display = 'block';
+      previewCanvas.style.filter = 'none';
+      previewCanvas.style.webkitFilter = 'none';
       hideResultImg();
       if (imagesReady) drawPreview();
     } else {
@@ -688,9 +690,10 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     var srcW = img.naturalWidth, srcH = img.naturalHeight;
     var size = LOGO_SIZE, radius = size / 2;
 
-    // Scale shorter side to 160
+    // Scale based on slider (default 100 = fill/cover)
+    var userScale = parseInt(logoScale.value, 10) / 100;
     var shortSide = Math.min(srcW, srcH);
-    var s = size / shortSide;
+    var s = (size / shortSide) * userScale;
     var sw = Math.round(srcW * s), sh = Math.round(srcH * s);
 
     var c = document.createElement('canvas'); c.width = size; c.height = size;
@@ -733,6 +736,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   function showLogoPreview() {
     hideResultImg();
     previewCanvas.style.display = 'block';
+    // drop-shadow follows alpha channel (rounded corners / circle)
+    previewCanvas.style.filter = 'drop-shadow(0 4px 16px rgba(0,0,0,0.18))';
+    previewCanvas.style.webkitFilter = 'drop-shadow(0 4px 16px rgba(0,0,0,0.18))';
 
     var size = LOGO_SIZE;
     previewCanvas.width = size;
@@ -866,17 +872,17 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     logoChipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
     btn.classList.add('active');
 
-    // Show/hide grid controls (scale slider + badge checkbox)
-    logoGridControls.style.display = (type === 'grid') ? 'flex' : 'none';
+    // Show/hide badge checkbox (only for 宫格图)
+    logoGridBadgeGroup.style.display = (type === 'grid') ? '' : 'none';
 
     // Re-process if image uploaded
     if (uploadedImage && currentTab === 'circle') processLogo();
   });
 
-  // Scale slider → re-process
+  // Scale slider → re-process (both grid and circle)
   logoScale.addEventListener('input', function () {
     logoScaleVal.textContent = this.value + '%';
-    if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
+    if (uploadedImage && currentTab === 'circle') processLogo();
   });
 
   // Badge checkbox change → re-process
