@@ -830,7 +830,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     btn.classList.add('active');
 
     // Show/hide grid controls (scale slider + badge checkbox)
-    logoGridControls.style.display = (type === 'grid') ? '' : 'none';
+    logoGridControls.style.display = (type === 'grid') ? 'flex' : 'none';
 
     // Re-process if image uploaded
     if (uploadedImage && currentTab === 'circle') processLogo();
