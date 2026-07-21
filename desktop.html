@@ -579,7 +579,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
       previewCanvas.style.display = 'block';
       bgToggleBtn.style.display = 'none';
       previewCard.style.background = '';
-      hideResultImg();
+      hidePreview();
       if (imagesReady) drawPreview();
     } else if (tab === 'compress') {
       previewCanvas.style.display = 'none';
@@ -688,7 +688,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     c.getContext('2d').drawImage(img, 0, 0, outW, outH);
     processedDataUrl = c.toDataURL('image/png');
 
-    showResultImg();
+    showPreview();
     downloadBtn.disabled = false;
     previewInfo.textContent = '原图 ' + srcW + '×' + srcH + ' → ' + outW + '×' + outH;
   }
@@ -718,13 +718,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     var c = document.createElement('canvas'); c.width = size; c.height = size;
     var cx = c.getContext('2d');
 
-    // Fill canvas with selected background color (skip if transparent)
-    if (currentBgColor) {
-      cx.fillStyle = currentBgColor;
-      cx.fillRect(0, 0, size, size);
-    }
-
-    // Rounded rect clip
+    // Rounded rect clip — both bg color and image are clipped to rounded corners
     cx.save();
     cx.beginPath();
     cx.moveTo(radius, 0);
@@ -738,6 +732,12 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     cx.arcTo(0, 0, radius, 0, radius);
     cx.closePath();
     cx.clip();
+
+    // Fill background inside rounded rect (skip if transparent)
+    if (currentBgColor) {
+      cx.fillStyle = currentBgColor;
+      cx.fillRect(0, 0, size, size);
+    }
 
     // Center the scaled image
     cx.drawImage(img, Math.round((size - sw) / 2), Math.round((size - sh) / 2), sw, sh);
@@ -756,7 +756,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     }
 
     processedDataUrl = c.toDataURL('image/png');
-    showLogoPreview();
+    showPreview({size: LOGO_SIZE, guide: currentLogoType});
     downloadBtn.disabled = false;
     previewInfo.textContent = '原图 ' + srcW + '×' + srcH + ' → ' + size + '×' + size + ' 宫格图' + (logoBadgeCheck.checked ? ' (含消息提醒)' : '');
   }
@@ -786,7 +786,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     cx.drawImage(img, Math.round((size - sw) / 2), Math.round((size - sh) / 2), sw, sh);
 
     processedDataUrl = c.toDataURL('image/png');
-    showLogoPreview();
+    showPreview({size: LOGO_SIZE, guide: currentLogoType});
     downloadBtn.disabled = false;
     previewInfo.textContent = '原图 ' + srcW + '×' + srcH + ' → ' + size + '×' + size + ' 圆形logo';
   }
@@ -794,60 +794,57 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   // ========================================================================
   // Result image overlay (non-WalletKit tabs)
   // ========================================================================
-  var resultImgEl = null;
-  function showResultImg() {
-    // Only used by compress tab now; logo uses canvas preview
-    if (!resultImgEl) {
-      resultImgEl = document.createElement('img');
-      resultImgEl.style.cssText = 'max-width:95%;max-height:600px;object-fit:contain;position:relative;z-index:1;' +
-        'filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));' +
-        '-webkit-filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));';
-      previewCard.appendChild(resultImgEl);
-    }
-    resultImgEl.src = processedDataUrl;
-    resultImgEl.style.display = 'block';
-    previewCanvas.style.display = 'none';
-  }
-
-  // Canvas-based preview for logo tab — draws guide overlay on 宫格图
-  function showLogoPreview() {
-    hideResultImg();
+  // ========================================================================
+  // Unified Preview — all tabs render via canvas
+  // ========================================================================
+  function showPreview(opts) {
     previewCanvas.style.display = 'block';
-    bgToggleBtn.style.display = 'flex';
-
-    var size = LOGO_SIZE;
-    previewCanvas.width = size;
-    previewCanvas.height = size;
-
-    var cardW = previewCard.clientWidth - 32;
-    var cardH = previewCard.clientHeight - 32;
-    var scale = Math.min(cardW / size, cardH / size, 2);
-    previewCanvas.style.width  = Math.round(size * scale) + 'px';
-    previewCanvas.style.height = Math.round(size * scale) + 'px';
-
+    // Show bg toggle for logo tab
+    if (opts && opts.size) {
+      bgToggleBtn.style.display = 'flex';
+    } else {
+      bgToggleBtn.style.display = 'none';
+    }
     var img = new Image();
     img.onload = function () {
-      ctx.clearRect(0, 0, size, size);
-      ctx.drawImage(img, 0, 0, size, size);
-
-      // Guide overlay for 宫格图: 96×96 centered dashed border
-      if (currentLogoType === 'grid') {
-        var gs = 96, gx = (size - gs) / 2, gy = (size - gs) / 2, gr = 12;
-        ctx.save();
-        ctx.strokeStyle = 'rgba(0,0,0,0.6)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([6, 3]);
-        drawRoundRect(ctx, gx, gy, gs, gs, gr);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.restore();
+      var pw, ph;
+      if (opts && opts.size) {
+        pw = opts.size; ph = opts.size;
+        ctx.clearRect(0, 0, pw, ph);
+        ctx.drawImage(img, 0, 0, pw, ph);
+        if (opts && opts.guide === 'grid') drawLogoGuideOverlay();
+      } else {
+        pw = img.naturalWidth; ph = img.naturalHeight;
+        ctx.clearRect(0, 0, pw, ph);
+        ctx.drawImage(img, 0, 0);
       }
+      previewCanvas.width = pw;
+      previewCanvas.height = ph;
+      var cardW = previewCard.clientWidth - 32;
+      var cardH = previewCard.clientHeight - 32;
+      var maxS = (opts && opts.maxScale) ? opts.maxScale : 2;
+      var s = Math.min(cardW / pw, cardH / ph, maxS);
+      previewCanvas.style.width  = Math.round(pw * s) + 'px';
+      previewCanvas.style.height = Math.round(ph * s) + 'px';
     };
     img.src = processedDataUrl;
   }
 
-  function hideResultImg() {
-    if (resultImgEl) { resultImgEl.src = ''; resultImgEl.style.display = 'none'; }
+  function drawLogoGuideOverlay() {
+    var gs = 96, gx = (LOGO_SIZE - gs) / 2, gy = (LOGO_SIZE - gs) / 2, gr = 12;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6, 3]);
+    drawRoundRect(ctx, gx, gy, gs, gs, gr);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
+  }
+
+  function hidePreview() {
+    previewCanvas.style.display = 'none';
+    bgToggleBtn.style.display = 'none';
   }
 
   // ========================================================================
@@ -877,7 +874,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     uploadError.textContent = '';
     downloadBtn.disabled = true;
     previewInfo.textContent = '';
-    hideResultImg();
+    hidePreview();
     bgToggleBtn.style.display = 'none';
     previewCard.style.background = '';
     bgIsDark = false;
@@ -890,160 +887,145 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   }
 
   // ========================================================================
-  // Event Bindings
+  // Centralized Event Handlers
   // ========================================================================
-  uploadZone.addEventListener('click', function () { fileInput.click(); });
 
-  fileInput.addEventListener('change', function (e) {
+  // -- Upload handlers --
+  function onUploadClick() { fileInput.click(); }
+  function onFileChange(e) {
     if (e.target.files && e.target.files[0]) handleFile(e.target.files[0]);
     fileInput.value = '';
-  });
-
-  uploadZone.addEventListener('dragover', function (e) {
-    e.preventDefault(); e.stopPropagation();
-    uploadZone.classList.add('drag-over');
-  });
-  uploadZone.addEventListener('dragleave', function (e) {
-    e.preventDefault(); e.stopPropagation();
-    uploadZone.classList.remove('drag-over');
-  });
-  uploadZone.addEventListener('drop', function (e) {
+  }
+  function onDragOver(e) { e.preventDefault(); e.stopPropagation(); uploadZone.classList.add('drag-over'); }
+  function onDragLeave(e) { e.preventDefault(); e.stopPropagation(); uploadZone.classList.remove('drag-over'); }
+  function onDrop(e) {
     e.preventDefault(); e.stopPropagation();
     uploadZone.classList.remove('drag-over');
     if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
-  });
-
-  document.addEventListener('dragover', function (e) { e.preventDefault(); });
-  document.addEventListener('drop', function (e) { e.preventDefault(); });
-
-  document.addEventListener('paste', function (e) {
+  }
+  function onDocDragOver(e) { e.preventDefault(); }
+  function onDocDrop(e) { e.preventDefault(); }
+  function onPaste(e) {
     if (currentTab !== 'walletkit' && currentTab !== 'compress' && currentTab !== 'circle') return;
     var items = e.clipboardData && e.clipboardData.items;
     if (!items) return;
     for (var i = 0; i < items.length; i++) {
-      if (items[i].type.match(/^image\//)) {
-        e.preventDefault();
-        handleFile(items[i].getAsFile());
-        break;
-      }
+      if (items[i].type.match(/^image\//)) { e.preventDefault(); handleFile(items[i].getAsFile()); break; }
     }
-  });
-
-  uploadZone.addEventListener('keydown', function (e) {
+  }
+  function onUploadKey(e) {
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
-  });
+  }
+  function onResize() { if (currentTab === 'walletkit') resizeCanvas(); }
 
-  resetBtn.addEventListener('click', function () { resetAll(); });
-  downloadBtn.addEventListener('click', function () { downloadImage(); });
-
-  cmpWidth.addEventListener('input', function () {
+  // -- Button handlers --
+  function onReset() { resetAll(); }
+  function onDownload() { downloadImage(); }
+  function onCmpWidthInput() {
     cmpWidthVal.textContent = this.value + 'px';
     if (uploadedImage && currentTab === 'compress') processCompress();
-  });
-
-  // Logo chips switching
-  logoChipsNav.addEventListener('click', function (e) {
+  }
+  function onLogoChipsClick(e) {
     var btn = e.target.closest('.chips-nav__btn');
     if (!btn) return;
     var type = btn.dataset.logo;
     if (type === currentLogoType) return;
-
     currentLogoType = type;
     logoChipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
     btn.classList.add('active');
-
-    // Show/hide badge checkbox (only for 宫格图)
     logoGridBadgeGroup.style.display = (type === 'grid') ? '' : 'none';
-
-    // Re-process if image uploaded
     if (uploadedImage && currentTab === 'circle') processLogo();
-  });
-
-  // Scale slider → re-process (both grid and circle)
-  logoScale.addEventListener('input', function () {
+  }
+  function onLogoScaleInput() {
     logoScaleVal.textContent = this.value + '%';
     if (uploadedImage && currentTab === 'circle') processLogo();
-  });
-
-  // Color picker for 宫格图 background
-  colorPicker.addEventListener('click', function (e) {
+  }
+  function onColorPick(e) {
     var dot = e.target.closest('.color-dot');
     if (!dot) return;
     colorPicker.querySelectorAll('.color-dot').forEach(function (d) { d.classList.remove('active'); });
     dot.classList.add('active');
     currentBgColor = dot.dataset.color;
     if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
-  });
-
-  // 去背景 checkbox → re-process uploaded image
-  removeBgCheck.addEventListener('change', function () {
+  }
+  function onRemoveBgChange() {
     removeBgEnabled = this.checked;
     if (!originalUploadDataUrl) return;
-    if (removeBgEnabled) {
-      applyBackgroundRemoval(originalUploadDataUrl);
+    if (removeBgEnabled) { applyBackgroundRemoval(originalUploadDataUrl); }
+    else { restoreOriginalImage(); }
+  }
+  function onBadgeChange() {
+    if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
+  }
+  var bgIsDark = false;
+  function onBgToggle() {
+    bgIsDark = !bgIsDark;
+    if (bgIsDark) {
+      previewCard.style.background = '#1a1a1a';
+      bgToggleBtn.classList.add('dark');
     } else {
-      // Restore original
-      var img = new Image();
-      img.onload = function () {
-        uploadedImage = img;
-        if (currentTab === 'walletkit') { drawPreview(); downloadBtn.disabled = false; }
-        else processImage();
-      };
-      img.src = originalUploadDataUrl;
+      previewCard.style.background = '#ffffff';
+      bgToggleBtn.classList.remove('dark');
     }
-  });
+  }
+
+  // -- All event bindings in one place --
+  function bindEvents() {
+    // Upload
+    uploadZone.addEventListener('click', onUploadClick);
+    fileInput.addEventListener('change', onFileChange);
+    uploadZone.addEventListener('dragover', onDragOver);
+    uploadZone.addEventListener('dragleave', onDragLeave);
+    uploadZone.addEventListener('drop', onDrop);
+    document.addEventListener('dragover', onDocDragOver);
+    document.addEventListener('drop', onDocDrop);
+    document.addEventListener('paste', onPaste);
+    uploadZone.addEventListener('keydown', onUploadKey);
+    window.addEventListener('resize', onResize);
+    // Buttons
+    resetBtn.addEventListener('click', onReset);
+    downloadBtn.addEventListener('click', onDownload);
+    // Compress
+    cmpWidth.addEventListener('input', onCmpWidthInput);
+    // Logo
+    logoChipsNav.addEventListener('click', onLogoChipsClick);
+    logoScale.addEventListener('input', onLogoScaleInput);
+    colorPicker.addEventListener('click', onColorPick);
+    logoBadgeCheck.addEventListener('change', onBadgeChange);
+    bgToggleBtn.addEventListener('click', onBgToggle);
+    // Remove bg
+    removeBgCheck.addEventListener('change', onRemoveBgChange);
+  }
 
   // ========================================================================
-  // Background Removal — detect and remove solid background color
+  // Background Removal
   // ========================================================================
   function applyBackgroundRemoval(dataUrl) {
     var img = new Image();
     img.onload = function () {
       var w = img.naturalWidth, h = img.naturalHeight;
-      // Only process if image is reasonably sized
       if (w < 10 || h < 10 || w * h > 4000000) {
-        // Skip — too small or too large
         uploadedImage = img;
         if (currentTab === 'walletkit') { drawPreview(); downloadBtn.disabled = false; }
         else processImage();
         return;
       }
-
       var c = document.createElement('canvas'); c.width = w; c.height = h;
       var cx = c.getContext('2d');
       cx.drawImage(img, 0, 0, w, h);
       var imageData = cx.getImageData(0, 0, w, h);
       var data = imageData.data;
-
-      // Sample background color from 4 corners
-      var corners = [
-        getPixel(data, w, 0, 0),       // top-left
-        getPixel(data, w, w-1, 0),     // top-right
-        getPixel(data, w, 0, h-1),     // bottom-left
-        getPixel(data, w, w-1, h-1)    // bottom-right
-      ];
-      var bgR = Math.round((corners[0][0] + corners[1][0] + corners[2][0] + corners[3][0]) / 4);
-      var bgG = Math.round((corners[0][1] + corners[1][1] + corners[2][1] + corners[3][1]) / 4);
-      var bgB = Math.round((corners[0][2] + corners[1][2] + corners[2][2] + corners[3][2]) / 4);
-
-      // Tolerance: pixels within this distance from bg color become transparent
-      var tolerance = 55;
-
-      for (var y = 0; y < h; y++) {
+      var corners = [getPixel(data,w,0,0), getPixel(data,w,w-1,0), getPixel(data,w,0,h-1), getPixel(data,w,w-1,h-1)];
+      var bgR = Math.round((corners[0][0]+corners[1][0]+corners[2][0]+corners[3][0])/4);
+      var bgG = Math.round((corners[0][1]+corners[1][1]+corners[2][1]+corners[3][1])/4);
+      var bgB = Math.round((corners[0][2]+corners[1][2]+corners[2][2]+corners[3][2])/4);
+      var t = 55;
+      for (var y = 0; y < h; y++)
         for (var x = 0; x < w; x++) {
-          var idx = (y * w + x) * 4;
-          var dr = Math.abs(data[idx] - bgR);
-          var dg = Math.abs(data[idx + 1] - bgG);
-          var db = Math.abs(data[idx + 2] - bgB);
-          if (dr < tolerance && dg < tolerance && db < tolerance) {
-            data[idx + 3] = 0; // set alpha to 0
-          }
+          var idx = (y*w+x)*4;
+          if (Math.abs(data[idx]-bgR)<t && Math.abs(data[idx+1]-bgG)<t && Math.abs(data[idx+2]-bgB)<t) data[idx+3]=0;
         }
-      }
-
       cx.putImageData(imageData, 0, 0);
-
-      // Create new Image from processed canvas
       var newImg = new Image();
       newImg.onload = function () {
         uploadedImage = newImg;
@@ -1055,35 +1037,26 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     img.src = dataUrl;
   }
 
+  function restoreOriginalImage() {
+    var img = new Image();
+    img.onload = function () {
+      uploadedImage = img;
+      if (currentTab === 'walletkit') { drawPreview(); downloadBtn.disabled = false; }
+      else processImage();
+    };
+    img.src = originalUploadDataUrl;
+  }
+
   function getPixel(data, w, x, y) {
     var idx = (y * w + x) * 4;
     return [data[idx], data[idx + 1], data[idx + 2]];
   }
 
-  // Badge checkbox change → re-process
-  logoBadgeCheck.addEventListener('change', function () {
-    if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
-  });
-
-  // Preview background toggle (logo tab only)
-  var bgIsDark = false;
-  bgToggleBtn.addEventListener('click', function () {
-    bgIsDark = !bgIsDark;
-    if (bgIsDark) {
-      previewCard.style.background = '#1a1a1a';
-      bgToggleBtn.classList.add('dark');
-    } else {
-      previewCard.style.background = '#ffffff';
-      bgToggleBtn.classList.remove('dark');
-    }
-  });
-
   // ========================================================================
   // Init
   // ========================================================================
-  loadBaseImages(function (ok) {
-    if (ok) drawPreview();
-  });
+  bindEvents();
+  loadBaseImages(function (ok) { if (ok) drawPreview(); });
 
 })();
 </script>
