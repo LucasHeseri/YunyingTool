@@ -154,6 +154,16 @@ body {
 .color-dot--green { background: #64BB5C; }
 .color-dot--yellow { background: #FFC107; }
 .color-dot--blue { background: #0A59F7; }
+.color-dot--none {
+  background: #fff;
+  position: relative;
+}
+.color-dot--none::after {
+  content: ''; position: absolute; top: 50%; left: 50%;
+  width: 18px; height: 2px; background: #e84026;
+  transform: translate(-50%, -50%) rotate(45deg);
+  border-radius: 1px;
+}
 .preview-actions { display: flex; gap: 10px; align-items: center; justify-content: center; }
 .preview-info { font-size: 13px; color: var(--text-secondary); text-align: center; padding: 4px 0; }
 
@@ -246,7 +256,8 @@ body {
           <div class="control-group">
             <div class="control-group__label"><span>背景颜色</span></div>
             <div class="color-picker" id="colorPicker">
-              <button class="color-dot color-dot--red active" data-color="#E84026" type="button"></button>
+              <button class="color-dot color-dot--none active" data-color="" type="button" title="透明（保留圆角裁剪效果）"></button>
+              <button class="color-dot color-dot--red" data-color="#E84026" type="button"></button>
               <button class="color-dot color-dot--green" data-color="#64BB5C" type="button"></button>
               <button class="color-dot color-dot--yellow" data-color="#FFC107" type="button"></button>
               <button class="color-dot color-dot--blue" data-color="#0A59F7" type="button"></button>
@@ -308,7 +319,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   var toastTimer = null;
   var currentMockupType = 'card';
   var currentLogoType = 'grid';   // 'grid' or 'circlelogo'
-  var currentBgColor = '#E84026'; // Background color for 宫格图
+  var currentBgColor = ''; // Background color for 宫格图 (empty = transparent)
   var removeBgEnabled = false;    // 去背景 toggle
   var originalUploadDataUrl = null; // Original upload before bg removal
 
@@ -707,9 +718,11 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     var c = document.createElement('canvas'); c.width = size; c.height = size;
     var cx = c.getContext('2d');
 
-    // Fill entire canvas with selected background color
-    cx.fillStyle = currentBgColor;
-    cx.fillRect(0, 0, size, size);
+    // Fill canvas with selected background color (skip if transparent)
+    if (currentBgColor) {
+      cx.fillStyle = currentBgColor;
+      cx.fillRect(0, 0, size, size);
+    }
 
     // Rounded rect clip
     cx.save();
