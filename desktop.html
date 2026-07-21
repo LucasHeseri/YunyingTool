@@ -736,9 +736,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   function showLogoPreview() {
     hideResultImg();
     previewCanvas.style.display = 'block';
-    // drop-shadow follows alpha channel (rounded corners / circle)
-    previewCanvas.style.filter = 'drop-shadow(0 4px 16px rgba(0,0,0,0.18))';
-    previewCanvas.style.webkitFilter = 'drop-shadow(0 4px 16px rgba(0,0,0,0.18))';
+    // Remove any CSS filter; shadow drawn directly on canvas to follow alpha
+    previewCanvas.style.filter = 'none';
+    previewCanvas.style.webkitFilter = 'none';
 
     var size = LOGO_SIZE;
     previewCanvas.width = size;
@@ -753,9 +753,17 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     var img = new Image();
     img.onload = function () {
       ctx.clearRect(0, 0, size, size);
-      ctx.drawImage(img, 0, 0, size, size);
 
-      // Guide overlay for 宫格图: 96×96 centered dashed border
+      // Draw with canvas shadow — follows the drawn alpha channel
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.18)';
+      ctx.shadowBlur = 16;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 4;
+      ctx.drawImage(img, 0, 0, size, size);
+      ctx.restore();
+
+      // Guide overlay for 宫格图: 96×96 centered dashed border (no shadow)
       if (currentLogoType === 'grid') {
         var gs = 96, gx = (size - gs) / 2, gy = (size - gs) / 2, gr = 12;
         ctx.save();
