@@ -206,11 +206,17 @@ body {
             <button class="chips-nav__btn" data-logo="circlelogo">圆形logo</button>
           </div>
         </div>
-        <div class="control-group" id="logoGridBadgeGroup" style="margin-top:12px;">
-          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);cursor:pointer;">
-            <input type="checkbox" id="logoBadgeCheck" style="width:16px;height:16px;accent-color:var(--brand);">
-            添加消息提醒圆点（右上角）
-          </label>
+        <div id="logoGridControls" style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+          <div class="control-group">
+            <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="logoScaleVal">100%</span></div>
+            <input type="range" class="control-group__slider" id="logoScale" min="50" max="200" value="100" step="5">
+          </div>
+          <div class="control-group" id="logoGridBadgeGroup">
+            <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);cursor:pointer;">
+              <input type="checkbox" id="logoBadgeCheck" style="width:16px;height:16px;accent-color:var(--brand);">
+              添加消息提醒圆点（右上角）
+            </label>
+          </div>
         </div>
       </div>
     </div>
@@ -301,7 +307,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   var cmpWidthVal   = $('cmpWidthVal');
   var logoChipsNav  = $('logoChipsNav');
   var logoBadgeCheck = $('logoBadgeCheck');
-  var logoGridBadgeGroup = $('logoGridBadgeGroup');
+  var logoGridControls = $('logoGridControls');
+  var logoScale     = $('logoScale');
+  var logoScaleVal  = $('logoScaleVal');
 
   // ========================================================================
   // Tab config
@@ -407,8 +415,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     drawRoundRect(ctx, r.x, r.y, r.w, r.h, r.rx);
     ctx.clip();
 
-    // Fill with white first so transparent PNGs don't show the red layer underneath
-    ctx.fillStyle = '#ffffff';
+    // Fill with #F1F3F5 so transparent PNGs don't show the red layer underneath
+    ctx.fillStyle = '#F1F3F5';
     ctx.fill();
 
     // object-fit: cover — fill the rect while maintaining aspect ratio
@@ -622,15 +630,16 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     else processLogoCircle();
   }
 
-  // 宫格图: 160×160, 圆角12px, 可选右上角消息提醒圆点
+  // 宫格图: 160×160, 圆角32px, 可选右上角消息提醒圆点
   function processLogoGrid() {
     var img = uploadedImage;
     var srcW = img.naturalWidth, srcH = img.naturalHeight;
-    var size = LOGO_SIZE, radius = 12;
+    var size = LOGO_SIZE, radius = 32;
 
-    // Scale to cover 160×160 (object-fit: cover)
+    // Scale based on slider (default 100 = fill/cover)
+    var userScale = parseInt(logoScale.value, 10) / 100;
     var shortSide = Math.min(srcW, srcH);
-    var s = size / shortSide;
+    var s = (size / shortSide) * userScale;
     var sw = Math.round(srcW * s), sh = Math.round(srcH * s);
 
     var c = document.createElement('canvas'); c.width = size; c.height = size;
@@ -657,7 +666,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 
     // HarmonyOS notification badge — drawn AFTER clip so it sits above the rounded corners
     if (logoBadgeCheck.checked) {
-      var badgeR = 9;
+      var badgeR = 12;
       var badgeCX = size - badgeR;
       var badgeCY = badgeR;
 
@@ -820,11 +829,17 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     logoChipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
     btn.classList.add('active');
 
-    // Show/hide badge checkbox (only for 宫格图)
-    logoGridBadgeGroup.style.display = (type === 'grid') ? '' : 'none';
+    // Show/hide grid controls (scale slider + badge checkbox)
+    logoGridControls.style.display = (type === 'grid') ? '' : 'none';
 
     // Re-process if image uploaded
     if (uploadedImage && currentTab === 'circle') processLogo();
+  });
+
+  // Scale slider → re-process
+  logoScale.addEventListener('input', function () {
+    logoScaleVal.textContent = this.value + '%';
+    if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
   });
 
   // Badge checkbox change → re-process
