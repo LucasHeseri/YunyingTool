@@ -677,7 +677,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     }
 
     processedDataUrl = c.toDataURL('image/png');
-    showResultImg();
+    showLogoPreview();
     downloadBtn.disabled = false;
     previewInfo.textContent = '原图 ' + srcW + '×' + srcH + ' → ' + size + '×' + size + ' 宫格图' + (logoBadgeCheck.checked ? ' (含消息提醒)' : '');
   }
@@ -706,7 +706,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     cx.drawImage(img, Math.round((size - sw) / 2), Math.round((size - sh) / 2), sw, sh);
 
     processedDataUrl = c.toDataURL('image/png');
-    showResultImg();
+    showLogoPreview();
     downloadBtn.disabled = false;
     previewInfo.textContent = '原图 ' + srcW + '×' + srcH + ' → ' + size + '×' + size + ' 圆形logo';
   }
@@ -716,9 +716,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   // ========================================================================
   var resultImgEl = null;
   function showResultImg() {
+    // Only used by compress tab now; logo uses canvas preview
     if (!resultImgEl) {
       resultImgEl = document.createElement('img');
-      // drop-shadow follows the alpha channel (rounded corners / circle), box-shadow does not
       resultImgEl.style.cssText = 'max-width:95%;max-height:600px;object-fit:contain;position:relative;z-index:1;' +
         'filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));' +
         '-webkit-filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));';
@@ -728,6 +728,43 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     resultImgEl.style.display = 'block';
     previewCanvas.style.display = 'none';
   }
+
+  // Canvas-based preview for logo tab — draws guide overlay on 宫格图
+  function showLogoPreview() {
+    hideResultImg();
+    previewCanvas.style.display = 'block';
+
+    var size = LOGO_SIZE;
+    previewCanvas.width = size;
+    previewCanvas.height = size;
+
+    var cardW = previewCard.clientWidth - 32;
+    var cardH = previewCard.clientHeight - 32;
+    var scale = Math.min(cardW / size, cardH / size, 2); // up to 2x
+    previewCanvas.style.width  = Math.round(size * scale) + 'px';
+    previewCanvas.style.height = Math.round(size * scale) + 'px';
+
+    var img = new Image();
+    img.onload = function () {
+      ctx.clearRect(0, 0, size, size);
+      ctx.drawImage(img, 0, 0, size, size);
+
+      // Guide overlay for 宫格图: 96×96 centered dashed border
+      if (currentLogoType === 'grid') {
+        var gs = 96, gx = (size - gs) / 2, gy = (size - gs) / 2, gr = 12;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([6, 3]);
+        drawRoundRect(ctx, gx, gy, gs, gs, gr);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+    };
+    img.src = processedDataUrl;
+  }
+
   function hideResultImg() {
     if (resultImgEl) { resultImgEl.src = ''; resultImgEl.style.display = 'none'; }
   }
