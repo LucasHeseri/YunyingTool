@@ -89,6 +89,12 @@ body {
 .upload-zone.has-image .upload-zone__limits { display: none; }
 .upload-zone__file-input { display: none; }
 .upload-error { font-size: 12px; color: #e84026; text-align: center; min-height: 18px; line-height: 18px; margin-top: 4px; }
+.upload-option { margin-top: 8px; }
+.upload-option label {
+  display: flex; align-items: center; gap: 6px; font-size: 12px;
+  color: var(--text-secondary); cursor: pointer;
+}
+.upload-option input[type=checkbox] { width: 14px; height: 14px; accent-color: var(--brand); }
 
 .control-group { display: flex; flex-direction: column; gap: 6px; }
 .control-group__label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-secondary); font-weight: 500; }
@@ -130,14 +136,24 @@ body {
 #previewCanvas { display: block; max-width: 100%; max-height: 100%; border-radius: 4px; }
 .bg-toggle-btn {
   position: absolute; bottom: 12px; left: 12px; z-index: 5;
-  width: 32px; height: 32px; border-radius: 16px; border: 1.5px solid rgba(0,0,0,0.15);
-  background: #fff; color: #333; font-size: 14px; cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: all 0.2s; line-height: 1;
+  padding: 6px 12px; border-radius: 16px; border: 1.5px solid rgba(0,0,0,0.15);
+  background: #fff; color: #333; font-size: 12px; cursor: pointer;
+  font-family: inherit; transition: all 0.2s; white-space: nowrap;
 }
 .bg-toggle-btn:hover { border-color: var(--brand); background: var(--brand-light); }
 .bg-toggle-btn.dark { background: #333; color: #fff; border-color: rgba(255,255,255,0.2); }
 .bg-toggle-btn.dark:hover { border-color: #fff; }
+.color-picker { display: flex; gap: 10px; align-items: center; }
+.color-dot {
+  width: 28px; height: 28px; border-radius: 50%; border: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s; flex-shrink: 0;
+}
+.color-dot:hover { transform: scale(1.15); }
+.color-dot.active { border-color: var(--text-primary); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--text-primary); }
+.color-dot--red { background: #E84026; }
+.color-dot--green { background: #64BB5C; }
+.color-dot--yellow { background: #FFC107; }
+.color-dot--blue { background: #0A59F7; }
 .preview-actions { display: flex; gap: 10px; align-items: center; justify-content: center; }
 .preview-info { font-size: 13px; color: var(--text-secondary); text-align: center; padding: 4px 0; }
 
@@ -190,6 +206,12 @@ body {
         <input type="file" class="upload-zone__file-input" id="fileInput" accept="image/png,image/jpeg,image/webp">
       </div>
       <p class="upload-error" id="uploadError"></p>
+      <div class="upload-option">
+        <label>
+          <input type="checkbox" id="removeBgCheck">
+          去背景（自动识别并移除纯色背景）
+        </label>
+      </div>
     </div>
 
     <div class="panel-card" id="controlsCard">
@@ -221,6 +243,15 @@ body {
             <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="logoScaleVal">100%</span></div>
             <input type="range" class="control-group__slider" id="logoScale" min="50" max="200" value="100" step="5">
           </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>背景颜色</span></div>
+            <div class="color-picker" id="colorPicker">
+              <button class="color-dot color-dot--red active" data-color="#E84026" type="button"></button>
+              <button class="color-dot color-dot--green" data-color="#64BB5C" type="button"></button>
+              <button class="color-dot color-dot--yellow" data-color="#FFC107" type="button"></button>
+              <button class="color-dot color-dot--blue" data-color="#0A59F7" type="button"></button>
+            </div>
+          </div>
           <div class="control-group" id="logoGridBadgeGroup">
             <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);cursor:pointer;">
               <input type="checkbox" id="logoBadgeCheck" style="width:16px;height:16px;accent-color:var(--brand);">
@@ -240,7 +271,7 @@ body {
   <section class="panel-right">
     <div class="preview-card" id="previewCard">
       <canvas id="previewCanvas"></canvas>
-      <button class="bg-toggle-btn" id="bgToggleBtn" title="切换预览背景色" style="display:none;">☐</button>
+      <button class="bg-toggle-btn" id="bgToggleBtn" title="切换预览背景色" style="display:none;">切换背景</button>
     </div>
     <div class="preview-actions"><span class="preview-info" id="previewInfo"></span></div>
     <div class="btn-row">
@@ -277,6 +308,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   var toastTimer = null;
   var currentMockupType = 'card';
   var currentLogoType = 'grid';   // 'grid' or 'circlelogo'
+  var currentBgColor = '#E84026'; // Background color for 宫格图
+  var removeBgEnabled = false;    // 去背景 toggle
+  var originalUploadDataUrl = null; // Original upload before bg removal
 
   // Original SVG Image objects (base layer with red card area)
   var baseImgCache = {};   // { card: Image, ticket: Image }
@@ -322,6 +356,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   var logoGridBadgeGroup = $('logoGridBadgeGroup');
   var logoScale       = $('logoScale');
   var logoScaleVal    = $('logoScaleVal');
+  var colorPicker     = $('colorPicker');
+  var removeBgCheck   = $('removeBgCheck');
 
   // ========================================================================
   // Tab config
@@ -592,11 +628,18 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 
     var reader = new FileReader();
     reader.onload = function (e) {
+      originalUploadDataUrl = e.target.result;
       var img = new Image();
       img.onload = function () {
         uploadedImage = img;
-        uploadThumb.src = e.target.result;
+        uploadThumb.src = originalUploadDataUrl;
         uploadZone.classList.add('has-image');
+
+        // Apply background removal if enabled
+        if (removeBgEnabled) {
+          applyBackgroundRemoval(originalUploadDataUrl);
+          return;
+        }
 
         if (currentTab === 'walletkit') {
           // Auto-composite: draw base + user image on top of red area
@@ -663,6 +706,10 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 
     var c = document.createElement('canvas'); c.width = size; c.height = size;
     var cx = c.getContext('2d');
+
+    // Fill entire canvas with selected background color
+    cx.fillStyle = currentBgColor;
+    cx.fillRect(0, 0, size, size);
 
     // Rounded rect clip
     cx.save();
@@ -810,6 +857,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   function resetAll() {
     uploadedImage = null;
     processedDataUrl = null;
+    originalUploadDataUrl = null;
     uploadThumb.src = '';
     uploadZone.classList.remove('has-image');
     fileInput.value = '';
@@ -904,6 +952,101 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     if (uploadedImage && currentTab === 'circle') processLogo();
   });
 
+  // Color picker for 宫格图 background
+  colorPicker.addEventListener('click', function (e) {
+    var dot = e.target.closest('.color-dot');
+    if (!dot) return;
+    colorPicker.querySelectorAll('.color-dot').forEach(function (d) { d.classList.remove('active'); });
+    dot.classList.add('active');
+    currentBgColor = dot.dataset.color;
+    if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
+  });
+
+  // 去背景 checkbox → re-process uploaded image
+  removeBgCheck.addEventListener('change', function () {
+    removeBgEnabled = this.checked;
+    if (!originalUploadDataUrl) return;
+    if (removeBgEnabled) {
+      applyBackgroundRemoval(originalUploadDataUrl);
+    } else {
+      // Restore original
+      var img = new Image();
+      img.onload = function () {
+        uploadedImage = img;
+        if (currentTab === 'walletkit') { drawPreview(); downloadBtn.disabled = false; }
+        else processImage();
+      };
+      img.src = originalUploadDataUrl;
+    }
+  });
+
+  // ========================================================================
+  // Background Removal — detect and remove solid background color
+  // ========================================================================
+  function applyBackgroundRemoval(dataUrl) {
+    var img = new Image();
+    img.onload = function () {
+      var w = img.naturalWidth, h = img.naturalHeight;
+      // Only process if image is reasonably sized
+      if (w < 10 || h < 10 || w * h > 4000000) {
+        // Skip — too small or too large
+        uploadedImage = img;
+        if (currentTab === 'walletkit') { drawPreview(); downloadBtn.disabled = false; }
+        else processImage();
+        return;
+      }
+
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var cx = c.getContext('2d');
+      cx.drawImage(img, 0, 0, w, h);
+      var imageData = cx.getImageData(0, 0, w, h);
+      var data = imageData.data;
+
+      // Sample background color from 4 corners
+      var corners = [
+        getPixel(data, w, 0, 0),       // top-left
+        getPixel(data, w, w-1, 0),     // top-right
+        getPixel(data, w, 0, h-1),     // bottom-left
+        getPixel(data, w, w-1, h-1)    // bottom-right
+      ];
+      var bgR = Math.round((corners[0][0] + corners[1][0] + corners[2][0] + corners[3][0]) / 4);
+      var bgG = Math.round((corners[0][1] + corners[1][1] + corners[2][1] + corners[3][1]) / 4);
+      var bgB = Math.round((corners[0][2] + corners[1][2] + corners[2][2] + corners[3][2]) / 4);
+
+      // Tolerance: pixels within this distance from bg color become transparent
+      var tolerance = 55;
+
+      for (var y = 0; y < h; y++) {
+        for (var x = 0; x < w; x++) {
+          var idx = (y * w + x) * 4;
+          var dr = Math.abs(data[idx] - bgR);
+          var dg = Math.abs(data[idx + 1] - bgG);
+          var db = Math.abs(data[idx + 2] - bgB);
+          if (dr < tolerance && dg < tolerance && db < tolerance) {
+            data[idx + 3] = 0; // set alpha to 0
+          }
+        }
+      }
+
+      cx.putImageData(imageData, 0, 0);
+
+      // Create new Image from processed canvas
+      var newImg = new Image();
+      newImg.onload = function () {
+        uploadedImage = newImg;
+        if (currentTab === 'walletkit') { drawPreview(); downloadBtn.disabled = false; }
+        else processImage();
+      };
+      newImg.src = c.toDataURL('image/png');
+    };
+    img.src = dataUrl;
+  }
+
+  function getPixel(data, w, x, y) {
+    var idx = (y * w + x) * 4;
+    return [data[idx], data[idx + 1], data[idx + 2]];
+  }
+
   // Badge checkbox change → re-process
   logoBadgeCheck.addEventListener('change', function () {
     if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
@@ -916,11 +1059,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     if (bgIsDark) {
       previewCard.style.background = '#1a1a1a';
       bgToggleBtn.classList.add('dark');
-      bgToggleBtn.textContent = '☐';
     } else {
       previewCard.style.background = '#ffffff';
       bgToggleBtn.classList.remove('dark');
-      bgToggleBtn.textContent = '☐';
     }
   });
 
