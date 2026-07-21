@@ -407,6 +407,10 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     drawRoundRect(ctx, r.x, r.y, r.w, r.h, r.rx);
     ctx.clip();
 
+    // Fill with white first so transparent PNGs don't show the red layer underneath
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+
     // object-fit: cover — fill the rect while maintaining aspect ratio
     var imgW = uploadedImage.naturalWidth;
     var imgH = uploadedImage.naturalHeight;
@@ -618,11 +622,11 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     else processLogoCircle();
   }
 
-  // 宫格图: 160×160, 圆角32px, 可选右上角消息提醒圆点
+  // 宫格图: 160×160, 圆角12px, 可选右上角消息提醒圆点
   function processLogoGrid() {
     var img = uploadedImage;
     var srcW = img.naturalWidth, srcH = img.naturalHeight;
-    var size = LOGO_SIZE, radius = 32;
+    var size = LOGO_SIZE, radius = 12;
 
     // Scale to cover 160×160 (object-fit: cover)
     var shortSide = Math.min(srcW, srcH);
@@ -705,7 +709,10 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   function showResultImg() {
     if (!resultImgEl) {
       resultImgEl = document.createElement('img');
-      resultImgEl.style.cssText = 'max-width:95%;max-height:600px;object-fit:contain;border-radius:4px;box-shadow:0 2px 12px rgba(0,0,0,0.08);position:relative;z-index:1;';
+      // drop-shadow follows the alpha channel (rounded corners / circle), box-shadow does not
+      resultImgEl.style.cssText = 'max-width:95%;max-height:600px;object-fit:contain;position:relative;z-index:1;' +
+        'filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));' +
+        '-webkit-filter:drop-shadow(0 4px 16px rgba(0,0,0,0.18));';
       previewCard.appendChild(resultImgEl);
     }
     resultImgEl.src = processedDataUrl;
