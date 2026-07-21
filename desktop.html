@@ -127,7 +127,17 @@ body {
   justify-content: center; overflow: auto; position: relative;
   min-height: 400px; padding: 16px;
 }
-#previewCanvas { display: block; max-width: 100%; max-height: 100%; border-radius: 4px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+#previewCanvas { display: block; max-width: 100%; max-height: 100%; border-radius: 4px; }
+.bg-toggle-btn {
+  position: absolute; bottom: 12px; left: 12px; z-index: 5;
+  width: 32px; height: 32px; border-radius: 16px; border: 1.5px solid rgba(0,0,0,0.15);
+  background: #fff; color: #333; font-size: 14px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s; line-height: 1;
+}
+.bg-toggle-btn:hover { border-color: var(--brand); background: var(--brand-light); }
+.bg-toggle-btn.dark { background: #333; color: #fff; border-color: rgba(255,255,255,0.2); }
+.bg-toggle-btn.dark:hover { border-color: #fff; }
 .preview-actions { display: flex; gap: 10px; align-items: center; justify-content: center; }
 .preview-info { font-size: 13px; color: var(--text-secondary); text-align: center; padding: 4px 0; }
 
@@ -230,6 +240,7 @@ body {
   <section class="panel-right">
     <div class="preview-card" id="previewCard">
       <canvas id="previewCanvas"></canvas>
+      <button class="bg-toggle-btn" id="bgToggleBtn" title="切换预览背景色" style="display:none;">☐</button>
     </div>
     <div class="preview-actions"><span class="preview-info" id="previewInfo"></span></div>
     <div class="btn-row">
@@ -295,6 +306,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   var previewCard   = $('previewCard');
   var previewCanvas = $('previewCanvas');
   var previewInfo   = $('previewInfo');
+  var bgToggleBtn   = $('bgToggleBtn');
   var toast         = $('toast');
   var chipsNav      = $('chipsNav');
 
@@ -518,11 +530,16 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 
     if (tab === 'walletkit') {
       previewCanvas.style.display = 'block';
-      previewCanvas.style.filter = 'none';
-      previewCanvas.style.webkitFilter = 'none';
+      bgToggleBtn.style.display = 'none';
+      previewCard.style.background = '';
       hideResultImg();
       if (imagesReady) drawPreview();
+    } else if (tab === 'compress') {
+      previewCanvas.style.display = 'none';
+      bgToggleBtn.style.display = 'none';
+      previewCard.style.background = '';
     } else {
+      // logo tab — keep bg toggle visible
       previewCanvas.style.display = 'none';
     }
 
@@ -736,9 +753,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   function showLogoPreview() {
     hideResultImg();
     previewCanvas.style.display = 'block';
-    // Remove any CSS filter; shadow drawn directly on canvas to follow alpha
-    previewCanvas.style.filter = 'none';
-    previewCanvas.style.webkitFilter = 'none';
+    bgToggleBtn.style.display = 'flex';
 
     var size = LOGO_SIZE;
     previewCanvas.width = size;
@@ -746,24 +761,16 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 
     var cardW = previewCard.clientWidth - 32;
     var cardH = previewCard.clientHeight - 32;
-    var scale = Math.min(cardW / size, cardH / size, 2); // up to 2x
+    var scale = Math.min(cardW / size, cardH / size, 2);
     previewCanvas.style.width  = Math.round(size * scale) + 'px';
     previewCanvas.style.height = Math.round(size * scale) + 'px';
 
     var img = new Image();
     img.onload = function () {
       ctx.clearRect(0, 0, size, size);
-
-      // Draw with canvas shadow — follows the drawn alpha channel
-      ctx.save();
-      ctx.shadowColor = 'rgba(0,0,0,0.18)';
-      ctx.shadowBlur = 16;
-      ctx.shadowOffsetX = 0;
-      ctx.shadowOffsetY = 4;
       ctx.drawImage(img, 0, 0, size, size);
-      ctx.restore();
 
-      // Guide overlay for 宫格图: 96×96 centered dashed border (no shadow)
+      // Guide overlay for 宫格图: 96×96 centered dashed border
       if (currentLogoType === 'grid') {
         var gs = 96, gx = (size - gs) / 2, gy = (size - gs) / 2, gr = 12;
         ctx.save();
@@ -810,6 +817,10 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     downloadBtn.disabled = true;
     previewInfo.textContent = '';
     hideResultImg();
+    bgToggleBtn.style.display = 'none';
+    previewCard.style.background = '';
+    bgIsDark = false;
+    bgToggleBtn.classList.remove('dark');
 
     if (currentTab === 'walletkit') {
       previewCanvas.style.display = 'block';
@@ -896,6 +907,21 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   // Badge checkbox change → re-process
   logoBadgeCheck.addEventListener('change', function () {
     if (uploadedImage && currentTab === 'circle' && currentLogoType === 'grid') processLogoGrid();
+  });
+
+  // Preview background toggle (logo tab only)
+  var bgIsDark = false;
+  bgToggleBtn.addEventListener('click', function () {
+    bgIsDark = !bgIsDark;
+    if (bgIsDark) {
+      previewCard.style.background = '#1a1a1a';
+      bgToggleBtn.classList.add('dark');
+      bgToggleBtn.textContent = '☐';
+    } else {
+      previewCard.style.background = '#ffffff';
+      bgToggleBtn.classList.remove('dark');
+      bgToggleBtn.textContent = '☐';
+    }
   });
 
   // ========================================================================
