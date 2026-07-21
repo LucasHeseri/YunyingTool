@@ -810,16 +810,16 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
       var pw, ph;
       if (opts && opts.size) {
         pw = opts.size; ph = opts.size;
-        ctx.clearRect(0, 0, pw, ph);
-        ctx.drawImage(img, 0, 0, pw, ph);
-        if (opts && opts.guide === 'grid') drawLogoGuideOverlay();
       } else {
         pw = img.naturalWidth; ph = img.naturalHeight;
-        ctx.clearRect(0, 0, pw, ph);
-        ctx.drawImage(img, 0, 0);
       }
+      // Set canvas size FIRST — this clears the canvas
       previewCanvas.width = pw;
       previewCanvas.height = ph;
+      // Now draw on the correctly-sized canvas
+      ctx.drawImage(img, 0, 0);
+      if (opts && opts.guide === 'grid') drawLogoGuideOverlay();
+      // Scale CSS display
       var cardW = previewCard.clientWidth - 32;
       var cardH = previewCard.clientHeight - 32;
       var maxS = (opts && opts.maxScale) ? opts.maxScale : 2;
