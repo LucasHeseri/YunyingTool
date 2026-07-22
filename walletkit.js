@@ -17,8 +17,8 @@
   // Config — matches the red rect in the SVGs
   // ========================================================================
   var CONFIG = {
-    card:   { viewBoxW: 823, viewBoxH: 808, rect: { x: 94,  y: 159, w: 634, h: 400, rx: 48 } },
-    ticket: { viewBoxW: 687, viewBoxH: 802, rect: { x: 91,  y: 123, w: 519, h: 806, rx: 36 } }
+    card:   { viewBoxW: 823, viewBoxH: 808, rect: { x: 94,  y: 159, w: 634, h: 400, rx: 48 }, fillMode: 'cover' },
+    ticket: { viewBoxW: 687, viewBoxH: 802, rect: { x: 91,  y: 123, w: 519, h: 806, rx: 36 }, fillMode: 'width' }
   };
 
   var baseImgCache = {}; // { card: Image, ticket: Image }
@@ -84,11 +84,25 @@
     ctx.save();
     APP.drawRoundRect(ctx, r.x, r.y, r.w, r.h, r.rx);
     ctx.clip();
+
+    // Fill to cover red placeholder + stroke to kill anti-alias red bleed
     ctx.fillStyle = '#F1F3F5'; ctx.fill();
+    ctx.strokeStyle = '#F1F3F5'; ctx.lineWidth = 1.5; ctx.stroke();
+
     var imgW = APP.state.uploadedImage.naturalWidth, imgH = APP.state.uploadedImage.naturalHeight;
-    var imgRatio = imgW / imgH, rectRatio = r.w / r.h, sx, sy, sw, sh;
-    if (imgRatio > rectRatio) { sh = imgH; sw = imgH * rectRatio; sx = (imgW - sw) / 2; sy = 0; }
-    else { sw = imgW; sh = imgW / rectRatio; sx = 0; sy = (imgH - sh) / 2; }
+    var rectRatio = r.w / r.h, sx, sy, sw, sh;
+
+    if (cfg.fillMode === 'width') {
+      // Ticket: width-first, crop top/bottom
+      sw = r.w; sh = Math.round(imgH * (r.w / imgW));
+      sx = 0; sy = Math.round((imgH - sh) / 2);
+    } else {
+      // Card: cover (match larger dimension)
+      var imgRatio = imgW / imgH;
+      if (imgRatio > rectRatio) { sh = imgH; sw = imgH * rectRatio; sx = (imgW - sw) / 2; sy = 0; }
+      else { sw = imgW; sh = imgW / rectRatio; sx = 0; sy = (imgH - sh) / 2; }
+    }
+
     ctx.drawImage(APP.state.uploadedImage, sx, sy, sw, sh, r.x, r.y, r.w, r.h);
     ctx.restore();
   }
