@@ -85,12 +85,8 @@
     APP.drawRoundRect(ctx, r.x, r.y, r.w, r.h, r.rx);
     ctx.clip();
 
-    // Fill to cover red placeholder + stroke to kill anti-alias red bleed
-    ctx.fillStyle = '#F1F3F5'; ctx.fill();
-    ctx.strokeStyle = '#F1F3F5'; ctx.lineWidth = 1.5; ctx.stroke();
-
     var imgW = APP.state.uploadedImage.naturalWidth, imgH = APP.state.uploadedImage.naturalHeight;
-    var rectRatio = r.w / r.h, sx, sy, sw, sh;
+    var sx, sy, sw, sh;
 
     if (cfg.fillMode === 'width') {
       // Ticket: width-first, crop top/bottom
@@ -98,7 +94,7 @@
       sx = 0; sy = Math.round((imgH - sh) / 2);
     } else {
       // Card: cover (match larger dimension)
-      var imgRatio = imgW / imgH;
+      var rectRatio = r.w / r.h, imgRatio = imgW / imgH;
       if (imgRatio > rectRatio) { sh = imgH; sw = imgH * rectRatio; sx = (imgW - sw) / 2; sy = 0; }
       else { sw = imgW; sh = imgW / rectRatio; sx = 0; sy = (imgH - sh) / 2; }
     }
