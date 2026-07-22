@@ -89,14 +89,15 @@
     var sx, sy, sw, sh;
 
     if (cfg.fillMode === 'width') {
-      // Ticket: width-first, crop top/bottom
-      sw = r.w; sh = Math.round(imgH * (r.w / imgW));
+      // Ticket: image width = card area width, crop excess height proportionally
+      sw = imgW;
+      sh = Math.round(r.h * imgW / r.w);
       sx = 0; sy = Math.round((imgH - sh) / 2);
     } else {
       // Card: cover (match larger dimension)
       var rectRatio = r.w / r.h, imgRatio = imgW / imgH;
-      if (imgRatio > rectRatio) { sh = imgH; sw = imgH * rectRatio; sx = (imgW - sw) / 2; sy = 0; }
-      else { sw = imgW; sh = imgW / rectRatio; sx = 0; sy = (imgH - sh) / 2; }
+      if (imgRatio > rectRatio) { sh = imgH; sw = Math.round(imgH * rectRatio); sx = Math.round((imgW - sw) / 2); sy = 0; }
+      else { sw = imgW; sh = Math.round(imgW / rectRatio); sx = 0; sy = Math.round((imgH - sh) / 2); }
     }
 
     ctx.drawImage(APP.state.uploadedImage, sx, sy, sw, sh, r.x, r.y, r.w, r.h);
