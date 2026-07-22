@@ -89,10 +89,10 @@
     var sx, sy, sw, sh;
 
     if (cfg.fillMode === 'width') {
-      // Ticket: image width = card area width, crop excess height proportionally
+      // Ticket: image width = card area width, top-aligned, crop excess bottom
       sw = imgW;
       sh = Math.round(r.h * imgW / r.w);
-      sx = 0; sy = Math.round((imgH - sh) / 2);
+      sx = 0; sy = 0;
     } else {
       // Card: cover (match larger dimension)
       var rectRatio = r.w / r.h, imgRatio = imgW / imgH;
