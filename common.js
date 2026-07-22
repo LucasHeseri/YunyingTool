@@ -403,24 +403,23 @@
     APP.ctx.drawImage(pcv, 0, 0);
   }
 
-  // Compute flood-fill mask from seed with current tolerance (RGB Euclidean distance, 0-100 scale)
+  // Compute flood-fill mask — hue-primary weighted HSL distance
   function computeFloodMask(bd) {
     var w = bd.w, h = bd.h, d = bd.origImageData.data;
     var mask = new Uint8Array(w * h);
     var tol = _bgTolerance;
     var px = bd.seedPX, py = bd.seedPY;
 
-    // Pre-read seed RGB
+    // Get seed HSL
     var seedIdx = (py * w + px) * 4;
-    var seedR = d[seedIdx], seedG = d[seedIdx + 1], seedB = d[seedIdx + 2];
+    var seedHSL = rgbToHsl(d[seedIdx], d[seedIdx+1], d[seedIdx+2]);
+    var seedH = seedHSL[0], seedS = seedHSL[1], seedL = seedHSL[2];
+    var seedIsAchromatic = seedS < 8; // white/gray/black
 
     var MAX_PIXELS = 500000;
     var count = 0;
     var queue = [px, py];
     mask[py * w + px] = 1;
-
-    // Normalization factor: max RGB distance √(255²+255²+255²) / 100 ≈ 4.4167
-    var NORM = 4.4167;
 
     while (queue.length > 0 && count < MAX_PIXELS) {
       var y = queue.shift(), x = queue.shift();
@@ -429,17 +428,45 @@
         var nx = nb[n][0], ny = nb[n][1];
         if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
           var i = (ny * w + nx) * 4;
-          var dr = d[i] - seedR, dg = d[i+1] - seedG, db = d[i+2] - seedB;
-          var dist = Math.sqrt(dr*dr + dg*dg + db*db) / NORM;
-          if (dist <= tol) {
-            mask[ny * w + nx] = 1;
-            queue.push(nx, ny);
-            count++;
+          var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
+
+          if (seedIsAchromatic && hsl[1] < 8) {
+            // Achromatic seed + achromatic pixel: compare lightness only
+            if (Math.abs(hsl[2] - seedL) <= tol) { mask[ny*w+nx] = 1; queue.push(nx, ny); count++; }
+          } else {
+            // Hue-primary weighted distance
+            var dH = Math.abs(hsl[0] - seedH);
+            if (dH > 180) dH = 360 - dH;
+            var dS = Math.abs(hsl[1] - seedS);
+            var dL = Math.abs(hsl[2] - seedL);
+            // Tolerance drives hue range; S and L have fixed generous bounds
+            var matchH = dH <= tol;
+            var matchS = dS <= Math.max(25, tol * 0.5);
+            var matchL = dL <= Math.max(25, tol * 0.5);
+            if (matchH && matchS && matchL) { mask[ny*w+nx] = 1; queue.push(nx, ny); count++; }
           }
         }
       }
     }
     return mask;
+  }
+
+  // RGB → HSL
+  function rgbToHsl(r, g, b) {
+    r /= 255; g /= 255; b /= 255;
+    var max = Math.max(r, g, b), min = Math.min(r, g, b);
+    var h, s, l = (max + min) / 2;
+    if (max === min) { h = s = 0; }
+    else {
+      var d = max - min;
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      switch (max) {
+        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
+        case g: h = ((b - r) / d + 2) / 6; break;
+        case b: h = ((r - g) / d + 4) / 6; break;
+      }
+    }
+    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
   }
 
   // "恢复原图" button
