@@ -37,10 +37,8 @@ body {
 }
 .app-header__title { font-size: 18px; font-weight: 600; flex-shrink: 0; }
 .tab-nav--header {
-  border-bottom: none; flex-shrink: 0;
   position: absolute; left: 50%; transform: translateX(-50%);
 }
-.tab-nav--header .tab-nav__btn { padding: 8px 14px 10px; }
 .clear-cache-btn {
   padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border);
   background: transparent; color: var(--text-secondary); font-size: 11px;
@@ -57,18 +55,21 @@ body {
 .panel-left { width: 50%; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
 .panel-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 24px; }
 
-.tab-nav { display: flex; border-bottom: 1.5px solid var(--border); }
+/* HarmonyOS segmented control */
+.tab-nav {
+  display: inline-flex; background: rgba(0,0,0,0.06); border-radius: 10px;
+  padding: 3px; flex-shrink: 0;
+}
 .tab-nav__btn {
-  flex: 1; padding: 12px 8px 14px; border: 0; background: transparent;
-  font-size: 14px; font-weight: 500; color: var(--text-secondary);
-  cursor: pointer; position: relative; transition: color var(--transition);
+  padding: 7px 20px; border: 0; border-radius: 8px;
+  font-size: 13px; font-weight: 500; color: rgba(0,0,0,0.6);
+  background: transparent; cursor: pointer; transition: all 0.2s;
   font-family: inherit; white-space: nowrap;
 }
-.tab-nav__btn:hover { color: var(--text-primary); }
-.tab-nav__btn.active { color: var(--brand); font-weight: 600; }
-.tab-nav__btn.active::after {
-  content: ''; position: absolute; bottom: -1.5px; left: 12px; right: 12px;
-  height: 2.5px; background: var(--brand); border-radius: 2px;
+.tab-nav__btn:hover { color: rgba(0,0,0,0.8); }
+.tab-nav__btn.active {
+  background: #ffffff; color: rgba(0,0,0,0.9);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
 }
 
 .chips-nav { display: flex; gap: 8px; }
