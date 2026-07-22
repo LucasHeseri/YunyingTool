@@ -35,8 +35,9 @@ body {
   padding: 0 32px; height: 56px; display: flex; align-items: center;
   justify-content: space-between; flex-shrink: 0; z-index: 10;
 }
-.app-header__title { font-size: 18px; font-weight: 600; }
-.app-header__subtitle { font-size: 13px; color: var(--text-tertiary); }
+.app-header__title { font-size: 18px; font-weight: 600; flex-shrink: 0; }
+.tab-nav--header { border-bottom: none; margin: 0 auto; flex-shrink: 0; }
+.tab-nav--header .tab-nav__btn { padding: 8px 14px 10px; }
 .clear-cache-btn {
   padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border);
   background: transparent; color: var(--text-secondary); font-size: 11px;
@@ -196,21 +197,17 @@ body {
 
 <header class="app-header">
   <span class="app-header__title">图片加工工具</span>
-  <span class="app-header__subtitle">WalletKit机模 · 图片压缩 · logo处理</span>
+  <nav class="tab-nav tab-nav--header" id="tabNav">
+    <button class="tab-nav__btn active" data-tab="walletkit">WalletKit机模</button>
+    <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
+    <button class="tab-nav__btn" data-tab="circle">logo处理</button>
+  </nav>
   <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
 
 <main class="app-main">
 
   <aside class="panel-left">
-
-    <div class="panel-card" style="padding: 0;">
-      <nav class="tab-nav" id="tabNav">
-        <button class="tab-nav__btn active" data-tab="walletkit">WalletKit机模</button>
-        <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
-        <button class="tab-nav__btn" data-tab="circle">logo处理</button>
-      </nav>
-    </div>
 
     <div class="panel-card">
       <div class="upload-zone" id="uploadZone" role="button" tabindex="0">
@@ -219,7 +216,7 @@ body {
           <line x1="22" y1="14" x2="22" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
           <line x1="14" y1="22" x2="30" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
         </svg>
-        <p class="upload-zone__text">点击或拖拽<strong>上传图片</strong></p>
+        <p class="upload-zone__text">点击<strong>上传图片</strong></p>
         <p class="upload-zone__limits" id="uploadLimits">支持 PNG / JPG / WebP，大小不超过 3MB</p>
         <img class="upload-zone__thumb" id="uploadThumb" alt="已上传图片">
         <input type="file" class="upload-zone__file-input" id="fileInput" accept="image/png,image/jpeg,image/webp">

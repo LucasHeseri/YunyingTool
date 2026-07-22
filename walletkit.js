@@ -119,7 +119,7 @@
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('📤 上传图片替换此处', r.x + r.w / 2, r.y + r.h / 2 - fs * 0.7);
     ctx.font = Math.round(fs * 0.55) + 'px "PingFang SC","HarmonyOS Sans SC",sans-serif';
-    ctx.fillText('点击左侧区域 或 Ctrl+V 粘贴', r.x + r.w / 2, r.y + r.h / 2 + fs * 0.7);
+    ctx.fillText('点击左侧区域上传图片', r.x + r.w / 2, r.y + r.h / 2 + fs * 0.7);
     ctx.restore();
   }
 
