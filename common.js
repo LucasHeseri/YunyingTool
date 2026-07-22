@@ -145,8 +145,7 @@
       APP.dom.previewCanvas.width = pw; APP.dom.previewCanvas.height = ph;
       APP.ctx.drawImage(img, 0, 0);
       if (opts && opts.guide === 'grid' && APP.logo) APP.logo.drawGuideOverlay();
-      var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 80;
-      ch = Math.max(ch, 200);
+      var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
       var s = Math.min(cw / pw, ch / ph, (opts && opts.maxScale) ? opts.maxScale : 2);
       APP.dom.previewCanvas.style.width = Math.round(pw * s) + 'px';
       APP.dom.previewCanvas.style.height = Math.round(ph * s) + 'px';

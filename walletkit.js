@@ -63,10 +63,9 @@
     var canvas = APP.dom.previewCanvas, ctx = APP.ctx;
     canvas.width = cw; canvas.height = ch;
 
-    // Leave room for download button (~70px) so it's always visible
+    // Fit canvas to card area
     var cardW = APP.dom.previewCard.clientWidth - 32;
-    var cardH = APP.dom.previewCard.clientHeight - 80;
-    cardH = Math.max(cardH, 200); // minimum height
+    var cardH = APP.dom.previewCard.clientHeight - 16;
     var scale = Math.min(cardW / cw, cardH / ch, 1);
     canvas.style.width  = Math.round(cw * scale) + 'px';
     canvas.style.height = Math.round(ch * scale) + 'px';

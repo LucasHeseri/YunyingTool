@@ -143,9 +143,9 @@ body {
   flex: 1; background: var(--bg-card); border-radius: var(--radius);
   box-shadow: var(--shadow-card); display: flex; align-items: center;
   justify-content: center; overflow: auto; position: relative;
-  min-height: 400px; padding: 16px;
+  min-height: 200px; max-height: calc(100vh - 200px); padding: 16px;
 }
-#previewCanvas { display: block; max-width: 100%; max-height: 100%; border-radius: 4px; }
+#previewCanvas { display: block; max-width: 100%; max-height: calc(100% - 8px); border-radius: 4px; object-fit: contain; }
 .bg-toggle-btn {
   position: absolute; bottom: 12px; left: 12px; z-index: 5;
   padding: 6px 12px; border-radius: 16px; border: 1.5px solid rgba(0,0,0,0.15);
@@ -340,7 +340,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 
   // Init WalletKit (load SVGs)
   APP.walletkit.init(function (ok) {
-    if (ok) requestAnimationFrame(function () { APP.walletkit.drawPreview(); });
+    if (ok) setTimeout(function () { APP.walletkit.drawPreview(); }, 50);
   });
 
 })();
