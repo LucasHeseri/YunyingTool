@@ -14,6 +14,7 @@
     processedDataUrl: null,
     toastTimer: null,
     removeBgEnabled: false,
+    bgTolerance: 55,
     originalUploadDataUrl: null
   };
 
@@ -41,7 +42,9 @@
     cmpWidth: $('cmpWidth'), cmpWidthVal: $('cmpWidthVal'),
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
-    colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck')
+    colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck'),
+    removeBgTolGroup: $('removeBgTolGroup'), tolMinus: $('tolMinus'),
+    tolPlus: $('tolPlus'), tolValue: $('tolValue')
   };
   APP.ctx = APP.dom.previewCanvas.getContext('2d');
 
@@ -205,7 +208,7 @@
       var bgR = Math.round((corners[0][0]+corners[1][0]+corners[2][0]+corners[3][0])/4);
       var bgG = Math.round((corners[0][1]+corners[1][1]+corners[2][1]+corners[3][1])/4);
       var bgB = Math.round((corners[0][2]+corners[1][2]+corners[2][2]+corners[3][2])/4);
-      var tol = 55;
+      var tol = s.bgTolerance;
       for (var y = 0; y < h; y++)
         for (var x = 0; x < w; x++) {
           var idx = (y*w+x)*4;
@@ -285,10 +288,19 @@
     });
     d.removeBgCheck.addEventListener('change', function () {
       APP.state.removeBgEnabled = this.checked;
+      d.removeBgTolGroup.style.display = this.checked ? 'flex' : 'none';
       if (!APP.state.originalUploadDataUrl) return;
       if (APP.state.removeBgEnabled) APP.removeBackground();
       else APP.restoreOriginalImage();
     });
+
+    function updateTol(delta) {
+      APP.state.bgTolerance = Math.max(5, Math.min(200, APP.state.bgTolerance + delta));
+      d.tolValue.textContent = APP.state.bgTolerance;
+      if (APP.state.removeBgEnabled && APP.state.originalUploadDataUrl) APP.removeBackground();
+    }
+    d.tolMinus.addEventListener('click', function () { updateTol(-5); });
+    d.tolPlus.addEventListener('click', function () { updateTol(5); });
   };
 
 })();

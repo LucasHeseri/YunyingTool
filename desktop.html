@@ -222,6 +222,12 @@ body {
           <input type="checkbox" id="removeBgCheck">
           去背景（自动识别并移除纯色背景）
         </label>
+        <div id="removeBgTolGroup" style="display:none;margin-top:6px;align-items:center;gap:6px;">
+          <span style="font-size:12px;color:var(--text-secondary);">容差</span>
+          <button id="tolMinus" style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;line-height:1;">−</button>
+          <span id="tolValue" style="font-size:13px;font-weight:600;min-width:24px;text-align:center;">55</span>
+          <button id="tolPlus" style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;line-height:1;">+</button>
+        </div>
       </div>
     </div>
 
