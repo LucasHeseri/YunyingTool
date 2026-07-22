@@ -280,7 +280,14 @@
       var s = Math.min(cw / w, ch / h, 2);
       APP.dom.previewCanvas.style.width  = Math.round(w * s) + 'px';
       APP.dom.previewCanvas.style.height = Math.round(h * s) + 'px';
-      APP.dom.previewCanvas.style.cursor = 'crosshair';
+      // Show loading state while building gradient map
+      APP.ctx.fillStyle = '#f5f5f5';
+      APP.ctx.fillRect(0, 0, w, h);
+      APP.ctx.fillStyle = '#999';
+      APP.ctx.font = '14px sans-serif';
+      APP.ctx.textAlign = 'center';
+      APP.ctx.fillText('处理中...', w/2, h/2);
+      APP.ctx.textAlign = 'start';
 
       // Prepare offscreen data for flood-fill
       var oc = document.createElement('canvas'); oc.width = w; oc.height = h;
@@ -288,8 +295,9 @@
       ocx.drawImage(img, 0, 0);
       var origImgData = ocx.getImageData(0, 0, w, h);
 
-      // Compute gradient map (edge detection) once
-      var gradMap = buildGradientMap(origImgData.data, w, h);
+      // Compute gradient map (edge detection) — may be null for very small images
+      var gradMap = null;
+      try { gradMap = buildGradientMap(origImgData.data, w, h); } catch(e) { gradMap = null; }
 
       _bgData = {
         w: w, h: h,
@@ -298,6 +306,10 @@
         canvas: oc, ctx: ocx
       };
       _bgPrevCanvas = document.createElement('canvas'); _bgPrevCanvas.width = w; _bgPrevCanvas.height = h;
+
+      // Now ready — enable interaction
+      APP.dom.previewCanvas.style.cursor = 'crosshair';
+      APP.showToast('在预览图上按住并拖动来调整范围，白色背景直接点击即可');
     };
     img.src = s.originalUploadDataUrl;
   };
