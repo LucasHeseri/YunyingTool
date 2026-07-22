@@ -245,166 +245,193 @@
   };
 
   // ========================================================================
-  // Background Removal — button → drag-to-expand-tolerance → flood-fill (HSL)
+  // Background Removal — preview canvas eyedropper + drag tolerance + red overlay
   // ========================================================================
-  var _bgRemovalData = null; // { w, h, idata, seedHSL }
+  var _bgData = null;        // { w, h, origImageData, seedHSL, seedPX, seedPY }
   var _bgDragStartX = 0, _bgDragStartY = 0;
   var _bgDragging = false;
-  var _bgBaseTolerance = 5;   // base HSL tolerance
+  var _bgTolerance = 5;
+  var _bgPrevCanvas = null;  // offscreen canvas for preview compositing
 
-  // "去背景" button → enter eyedropper
+  // "去背景" button → enter eyedropper on preview canvas
   APP.enterBgRemoval = function () {
     var s = APP.state;
     if (!s.originalUploadDataUrl) { APP.showToast('请先上传图片'); return; }
     s.removeBgEnabled = true;
-    APP.dom.uploadZone.style.cursor = 'crosshair';
-    APP.dom.uploadThumb.style.pointerEvents = 'auto';
-    APP.dom.uploadThumb.draggable = false;
     APP.dom.removeBgBtn.style.display = 'none';
     APP.dom.restoreBgBtn.style.display = '';
-    APP.showToast('在图片上按住并拖动来调整范围');
-  };
+    APP.showToast('在预览图上按住并拖动来调整范围');
 
-  APP.exitBgRemoval = function () {
-    APP.state.removeBgEnabled = false;
-    APP.dom.uploadZone.style.cursor = '';
-    APP.dom.uploadThumb.style.pointerEvents = '';
-    APP.dom.uploadThumb.draggable = true;
-    APP.dom.removeBgBtn.style.display = '';
-    APP.dom.restoreBgBtn.style.display = 'none';
-  };
-
-  // mousedown on thumbnail: start tracking
-  APP.bgMousedown = function (e) {
-    if (!APP.state.removeBgEnabled) return;
-    e.preventDefault(); e.stopPropagation();
-    _bgDragging = true;
-    _bgDragStartX = e.clientX;
-    _bgDragStartY = e.clientY;
-    _bgBaseTolerance = 5;
-
-    // Prepare image data for flood-fill
-    var s = APP.state;
+    // Show original image on preview canvas
     var img = new Image();
     img.onload = function () {
       var w = img.naturalWidth, h = img.naturalHeight;
-      if (w < 10 || h < 10 || w * h > 4000000) return;
-      var c = document.createElement('canvas'); c.width = w; c.height = h;
-      var cx = c.getContext('2d');
-      cx.drawImage(img, 0, 0, w, h);
-      var idata = cx.getImageData(0, 0, w, h), d = idata.data;
+      APP.dom.previewCanvas.width = w;
+      APP.dom.previewCanvas.height = h;
+      APP.dom.previewCanvas.style.display = 'block';
+      APP.dom.bgToggleBtn.style.display = 'none';
+      APP.ctx.drawImage(img, 0, 0);
+      // Fit canvas to preview card
+      var cw = APP.dom.previewCard.clientWidth - 32;
+      var ch = APP.dom.previewCard.clientHeight - 32;
+      var s = Math.min(cw / w, ch / h, 1);
+      APP.dom.previewCanvas.style.width  = Math.round(w * s) + 'px';
+      APP.dom.previewCanvas.style.height = Math.round(h * s) + 'px';
+      APP.dom.previewCanvas.style.cursor = 'crosshair';
 
-      // Get seed pixel at click point
-      var thumb = APP.dom.uploadThumb;
-      var trect = thumb.getBoundingClientRect();
-      var sx = w / trect.width, sy = h / trect.height;
-      var px = Math.round((e.clientX - trect.left) * sx);
-      var py = Math.round((e.clientY - trect.top) * sy);
-      px = Math.max(0, Math.min(w - 1, px));
-      py = Math.max(0, Math.min(h - 1, py));
-      var idx = (py * w + px) * 4;
-      var seedHSL = rgbToHsl(d[idx], d[idx+1], d[idx+2]);
-
-      _bgRemovalData = { w: w, h: h, idata: idata, seedHSL: seedHSL, canvas: c, cx: cx };
-      applyBgFloodPreview();
+      // Prepare offscreen data for flood-fill
+      var oc = document.createElement('canvas'); oc.width = w; oc.height = h;
+      var ocx = oc.getContext('2d');
+      ocx.drawImage(img, 0, 0);
+      _bgData = {
+        w: w, h: h,
+        origImageData: ocx.getImageData(0, 0, w, h),
+        canvas: oc, ctx: ocx
+      };
+      _bgPrevCanvas = document.createElement('canvas'); _bgPrevCanvas.width = w; _bgPrevCanvas.height = h;
     };
     img.src = s.originalUploadDataUrl;
   };
 
-  // mousemove: update tolerance from drag distance → live preview
+  APP.exitBgRemoval = function () {
+    APP.state.removeBgEnabled = false;
+    _bgDragging = false;
+    _bgData = null;
+    APP.dom.previewCanvas.style.cursor = '';
+    APP.dom.removeBgBtn.style.display = '';
+    APP.dom.restoreBgBtn.style.display = 'none';
+  };
+
+  // mousedown on preview canvas
+  APP.bgMousedown = function (e) {
+    if (!APP.state.removeBgEnabled || !_bgData) return;
+    e.preventDefault(); e.stopPropagation();
+    _bgDragging = true;
+    _bgDragStartX = e.clientX;
+    _bgDragStartY = e.clientY;
+    _bgTolerance = 5;
+
+    // Get seed pixel from canvas coordinates
+    var cv = APP.dom.previewCanvas;
+    var cr = cv.getBoundingClientRect();
+    var sx = _bgData.w / cr.width, sy = _bgData.h / cr.height;
+    var px = Math.round((e.clientX - cr.left) * sx);
+    var py = Math.round((e.clientY - cr.top) * sy);
+    px = Math.max(0, Math.min(_bgData.w - 1, px));
+    py = Math.max(0, Math.min(_bgData.h - 1, py));
+    _bgData.seedPX = px; _bgData.seedPY = py;
+    var d = _bgData.origImageData.data;
+    var idx = (py * _bgData.w + px) * 4;
+    _bgData.seedHSL = rgbToHsl(d[idx], d[idx+1], d[idx+2]);
+
+    renderBgOverlay();
+  };
+
+  // mousemove: straight-line distance → tolerance
   APP.bgMousemove = function (e) {
-    if (!_bgDragging || !_bgRemovalData) return;
+    if (!_bgDragging || !_bgData) return;
     e.preventDefault();
     var dx = e.clientX - _bgDragStartX;
     var dy = e.clientY - _bgDragStartY;
     var dist = Math.sqrt(dx * dx + dy * dy);
-    // Scale: 1px drag ≈ +0.5 HSL tolerance, max 30
-    _bgBaseTolerance = Math.min(30, Math.max(5, Math.round(5 + dist * 0.5)));
-    applyBgFloodPreview();
+    _bgTolerance = Math.min(30, Math.max(5, Math.round(5 + dist * 0.5)));
+    renderBgOverlay();
   };
 
-  // mouseup: finalize
+  // mouseup: finalize transparency
   APP.bgMouseup = function (e) {
-    if (!_bgDragging) return;
+    if (!_bgDragging || !_bgData) return;
     _bgDragging = false;
-    if (_bgRemovalData) {
-      // Finalize with current tolerance
-      applyBgFloodPreview();
-      var rd = _bgRemovalData;
-      rd.cx.putImageData(rd.idata, 0, 0);
-      var ni = new Image();
-      ni.onload = function () {
-        APP.state.uploadedImage = ni;
-        _bgRemovalData = null;
-        APP.exitBgRemoval();
-        APP._afterBgRemoval();
-        APP.showToast('背景已移除（容差范围: ±' + _bgBaseTolerance + '）');
-      };
-      ni.src = rd.canvas.toDataURL('image/png');
-    }
+
+    // Apply final transparency to original image data
+    var bd = _bgData, w = bd.w, h = bd.h;
+    var idata = new ImageData(new Uint8ClampedArray(bd.origImageData.data), w, h);
+    var d = idata.data;
+    var mask = computeFloodMask(bd);
+
+    for (var y = 0; y < h; y++)
+      for (var x = 0; x < w; x++)
+        if (mask[y * w + x]) d[(y * w + x) * 4 + 3] = 0;
+
+    bd.ctx.putImageData(idata, 0, 0);
+    var ni = new Image();
+    ni.onload = function () {
+      APP.state.uploadedImage = ni;
+      APP.exitBgRemoval();
+      APP._afterBgRemoval();
+      APP.showToast('背景已移除（容差: ±' + _bgTolerance + '）');
+    };
+    ni.src = bd.canvas.toDataURL('image/png');
   };
 
-  function applyBgFloodPreview() {
-    var rd = _bgRemovalData, d = rd.idata.data, w = rd.w, h = rd.h;
-    // Reset: copy from original
-    rd.cx.putImageData(rd.idata, 0, 0); // restore
-    // Re-read after reset (since putImageData modifies internal state)
-    var idata = rd.cx.getImageData(0, 0, w, h);
-    d = idata.data;
+  // Render: original image + red 20% overlay on flood-filled region
+  function renderBgOverlay() {
+    var bd = _bgData, w = bd.w, h = bd.h;
+    var pcv = _bgPrevCanvas, pcx = pcv.getContext('2d');
 
-    var seedH = rd.seedHSL[0], seedS = rd.seedHSL[1], seedL = rd.seedHSL[2];
-    var tol = _bgBaseTolerance;
+    // Copy original image data to preview canvas
+    pcx.putImageData(bd.origImageData, 0, 0);
 
-    var visited = new Uint8Array(w * h);
-    // Find seed point — first non-transparent pixel at the original click area
-    // Actually we stored seedHSL, need to find matching pixels via flood-fill
-    // We'll scan from where the seed was originally
+    // Compute flood mask
+    var mask = computeFloodMask(bd);
 
-    // Re-get seed position from original click
-    var thumb = APP.dom.uploadThumb;
-    var trect = thumb.getBoundingClientRect();
-    var sx = w / trect.width, sy = h / trect.height;
-    var px = Math.round((_bgDragStartX - trect.left) * sx);
-    var py = Math.round((_bgDragStartY - trect.top) * sy);
-    px = Math.max(0, Math.min(w - 1, px));
-    py = Math.max(0, Math.min(h - 1, py));
+    // Draw red overlay on masked pixels
+    var overlayData = pcx.getImageData(0, 0, w, h);
+    var od = overlayData.data;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        if (mask[y * w + x]) {
+          var idx = (y * w + x) * 4;
+          od[idx]     = 255;   // R
+          od[idx + 1] = 0;     // G
+          od[idx + 2] = 0;     // B
+          od[idx + 3] = Math.round(od[idx + 3] * 0.2 + 51); // 20% red blend
+        }
+      }
+    }
+    pcx.putImageData(overlayData, 0, 0);
+
+    // Show on preview canvas
+    var cv = APP.dom.previewCanvas;
+    cv.width = w; cv.height = h;
+    APP.ctx.drawImage(pcv, 0, 0);
+  }
+
+  // Compute flood-fill mask from seed with current tolerance
+  function computeFloodMask(bd) {
+    var w = bd.w, h = bd.h, d = bd.origImageData.data;
+    var mask = new Uint8Array(w * h);
+    var seedH = bd.seedHSL[0], seedS = bd.seedHSL[1], seedL = bd.seedHSL[2];
+    var tol = _bgTolerance;
+    var px = bd.seedPX, py = bd.seedPY;
 
     var queue = [px, py];
-    visited[py * w + px] = 1;
+    mask[py * w + px] = 1;
 
     while (queue.length > 0) {
       var y = queue.shift(), x = queue.shift();
-      var i = (y * w + x) * 4;
-      var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
-
-      if (Math.abs(hsl[0] - seedH) <= tol &&
-          Math.abs(hsl[1] - seedS) <= tol &&
-          Math.abs(hsl[2] - seedL) <= tol) {
-        d[i + 3] = 0;
-
-        var nb = [[x-1,y],[x+1,y],[x,y-1],[x,y+1]];
-        for (var n = 0; n < 4; n++) {
-          var nx = nb[n][0], ny = nb[n][1];
-          if (nx >= 0 && nx < w && ny >= 0 && ny < h && !visited[ny * w + nx]) {
-            visited[ny * w + nx] = 1;
+      var nb = [[x-1,y],[x+1,y],[x,y-1],[x,y+1]];
+      for (var n = 0; n < 4; n++) {
+        var nx = nb[n][0], ny = nb[n][1];
+        if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
+          var i = (ny * w + nx) * 4;
+          var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
+          if (Math.abs(hsl[0] - seedH) <= tol &&
+              Math.abs(hsl[1] - seedS) <= tol &&
+              Math.abs(hsl[2] - seedL) <= tol) {
+            mask[ny * w + nx] = 1;
             queue.push(nx, ny);
           }
         }
       }
     }
-
-    rd.cx.putImageData(idata, 0, 0);
-    // Live preview: update upload thumbnail
-    APP.dom.uploadThumb.src = rd.canvas.toDataURL('image/png');
-    rd.idata = idata; // save for next update
+    return mask;
   }
 
   // "恢复原图" button
   APP.restoreOriginalImage = function () {
     var s = APP.state;
     APP.exitBgRemoval();
-    _bgRemovalData = null;
-    _bgDragging = false;
     var img = new Image();
     img.onload = function () { s.uploadedImage = img; APP._afterBgRemoval(); };
     img.src = s.originalUploadDataUrl;
@@ -499,19 +526,15 @@
       APP.restoreOriginalImage();
     });
 
-    // Eyedropper drag on upload thumbnail
-    d.uploadThumb.addEventListener('mousedown', function (e) {
+    // Eyedropper drag on preview canvas
+    d.previewCanvas.addEventListener('mousedown', function (e) {
       APP.bgMousedown(e);
     });
     document.addEventListener('mousemove', function (e) {
-      if (_bgDragging) APP.bgMousemove(e);
+      if (APP.state.removeBgEnabled && _bgDragging) APP.bgMousemove(e);
     });
     document.addEventListener('mouseup', function (e) {
       APP.bgMouseup(e);
-    });
-    // Prevent native image drag during eyedropper
-    d.uploadThumb.addEventListener('dragstart', function (e) {
-      if (APP.state.removeBgEnabled) e.preventDefault();
     });
   };
 
