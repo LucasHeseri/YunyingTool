@@ -184,6 +184,7 @@
       APP.dom.previewCanvas.style.display = 'none';
     }
     APP.resetAll();
+    if (tab === 'circle' && !s.uploadedImage && APP.logo) APP.logo.showPlaceholder();
     if (s.uploadedImage && tab !== 'walletkit') {
       if (tab === 'compress' && APP.compress) APP.compress.process();
       else if (tab === 'circle' && APP.logo) APP.logo.process();

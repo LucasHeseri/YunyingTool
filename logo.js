@@ -104,6 +104,30 @@
   };
 
   // ========================================================================
+  // Placeholder (before upload) — 160×160 filled rounded rect + guide
+  // ========================================================================
+  M.showPlaceholder = function () {
+    var size = LOGO_SIZE, radius = 32;
+    var cv = APP.dom.previewCanvas, ctx = APP.ctx;
+    cv.style.display = 'block';
+    cv.width = size; cv.height = size;
+    // Fill with #F1F3F5 rounded rect
+    ctx.save();
+    APP.drawRoundRect(ctx, 0, 0, size, size, radius);
+    ctx.clip();
+    ctx.fillStyle = '#F1F3F5'; ctx.fill();
+    ctx.restore();
+    // Center 96×96 guide outline
+    M.drawGuideOverlay();
+    // Scale
+    var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 32;
+    var s = Math.min(cw / size, ch / size, 2);
+    cv.style.width  = Math.round(size * s) + 'px';
+    cv.style.height = Math.round(size * s) + 'px';
+    APP.dom.downloadBtn.disabled = true;
+  };
+
+  // ========================================================================
   // Events
   // ========================================================================
   M.bindEvents = function () {
