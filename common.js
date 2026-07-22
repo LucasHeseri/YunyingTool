@@ -403,7 +403,7 @@
     APP.ctx.drawImage(pcv, 0, 0);
   }
 
-  // Compute flood-fill mask — hue-primary weighted HSL distance
+  // Compute flood-fill mask — hue-strict, S/L-generous
   function computeFloodMask(bd) {
     var w = bd.w, h = bd.h, d = bd.origImageData.data;
     var mask = new Uint8Array(w * h);
@@ -414,7 +414,11 @@
     var seedIdx = (py * w + px) * 4;
     var seedHSL = rgbToHsl(d[seedIdx], d[seedIdx+1], d[seedIdx+2]);
     var seedH = seedHSL[0], seedS = seedHSL[1], seedL = seedHSL[2];
-    var seedIsAchromatic = seedS < 8; // white/gray/black
+    var seedIsAchromatic = seedS < 8;
+
+    // Achromatic: fixed generous lightness tolerance, no drag needed
+    var hueTol = seedIsAchromatic ? 0 : Math.round(tol * 0.3);
+    var slTol  = seedIsAchromatic ? 30 : 60;
 
     var MAX_PIXELS = 500000;
     var count = 0;
@@ -431,19 +435,13 @@
           var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
 
           if (seedIsAchromatic && hsl[1] < 8) {
-            // Achromatic seed + achromatic pixel: compare lightness only
-            if (Math.abs(hsl[2] - seedL) <= tol) { mask[ny*w+nx] = 1; queue.push(nx, ny); count++; }
+            if (Math.abs(hsl[2] - seedL) <= slTol) { mask[ny*w+nx]=1; queue.push(nx,ny); count++; }
           } else {
-            // Hue-primary weighted distance
             var dH = Math.abs(hsl[0] - seedH);
             if (dH > 180) dH = 360 - dH;
             var dS = Math.abs(hsl[1] - seedS);
             var dL = Math.abs(hsl[2] - seedL);
-            // Tolerance drives hue range; S and L have fixed generous bounds
-            var matchH = dH <= tol;
-            var matchS = dS <= Math.max(25, tol * 0.5);
-            var matchL = dL <= Math.max(25, tol * 0.5);
-            if (matchH && matchS && matchL) { mask[ny*w+nx] = 1; queue.push(nx, ny); count++; }
+            if (dH <= hueTol && dS <= slTol && dL <= slTol) { mask[ny*w+nx]=1; queue.push(nx,ny); count++; }
           }
         }
       }
