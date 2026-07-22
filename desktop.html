@@ -217,9 +217,11 @@ body {
         <input type="file" class="upload-zone__file-input" id="fileInput" accept="image/png,image/jpeg,image/webp">
       </div>
       <p class="upload-error" id="uploadError"></p>
-      <div class="upload-option" style="display:flex;gap:8px;">
-        <button class="btn btn-outline btn-sm" id="removeBgBtn" style="flex:1;height:32px;padding:5px 12px;font-size:12px;">去背景</button>
-        <button class="btn btn-outline btn-sm" id="restoreBgBtn" style="display:none;height:32px;padding:5px 12px;font-size:12px;">恢复原图</button>
+      <div class="upload-option">
+        <label>
+          <input type="checkbox" id="removeBgCheck">
+          去背景（自动识别并移除纯色背景）
+        </label>
       </div>
     </div>
 

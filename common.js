@@ -1,10 +1,8 @@
 /**
  * common.js — Shared state, DOM, utilities, upload, and tab switching.
- * All other modules depend on APP.* defined here.
  */
 (function () {
   'use strict';
-
   var APP = window.APP = window.APP || {};
 
   // ========================================================================
@@ -34,36 +32,17 @@
   // ========================================================================
   var $ = function (id) { return document.getElementById(id); };
   APP.dom = {
-    tabNav:       $('tabNav'),
-    uploadZone:   $('uploadZone'),
-    uploadThumb:  $('uploadThumb'),
-    uploadLimits: $('uploadLimits'),
-    uploadError:  $('uploadError'),
-    fileInput:    $('fileInput'),
-    resetBtn:     $('resetBtn'),
-    downloadBtn:  $('downloadBtn'),
-    previewCard:  $('previewCard'),
-    previewCanvas: $('previewCanvas'),
-    previewInfo:  $('previewInfo'),
-    bgToggleBtn:  $('bgToggleBtn'),
-    toast:        $('toast'),
-    chipsNav:     $('chipsNav'),
-    // Controls
-    ctrlWalletkit: $('ctrlWalletkit'),
-    ctrlCompress:  $('ctrlCompress'),
-    ctrlCircle:    $('ctrlCircle'),
-    cmpWidth:      $('cmpWidth'),
-    cmpWidthVal:   $('cmpWidthVal'),
-    logoChipsNav:    $('logoChipsNav'),
-    logoBadgeCheck:  $('logoBadgeCheck'),
-    logoGridBadgeGroup: $('logoGridBadgeGroup'),
-    logoScale:      $('logoScale'),
-    logoScaleVal:   $('logoScaleVal'),
-    colorPicker:    $('colorPicker'),
-    removeBgBtn:   $('removeBgBtn'),
-    restoreBgBtn:  $('restoreBgBtn')
+    tabNav: $('tabNav'), uploadZone: $('uploadZone'), uploadThumb: $('uploadThumb'),
+    uploadLimits: $('uploadLimits'), uploadError: $('uploadError'), fileInput: $('fileInput'),
+    resetBtn: $('resetBtn'), downloadBtn: $('downloadBtn'), previewCard: $('previewCard'),
+    previewCanvas: $('previewCanvas'), previewInfo: $('previewInfo'), bgToggleBtn: $('bgToggleBtn'),
+    toast: $('toast'), chipsNav: $('chipsNav'),
+    ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'),
+    cmpWidth: $('cmpWidth'), cmpWidthVal: $('cmpWidthVal'),
+    logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
+    logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
+    colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck')
   };
-
   APP.ctx = APP.dom.previewCanvas.getContext('2d');
 
   // ========================================================================
@@ -74,9 +53,7 @@
     if (s.toastTimer) clearTimeout(s.toastTimer);
     APP.dom.toast.textContent = msg;
     APP.dom.toast.classList.add('show');
-    s.toastTimer = setTimeout(function () {
-      APP.dom.toast.classList.remove('show');
-    }, 2000);
+    s.toastTimer = setTimeout(function () { APP.dom.toast.classList.remove('show'); }, 2000);
   };
 
   // ========================================================================
@@ -84,31 +61,23 @@
   // ========================================================================
   APP.validateFile = function (file) {
     if (!file) return false;
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      APP.showError('仅支持 PNG / JPG / WebP 格式');
-      return false;
-    }
+    if (!ALLOWED_TYPES.includes(file.type)) { APP.showError('仅支持 PNG / JPG / WebP 格式'); return false; }
     var maxSize = APP.TAB_CONFIG[APP.state.currentTab].maxSize;
-    if (file.size > maxSize) {
-      APP.showError('图片大小超过 ' + (maxSize / 1024 / 1024).toFixed(0) + 'MB');
-      return false;
-    }
+    if (file.size > maxSize) { APP.showError('图片大小超过 ' + (maxSize / 1024 / 1024).toFixed(0) + 'MB'); return false; }
     return true;
   };
-
   APP.showError = function (msg) {
     APP.dom.uploadError.textContent = msg;
     setTimeout(function () { APP.dom.uploadError.textContent = ''; }, 3000);
   };
 
   // ========================================================================
-  // File Handling — upload → call tab-specific process
+  // File Handling
   // ========================================================================
   APP.handleFile = function (file) {
     if (!APP.validateFile(file)) return;
     APP.dom.uploadError.textContent = '';
     var s = APP.state;
-
     var reader = new FileReader();
     reader.onload = function (e) {
       s.originalUploadDataUrl = e.target.result;
@@ -117,16 +86,10 @@
         s.uploadedImage = img;
         APP.dom.uploadThumb.src = s.originalUploadDataUrl;
         APP.dom.uploadZone.classList.add('has-image');
-
-        // Exit eyedropper if active, then proceed normally
-        if (s.removeBgEnabled) APP.exitBgRemoval();
-        if (s.currentTab === 'walletkit') {
-          if (APP.walletkit) APP.walletkit.afterUpload();
-        } else if (s.currentTab === 'compress') {
-          if (APP.compress) APP.compress.process();
-        } else if (s.currentTab === 'circle') {
-          if (APP.logo) APP.logo.process();
-        }
+        if (s.removeBgEnabled) { APP.removeBackground(); return; }
+        if (s.currentTab === 'walletkit') { if (APP.walletkit) APP.walletkit.afterUpload(); }
+        else if (s.currentTab === 'compress') { if (APP.compress) APP.compress.process(); }
+        else if (s.currentTab === 'circle') { if (APP.logo) APP.logo.process(); }
       };
       img.onerror = function () { APP.showError('图片加载失败，请重试'); };
       img.src = e.target.result;
@@ -154,18 +117,11 @@
   // ========================================================================
   APP.resetAll = function () {
     var s = APP.state;
-    s.uploadedImage = null;
-    s.processedDataUrl = null;
-    s.originalUploadDataUrl = null;
-    APP.exitBgRemoval();
-    APP.dom.uploadThumb.src = '';
-    APP.dom.uploadZone.classList.remove('has-image');
-    APP.dom.fileInput.value = '';
-    APP.dom.uploadError.textContent = '';
-    APP.dom.downloadBtn.disabled = true;
-    APP.dom.previewInfo.textContent = '';
+    s.uploadedImage = null; s.processedDataUrl = null; s.originalUploadDataUrl = null;
+    APP.dom.uploadThumb.src = ''; APP.dom.uploadZone.classList.remove('has-image');
+    APP.dom.fileInput.value = ''; APP.dom.uploadError.textContent = '';
+    APP.dom.downloadBtn.disabled = true; APP.dom.previewInfo.textContent = '';
     APP.hidePreview();
-
     if (s.currentTab === 'walletkit') {
       APP.dom.previewCanvas.style.display = 'block';
       if (APP.walletkit && APP.walletkit.isReady()) APP.walletkit.drawPreview();
@@ -173,37 +129,26 @@
   };
 
   // ========================================================================
-  // Unified Preview (canvas-based)
+  // Unified Preview
   // ========================================================================
   APP.showPreview = function (opts) {
     APP.dom.previewCanvas.style.display = 'block';
-    if (opts && opts.size) {
-      APP.dom.bgToggleBtn.style.display = 'flex';
-    } else {
-      APP.dom.bgToggleBtn.style.display = 'none';
-    }
+    APP.dom.bgToggleBtn.style.display = (opts && opts.size) ? 'flex' : 'none';
     var img = new Image();
     img.onload = function () {
       var pw, ph;
-      if (opts && opts.size) {
-        pw = opts.size; ph = opts.size;
-      } else {
-        pw = img.naturalWidth; ph = img.naturalHeight;
-      }
-      APP.dom.previewCanvas.width = pw;
-      APP.dom.previewCanvas.height = ph;
+      if (opts && opts.size) { pw = opts.size; ph = opts.size; }
+      else { pw = img.naturalWidth; ph = img.naturalHeight; }
+      APP.dom.previewCanvas.width = pw; APP.dom.previewCanvas.height = ph;
       APP.ctx.drawImage(img, 0, 0);
       if (opts && opts.guide === 'grid' && APP.logo) APP.logo.drawGuideOverlay();
-      var cardW = APP.dom.previewCard.clientWidth - 32;
-      var cardH = APP.dom.previewCard.clientHeight - 32;
-      var maxS = (opts && opts.maxScale) ? opts.maxScale : 2;
-      var s = Math.min(cardW / pw, cardH / ph, maxS);
-      APP.dom.previewCanvas.style.width  = Math.round(pw * s) + 'px';
+      var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 32;
+      var s = Math.min(cw / pw, ch / ph, (opts && opts.maxScale) ? opts.maxScale : 2);
+      APP.dom.previewCanvas.style.width = Math.round(pw * s) + 'px';
       APP.dom.previewCanvas.style.height = Math.round(ph * s) + 'px';
     };
     img.src = APP.state.processedDataUrl;
   };
-
   APP.hidePreview = function () {
     APP.dom.previewCanvas.style.display = 'none';
     APP.dom.bgToggleBtn.style.display = 'none';
@@ -214,17 +159,14 @@
   // ========================================================================
   APP.switchTab = function (tab) {
     var s = APP.state;
-    if (s.removeBgEnabled) APP.exitBgRemoval();
     s.currentTab = tab;
     var nav = APP.dom.tabNav;
     nav.querySelectorAll('.tab-nav__btn').forEach(function (b) { b.classList.remove('active'); });
     nav.querySelector('[data-tab="' + tab + '"]').classList.add('active');
-
     APP.dom.ctrlWalletkit.style.display = (tab === 'walletkit') ? '' : 'none';
     APP.dom.ctrlCompress.style.display  = (tab === 'compress')  ? '' : 'none';
     APP.dom.ctrlCircle.style.display    = (tab === 'circle')    ? '' : 'none';
     APP.dom.uploadLimits.textContent = APP.TAB_CONFIG[tab].limits;
-
     if (tab === 'walletkit') {
       APP.dom.previewCanvas.style.display = 'block';
       APP.dom.bgToggleBtn.style.display = 'none';
@@ -238,7 +180,6 @@
     } else {
       APP.dom.previewCanvas.style.display = 'none';
     }
-
     APP.resetAll();
     if (s.uploadedImage && tab !== 'walletkit') {
       if (tab === 'compress' && APP.compress) APP.compress.process();
@@ -247,267 +188,55 @@
   };
 
   // ========================================================================
-  // Background Removal — preview canvas eyedropper + drag tolerance + red overlay
+  // Background Removal — corner sampling + RGB tolerance
   // ========================================================================
-  var _bgData = null;        // { w, h, origImageData, canvas, ctx, seedPX, seedPY }
-  var _bgDragStartX = 0, _bgDragStartY = 0;
-  var _bgDragging = false;
-  var _bgTolerance = 5;
-  var _bgPrevCanvas = null;  // offscreen canvas for preview compositing
-  var _bgRenderPending = false;
-
-  // "去背景" button → enter eyedropper on preview canvas
-  APP.enterBgRemoval = function () {
+  APP.removeBackground = function () {
     var s = APP.state;
-    if (!s.originalUploadDataUrl) { APP.showToast('请先上传图片'); return; }
-    s.removeBgEnabled = true;
-    APP.dom.removeBgBtn.style.display = 'none';
-    APP.dom.restoreBgBtn.style.display = '';
-    APP.showToast('在预览图上按住并拖动来调整范围');
-
-    // Show original image on preview canvas, keeping current display size
+    if (!s.originalUploadDataUrl) return;
     var img = new Image();
     img.onload = function () {
       var w = img.naturalWidth, h = img.naturalHeight;
-      APP.dom.previewCanvas.width = w;
-      APP.dom.previewCanvas.height = h;
-      APP.dom.previewCanvas.style.display = 'block';
-      APP.dom.bgToggleBtn.style.display = 'none';
-      APP.ctx.drawImage(img, 0, 0);
-      // Keep current canvas display size — don't shrink it
-      var cw = APP.dom.previewCard.clientWidth - 32;
-      var ch = APP.dom.previewCard.clientHeight - 32;
-      var s = Math.min(cw / w, ch / h, 2);
-      APP.dom.previewCanvas.style.width  = Math.round(w * s) + 'px';
-      APP.dom.previewCanvas.style.height = Math.round(h * s) + 'px';
-      // Prepare offscreen data for flood-fill
-      var oc = document.createElement('canvas'); oc.width = w; oc.height = h;
-      var ocx = oc.getContext('2d');
-      ocx.drawImage(img, 0, 0);
-      var origImgData = ocx.getImageData(0, 0, w, h);
-
-      _bgData = {
-        w: w, h: h,
-        origImageData: origImgData,
-        canvas: oc, ctx: ocx
-      };
-      _bgPrevCanvas = document.createElement('canvas'); _bgPrevCanvas.width = w; _bgPrevCanvas.height = h;
-
-      // Ready — enable interaction immediately
-      APP.dom.previewCanvas.style.cursor = 'crosshair';
-      APP.showToast('在预览图上按住并拖动来调整范围，白色背景直接点击即可');
+      if (w < 10 || h < 10 || w * h > 4000000) { s.uploadedImage = img; afterBg(); return; }
+      var c = document.createElement('canvas'); c.width = w; c.height = h;
+      var cx = c.getContext('2d');
+      cx.drawImage(img, 0, 0, w, h);
+      var idata = cx.getImageData(0, 0, w, h), d = idata.data;
+      var corners = [getPx(d,w,0,0), getPx(d,w,w-1,0), getPx(d,w,0,h-1), getPx(d,w,w-1,h-1)];
+      var bgR = Math.round((corners[0][0]+corners[1][0]+corners[2][0]+corners[3][0])/4);
+      var bgG = Math.round((corners[0][1]+corners[1][1]+corners[2][1]+corners[3][1])/4);
+      var bgB = Math.round((corners[0][2]+corners[1][2]+corners[2][2]+corners[3][2])/4);
+      var tol = 55;
+      for (var y = 0; y < h; y++)
+        for (var x = 0; x < w; x++) {
+          var idx = (y*w+x)*4;
+          if (Math.abs(d[idx]-bgR)<tol && Math.abs(d[idx+1]-bgG)<tol && Math.abs(d[idx+2]-bgB)<tol) d[idx+3]=0;
+        }
+      cx.putImageData(idata, 0, 0);
+      var ni = new Image();
+      ni.onload = function () { s.uploadedImage = ni; afterBg(); };
+      ni.src = c.toDataURL('image/png');
     };
     img.src = s.originalUploadDataUrl;
   };
 
-  APP.exitBgRemoval = function () {
-    APP.state.removeBgEnabled = false;
-    _bgDragging = false;
-    _bgData = null;
-    APP.dom.previewCanvas.style.cursor = '';
-    APP.dom.removeBgBtn.style.display = '';
-    APP.dom.restoreBgBtn.style.display = 'none';
-  };
-
-  // mousedown on preview canvas
-  APP.bgMousedown = function (e) {
-    if (!APP.state.removeBgEnabled || !_bgData) return;
-    e.preventDefault(); e.stopPropagation();
-    _bgDragging = true;
-    _bgDragStartX = e.clientX;
-    _bgDragStartY = e.clientY;
-    _bgTolerance = 10;
-
-    // Get seed pixel from canvas coordinates
-    var cv = APP.dom.previewCanvas;
-    var cr = cv.getBoundingClientRect();
-    var sx = _bgData.w / cr.width, sy = _bgData.h / cr.height;
-    var px = Math.round((e.clientX - cr.left) * sx);
-    var py = Math.round((e.clientY - cr.top) * sy);
-    px = Math.max(0, Math.min(_bgData.w - 1, px));
-    py = Math.max(0, Math.min(_bgData.h - 1, py));
-    _bgData.seedPX = px; _bgData.seedPY = py;
-
-    renderBgOverlay();
-  };
-
-  // mousemove: straight-line distance → tolerance (throttled via RAF)
-  APP.bgMousemove = function (e) {
-    if (!_bgDragging || !_bgData) return;
-    e.preventDefault();
-    var dx = e.clientX - _bgDragStartX;
-    var dy = e.clientY - _bgDragStartY;
-    var dist = Math.sqrt(dx * dx + dy * dy);
-    _bgTolerance = Math.min(100, Math.max(10, Math.round(10 + dist * 0.8)));
-    if (!_bgRenderPending) {
-      _bgRenderPending = true;
-      requestAnimationFrame(function () {
-        _bgRenderPending = false;
-        renderBgOverlay();
-      });
-    }
-  };
-
-  // mouseup: finalize transparency
-  APP.bgMouseup = function (e) {
-    if (!_bgDragging || !_bgData) return;
-    _bgDragging = false;
-
-    // Apply final transparency to original image data
-    var bd = _bgData, w = bd.w, h = bd.h;
-    var idata = new ImageData(new Uint8ClampedArray(bd.origImageData.data), w, h);
-    var d = idata.data;
-    var mask = computeFloodMask(bd);
-
-    for (var y = 0; y < h; y++)
-      for (var x = 0; x < w; x++)
-        if (mask[y * w + x]) d[(y * w + x) * 4 + 3] = 0;
-
-    bd.ctx.putImageData(idata, 0, 0);
-    var ni = new Image();
-    ni.onload = function () {
-      APP.state.uploadedImage = ni;
-      APP.exitBgRemoval();
-      APP._afterBgRemoval();
-      APP.showToast('背景已移除（容差: ±' + _bgTolerance + '）');
-    };
-    ni.src = bd.canvas.toDataURL('image/png');
-  };
-
-  // Render: original image + red 20% overlay on flood-filled region
-  function renderBgOverlay() {
-    var bd = _bgData, w = bd.w, h = bd.h;
-    var pcv = _bgPrevCanvas, pcx = pcv.getContext('2d');
-
-    // Copy original image data to preview canvas
-    pcx.putImageData(bd.origImageData, 0, 0);
-
-    // Compute flood mask
-    var mask = computeFloodMask(bd);
-
-    // Draw red overlay on masked pixels
-    var overlayData = pcx.getImageData(0, 0, w, h);
-    var od = overlayData.data;
-    for (var y = 0; y < h; y++) {
-      for (var x = 0; x < w; x++) {
-        if (mask[y * w + x]) {
-          var idx = (y * w + x) * 4;
-          od[idx]     = 255;   // R
-          od[idx + 1] = 0;     // G
-          od[idx + 2] = 0;     // B
-          od[idx + 3] = Math.round(od[idx + 3] * 0.2 + 51); // 20% red blend
-        }
-      }
-    }
-    pcx.putImageData(overlayData, 0, 0);
-
-    // Show on preview canvas
-    var cv = APP.dom.previewCanvas;
-    cv.width = w; cv.height = h;
-    APP.ctx.drawImage(pcv, 0, 0);
-  }
-
-  // Compute flood-fill mask — hue-strict, S/L-generous, edge-aware (on-the-fly)
-  function computeFloodMask(bd) {
-    var w = bd.w, h = bd.h, d = bd.origImageData.data;
-    var mask = new Uint8Array(w * h);
-    var tol = _bgTolerance;
-    var px = bd.seedPX, py = bd.seedPY;
-
-    // Get seed HSL
-    var seedIdx = (py * w + px) * 4;
-    var seedHSL = rgbToHsl(d[seedIdx], d[seedIdx+1], d[seedIdx+2]);
-    var seedH = seedHSL[0], seedS = seedHSL[1], seedL = seedHSL[2];
-    var seedIsAchromatic = seedS < 8;
-
-    var hueTol = seedIsAchromatic ? 0 : Math.round(tol * 0.3);
-    var slTol  = seedIsAchromatic ? 30 : 60;
-    var EDGE_THRESH = 60;
-
-    var MAX_PIXELS = 500000;
-    var count = 0;
-    var queue = [px, py];
-    mask[py * w + px] = 1;
-
-    // Inline grayscale: no pre-allocation, compute on demand
-    function getGray(px, py) {
-      if (px < 0 || px >= w || py < 0 || py >= h) return 0;
-      var j = (py * w + px) * 4;
-      return Math.round(d[j] * 0.299 + d[j+1] * 0.587 + d[j+2] * 0.114);
-    }
-
-    while (queue.length > 0 && count < MAX_PIXELS) {
-      var y = queue.shift(), x = queue.shift();
-      var nb = [[x-1,y],[x+1,y],[x,y-1],[x,y+1]];
-      for (var n = 0; n < 4; n++) {
-        var nx = nb[n][0], ny = nb[n][1];
-        if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
-          // On-the-fly edge check (lazy grayscale)
-          if (!seedIsAchromatic) {
-            var g0 = getGray(nx, ny);
-            if (Math.abs(getGray(nx+1, ny) - g0) > EDGE_THRESH ||
-                Math.abs(getGray(nx, ny+1) - g0) > EDGE_THRESH) continue;
-          }
-
-          var i = (ny * w + nx) * 4;
-          var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
-
-          var match = false;
-          if (seedIsAchromatic && hsl[1] < 8) {
-            match = Math.abs(hsl[2] - seedL) <= slTol;
-          } else {
-            var dH = Math.abs(hsl[0] - seedH);
-            if (dH > 180) dH = 360 - dH;
-            match = dH <= hueTol && Math.abs(hsl[1] - seedS) <= slTol && Math.abs(hsl[2] - seedL) <= slTol;
-          }
-          if (match) { mask[ny*w+nx] = 1; queue.push(nx, ny); count++; }
-        }
-      }
-    }
-    return mask;
-  }
-
-  // RGB → HSL
-  function rgbToHsl(r, g, b) {
-    r /= 255; g /= 255; b /= 255;
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
-    if (max === min) { h = s = 0; }
-    else {
-      var d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      switch (max) {
-        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-        case g: h = ((b - r) / d + 2) / 6; break;
-        case b: h = ((r - g) / d + 4) / 6; break;
-      }
-    }
-    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-  }
-
-  // "恢复原图" button
   APP.restoreOriginalImage = function () {
     var s = APP.state;
-    APP.exitBgRemoval();
     var img = new Image();
-    img.onload = function () { s.uploadedImage = img; APP._afterBgRemoval(); };
+    img.onload = function () { s.uploadedImage = img; afterBg(); };
     img.src = s.originalUploadDataUrl;
   };
 
-  APP._afterBgRemoval = function () {
+  function afterBg() {
     var s = APP.state;
-    if (s.currentTab === 'walletkit') {
-      if (APP.walletkit) { APP.walletkit.drawPreview(); APP.dom.downloadBtn.disabled = false; }
-    } else if (s.currentTab === 'compress') {
-      if (APP.compress) APP.compress.process();
-    } else if (s.currentTab === 'circle') {
-      if (APP.logo) APP.logo.process();
-    }
-  };
+    if (s.currentTab === 'walletkit') { if (APP.walletkit) { APP.walletkit.drawPreview(); APP.dom.downloadBtn.disabled = false; } }
+    else if (s.currentTab === 'compress') { if (APP.compress) APP.compress.process(); }
+    else if (s.currentTab === 'circle') { if (APP.logo) APP.logo.process(); }
+  }
 
+  function getPx(data, w, x, y) { var idx = (y*w+x)*4; return [data[idx], data[idx+1], data[idx+2]]; }
 
   // ========================================================================
-  // Utility: rounded rect path
+  // Utility
   // ========================================================================
   APP.drawRoundRect = function (ctx, x, y, w, h, r) {
     r = Math.min(r, w / 2, h / 2);
@@ -520,7 +249,7 @@
   };
 
   // ========================================================================
-  // Events — shared (upload, drag, paste, nav, download, reset)
+  // Events
   // ========================================================================
   APP.bindSharedEvents = function () {
     var d = APP.dom;
@@ -541,9 +270,8 @@
       if (APP.state.currentTab === 'walletkit' || APP.state.currentTab === 'compress' || APP.state.currentTab === 'circle') {
         var items = e.clipboardData && e.clipboardData.items;
         if (!items) return;
-        for (var i = 0; i < items.length; i++) {
+        for (var i = 0; i < items.length; i++)
           if (items[i].type.match(/^image\//)) { e.preventDefault(); APP.handleFile(items[i].getAsFile()); break; }
-        }
       }
     });
     d.uploadZone.addEventListener('keydown', function (e) {
@@ -555,27 +283,11 @@
       var btn = e.target.closest('.tab-nav__btn');
       if (btn) APP.switchTab(btn.dataset.tab);
     });
-    // 去背景 button
-    d.removeBgBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      APP.enterBgRemoval();
-    });
-
-    // 恢复原图 button
-    d.restoreBgBtn.addEventListener('click', function (e) {
-      e.stopPropagation();
-      APP.restoreOriginalImage();
-    });
-
-    // Eyedropper drag on preview canvas
-    d.previewCanvas.addEventListener('mousedown', function (e) {
-      APP.bgMousedown(e);
-    });
-    document.addEventListener('mousemove', function (e) {
-      if (APP.state.removeBgEnabled && _bgDragging) APP.bgMousemove(e);
-    });
-    document.addEventListener('mouseup', function (e) {
-      APP.bgMouseup(e);
+    d.removeBgCheck.addEventListener('change', function () {
+      APP.state.removeBgEnabled = this.checked;
+      if (!APP.state.originalUploadDataUrl) return;
+      if (APP.state.removeBgEnabled) APP.removeBackground();
+      else APP.restoreOriginalImage();
     });
   };
 
