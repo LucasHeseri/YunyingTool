@@ -312,7 +312,7 @@
     _bgDragging = true;
     _bgDragStartX = e.clientX;
     _bgDragStartY = e.clientY;
-    _bgTolerance = 5;
+    _bgTolerance = 10;
 
     // Get seed pixel from canvas coordinates
     var cv = APP.dom.previewCanvas;
@@ -334,7 +334,7 @@
     var dx = e.clientX - _bgDragStartX;
     var dy = e.clientY - _bgDragStartY;
     var dist = Math.sqrt(dx * dx + dy * dy);
-    _bgTolerance = Math.min(100, Math.max(3, Math.round(3 + dist * 0.8)));
+    _bgTolerance = Math.min(100, Math.max(10, Math.round(10 + dist * 0.8)));
     if (!_bgRenderPending) {
       _bgRenderPending = true;
       requestAnimationFrame(function () {
