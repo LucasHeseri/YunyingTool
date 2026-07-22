@@ -440,8 +440,8 @@
       for (var n = 0; n < 4; n++) {
         var nx = nb[n][0], ny = nb[n][1];
         if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
-          // Edge barrier: don't cross strong edges
-          if (grad[ny * w + nx] >= EDGE_THRESH) continue;
+          // Edge barrier: skip for achromatic seeds, or if gradient too strong
+          if (!seedIsAchromatic && grad && grad[ny * w + nx] >= EDGE_THRESH) continue;
 
           var i = (ny * w + nx) * 4;
           var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
