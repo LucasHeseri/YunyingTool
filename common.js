@@ -286,9 +286,15 @@
       var oc = document.createElement('canvas'); oc.width = w; oc.height = h;
       var ocx = oc.getContext('2d');
       ocx.drawImage(img, 0, 0);
+      var origImgData = ocx.getImageData(0, 0, w, h);
+
+      // Compute gradient map (edge detection) once
+      var gradMap = buildGradientMap(origImgData.data, w, h);
+
       _bgData = {
         w: w, h: h,
-        origImageData: ocx.getImageData(0, 0, w, h),
+        origImageData: origImgData,
+        gradMap: gradMap,
         canvas: oc, ctx: ocx
       };
       _bgPrevCanvas = document.createElement('canvas'); _bgPrevCanvas.width = w; _bgPrevCanvas.height = h;
@@ -403,12 +409,16 @@
     APP.ctx.drawImage(pcv, 0, 0);
   }
 
-  // Compute flood-fill mask — hue-strict, S/L-generous
+  // Compute flood-fill mask — hue-strict, S/L-generous, edge-aware
   function computeFloodMask(bd) {
     var w = bd.w, h = bd.h, d = bd.origImageData.data;
+    var grad = bd.gradMap;
     var mask = new Uint8Array(w * h);
     var tol = _bgTolerance;
     var px = bd.seedPX, py = bd.seedPY;
+
+    // Edge threshold: gradient > EDGE_THRESH blocks flood propagation
+    var EDGE_THRESH = 40; // 0-255, higher = allow more through edges
 
     // Get seed HSL
     var seedIdx = (py * w + px) * 4;
@@ -416,7 +426,6 @@
     var seedH = seedHSL[0], seedS = seedHSL[1], seedL = seedHSL[2];
     var seedIsAchromatic = seedS < 8;
 
-    // Achromatic: fixed generous lightness tolerance, no drag needed
     var hueTol = seedIsAchromatic ? 0 : Math.round(tol * 0.3);
     var slTol  = seedIsAchromatic ? 30 : 60;
 
@@ -431,22 +440,63 @@
       for (var n = 0; n < 4; n++) {
         var nx = nb[n][0], ny = nb[n][1];
         if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
+          // Edge barrier: don't cross strong edges
+          if (grad[ny * w + nx] >= EDGE_THRESH) continue;
+
           var i = (ny * w + nx) * 4;
           var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
 
+          var match = false;
           if (seedIsAchromatic && hsl[1] < 8) {
-            if (Math.abs(hsl[2] - seedL) <= slTol) { mask[ny*w+nx]=1; queue.push(nx,ny); count++; }
+            match = Math.abs(hsl[2] - seedL) <= slTol;
           } else {
             var dH = Math.abs(hsl[0] - seedH);
             if (dH > 180) dH = 360 - dH;
-            var dS = Math.abs(hsl[1] - seedS);
-            var dL = Math.abs(hsl[2] - seedL);
-            if (dH <= hueTol && dS <= slTol && dL <= slTol) { mask[ny*w+nx]=1; queue.push(nx,ny); count++; }
+            match = dH <= hueTol && Math.abs(hsl[1] - seedS) <= slTol && Math.abs(hsl[2] - seedL) <= slTol;
           }
+          if (match) { mask[ny*w+nx] = 1; queue.push(nx, ny); count++; }
         }
       }
     }
     return mask;
+  }
+
+  // Sobel edge detection → gradient magnitude (0-255)
+  function buildGradientMap(data, w, h) {
+    // Downscale large images for performance
+    var SCALE = 1;
+    if (w * h > 2000000) SCALE = 2;
+    if (w * h > 6000000) SCALE = 3;
+    var sw = Math.floor(w / SCALE), sh = Math.floor(h / SCALE);
+    var grad = new Uint8Array(w * h);
+    var tmp = new Float32Array(sw * sh);
+
+    // Compute grayscale at scaled resolution
+    for (var y = 0; y < sh; y++) {
+      for (var x = 0; x < sw; x++) {
+        var sx = Math.min(x * SCALE, w - 1), sy = Math.min(y * SCALE, h - 1);
+        var i = (sy * w + sx) * 4;
+        tmp[y * sw + x] = data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114;
+      }
+    }
+
+    // Sobel on scaled data
+    for (var y = 1; y < sh - 1; y++) {
+      for (var x = 1; x < sw - 1; x++) {
+        var tl = tmp[(y-1)*sw + (x-1)], tc = tmp[(y-1)*sw + x], tr = tmp[(y-1)*sw + (x+1)];
+        var ml = tmp[y*sw + (x-1)],                         mr = tmp[y*sw + (x+1)];
+        var bl = tmp[(y+1)*sw + (x-1)], bc = tmp[(y+1)*sw + x], br = tmp[(y+1)*sw + (x+1)];
+        var gx = -tl + tr - 2*ml + 2*mr - bl + br;
+        var gy = -tl - 2*tc - tr + bl + 2*bc + br;
+        var mag = Math.min(255, Math.sqrt(gx*gx + gy*gy));
+        // Expand back to full resolution
+        for (var dy = 0; dy < SCALE; dy++)
+          for (var dx = 0; dx < SCALE; dx++)
+            if (y*SCALE+dy < h && x*SCALE+dx < w)
+              grad[(y*SCALE+dy)*w + (x*SCALE+dx)] = mag;
+      }
+    }
+    return grad;
   }
 
   // RGB → HSL
