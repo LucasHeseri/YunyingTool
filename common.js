@@ -118,7 +118,8 @@
         APP.dom.uploadThumb.src = s.originalUploadDataUrl;
         APP.dom.uploadZone.classList.add('has-image');
 
-        // Don't auto-remove background — user controls via button
+        // Exit eyedropper if active, then proceed normally
+        if (s.removeBgEnabled) APP.exitBgRemoval();
         if (s.currentTab === 'walletkit') {
           if (APP.walletkit) APP.walletkit.afterUpload();
         } else if (s.currentTab === 'compress') {
@@ -213,6 +214,7 @@
   // ========================================================================
   APP.switchTab = function (tab) {
     var s = APP.state;
+    if (s.removeBgEnabled) APP.exitBgRemoval();
     s.currentTab = tab;
     var nav = APP.dom.tabNav;
     nav.querySelectorAll('.tab-nav__btn').forEach(function (b) { b.classList.remove('active'); });
@@ -247,7 +249,7 @@
   // ========================================================================
   // Background Removal — preview canvas eyedropper + drag tolerance + red overlay
   // ========================================================================
-  var _bgData = null;        // { w, h, origImageData, seedHSL, seedPX, seedPY }
+  var _bgData = null;        // { w, h, origImageData, canvas, ctx, seedPX, seedPY }
   var _bgDragStartX = 0, _bgDragStartY = 0;
   var _bgDragging = false;
   var _bgTolerance = 5;
@@ -321,9 +323,6 @@
     px = Math.max(0, Math.min(_bgData.w - 1, px));
     py = Math.max(0, Math.min(_bgData.h - 1, py));
     _bgData.seedPX = px; _bgData.seedPY = py;
-    var d = _bgData.origImageData.data;
-    var idx = (py * _bgData.w + px) * 4;
-    _bgData.seedHSL = rgbToHsl(d[idx], d[idx+1], d[idx+2]);
 
     renderBgOverlay();
   };
@@ -335,7 +334,7 @@
     var dx = e.clientX - _bgDragStartX;
     var dy = e.clientY - _bgDragStartY;
     var dist = Math.sqrt(dx * dx + dy * dy);
-    _bgTolerance = Math.min(30, Math.max(5, Math.round(5 + dist * 0.5)));
+    _bgTolerance = Math.min(100, Math.max(3, Math.round(3 + dist * 0.8)));
     if (!_bgRenderPending) {
       _bgRenderPending = true;
       requestAnimationFrame(function () {
@@ -404,18 +403,24 @@
     APP.ctx.drawImage(pcv, 0, 0);
   }
 
-  // Compute flood-fill mask from seed with current tolerance
+  // Compute flood-fill mask from seed with current tolerance (RGB Euclidean distance, 0-100 scale)
   function computeFloodMask(bd) {
     var w = bd.w, h = bd.h, d = bd.origImageData.data;
     var mask = new Uint8Array(w * h);
-    var seedH = bd.seedHSL[0], seedS = bd.seedHSL[1], seedL = bd.seedHSL[2];
     var tol = _bgTolerance;
     var px = bd.seedPX, py = bd.seedPY;
+
+    // Pre-read seed RGB
+    var seedIdx = (py * w + px) * 4;
+    var seedR = d[seedIdx], seedG = d[seedIdx + 1], seedB = d[seedIdx + 2];
 
     var MAX_PIXELS = 500000;
     var count = 0;
     var queue = [px, py];
     mask[py * w + px] = 1;
+
+    // Normalization factor: max RGB distance √(255²+255²+255²) / 100 ≈ 4.4167
+    var NORM = 4.4167;
 
     while (queue.length > 0 && count < MAX_PIXELS) {
       var y = queue.shift(), x = queue.shift();
@@ -424,13 +429,9 @@
         var nx = nb[n][0], ny = nb[n][1];
         if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
           var i = (ny * w + nx) * 4;
-          var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
-          var matchH = Math.abs(hsl[0] - seedH) <= tol || (hsl[0] - seedH + 360) % 360 <= tol || (seedH - hsl[0] + 360) % 360 <= tol;
-          var matchS = Math.abs(hsl[1] - seedS) <= tol;
-          var matchL = Math.abs(hsl[2] - seedL) <= tol;
-          // For near-achromatic colors (white/gray/black), hue is unstable — ignore it
-          if (seedS < 10 && hsl[1] < 10) matchH = true;
-          if (matchH && matchS && matchL) {
+          var dr = d[i] - seedR, dg = d[i+1] - seedG, db = d[i+2] - seedB;
+          var dist = Math.sqrt(dr*dr + dg*dg + db*db) / NORM;
+          if (dist <= tol) {
             mask[ny * w + nx] = 1;
             queue.push(nx, ny);
             count++;
@@ -461,22 +462,6 @@
     }
   };
 
-  function rgbToHsl(r, g, b) {
-    r /= 255; g /= 255; b /= 255;
-    var max = Math.max(r, g, b), min = Math.min(r, g, b);
-    var h, s, l = (max + min) / 2;
-    if (max === min) { h = s = 0; }
-    else {
-      var d = max - min;
-      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      switch (max) {
-        case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-        case g: h = ((b - r) / d + 2) / 6; break;
-        case b: h = ((r - g) / d + 4) / 6; break;
-      }
-    }
-    return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
-  }
 
   // ========================================================================
   // Utility: rounded rect path
