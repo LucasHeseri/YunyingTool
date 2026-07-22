@@ -262,7 +262,7 @@
     APP.dom.restoreBgBtn.style.display = '';
     APP.showToast('在预览图上按住并拖动来调整范围');
 
-    // Show original image on preview canvas
+    // Show original image on preview canvas, keeping current display size
     var img = new Image();
     img.onload = function () {
       var w = img.naturalWidth, h = img.naturalHeight;
@@ -271,10 +271,10 @@
       APP.dom.previewCanvas.style.display = 'block';
       APP.dom.bgToggleBtn.style.display = 'none';
       APP.ctx.drawImage(img, 0, 0);
-      // Fit canvas to preview card
+      // Keep current canvas display size — don't shrink it
       var cw = APP.dom.previewCard.clientWidth - 32;
       var ch = APP.dom.previewCard.clientHeight - 32;
-      var s = Math.min(cw / w, ch / h, 1);
+      var s = Math.min(cw / w, ch / h, 2);
       APP.dom.previewCanvas.style.width  = Math.round(w * s) + 'px';
       APP.dom.previewCanvas.style.height = Math.round(h * s) + 'px';
       APP.dom.previewCanvas.style.cursor = 'crosshair';
