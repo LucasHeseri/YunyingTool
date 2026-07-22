@@ -425,9 +425,12 @@
         if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
           var i = (ny * w + nx) * 4;
           var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
-          if (Math.abs(hsl[0] - seedH) <= tol &&
-              Math.abs(hsl[1] - seedS) <= tol &&
-              Math.abs(hsl[2] - seedL) <= tol) {
+          var matchH = Math.abs(hsl[0] - seedH) <= tol || (hsl[0] - seedH + 360) % 360 <= tol || (seedH - hsl[0] + 360) % 360 <= tol;
+          var matchS = Math.abs(hsl[1] - seedS) <= tol;
+          var matchL = Math.abs(hsl[2] - seedL) <= tol;
+          // For near-achromatic colors (white/gray/black), hue is unstable — ignore it
+          if (seedS < 10 && hsl[1] < 10) matchH = true;
+          if (matchH && matchS && matchL) {
             mask[ny * w + nx] = 1;
             queue.push(nx, ny);
             count++;
