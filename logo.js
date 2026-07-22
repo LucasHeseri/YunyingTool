@@ -77,8 +77,13 @@
 
     var c = document.createElement('canvas'); c.width = size; c.height = size;
     var cx = c.getContext('2d');
+
+    // Circle clip — bg color fills inside the circle
+    cx.save();
     cx.beginPath(); cx.arc(radius, radius, radius, 0, Math.PI * 2); cx.closePath(); cx.clip();
+    if (M.state.bgColor) { cx.fillStyle = M.state.bgColor; cx.fillRect(0, 0, size, size); }
     cx.drawImage(img, Math.round((size - sw) / 2), Math.round((size - sh) / 2), sw, sh);
+    cx.restore();
 
     APP.state.processedDataUrl = c.toDataURL('image/png');
     APP.showPreview({size: LOGO_SIZE, guide: M.state.type});
@@ -128,10 +133,11 @@
       APP.dom.colorPicker.querySelectorAll('.color-dot').forEach(function (d) { d.classList.remove('active'); });
       dot.classList.add('active');
       M.state.bgColor = dot.dataset.color;
-      if (APP.state.uploadedImage && APP.state.currentTab === 'circle' && M.state.type === 'grid') M.processGrid();
+      if (APP.state.uploadedImage && APP.state.currentTab === 'circle') M.process();
     });
 
     // Badge checkbox
+    // Badge checkbox — only for 宫格图
     APP.dom.logoBadgeCheck.addEventListener('change', function () {
       if (APP.state.uploadedImage && APP.state.currentTab === 'circle' && M.state.type === 'grid') M.processGrid();
     });

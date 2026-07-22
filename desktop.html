@@ -150,10 +150,11 @@ body {
 }
 .color-dot:hover { transform: scale(1.15); }
 .color-dot.active { border-color: var(--text-primary); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--text-primary); }
-.color-dot--red { background: #E873611a; }
-.color-dot--green { background: #64BB5C1a; }
-.color-dot--yellow { background: #ed955f1a; }
-.color-dot--blue { background: #3B75EB1a; }
+.color-dot--red { background: #E84026; }
+.color-dot--green { background: #64BB5C; }
+.color-dot--yellow { background: #FFC107; }
+.color-dot--blue { background: #0A59F7; }
+.color-dot--white { background: #FFFFFF; border-color: rgba(0,0,0,0.25); }
 .color-dot--none {
   background: #fff;
   position: relative;
@@ -256,11 +257,12 @@ body {
           <div class="control-group">
             <div class="control-group__label"><span>背景颜色</span></div>
             <div class="color-picker" id="colorPicker">
-              <button class="color-dot color-dot--none active" data-color="" type="button" title="透明（保留圆角裁剪效果）"></button>
-              <button class="color-dot color-dot--red" data-color="#E873611a" type="button"></button>
-              <button class="color-dot color-dot--green" data-color="#64BB5C1a" type="button"></button>
-              <button class="color-dot color-dot--yellow" data-color="#ed955f1a" type="button"></button>
-              <button class="color-dot color-dot--blue" data-color="#3B75EB1a" type="button"></button>
+              <button class="color-dot color-dot--none active" data-color="" type="button" title="透明"></button>
+              <button class="color-dot color-dot--red" data-color="#E84026" type="button"></button>
+              <button class="color-dot color-dot--green" data-color="#64BB5C" type="button"></button>
+              <button class="color-dot color-dot--yellow" data-color="#FFC107" type="button"></button>
+              <button class="color-dot color-dot--blue" data-color="#0A59F7" type="button"></button>
+              <button class="color-dot color-dot--white" data-color="#FFFFFF" type="button"></button>
             </div>
           </div>
           <div class="control-group" id="logoGridBadgeGroup">
