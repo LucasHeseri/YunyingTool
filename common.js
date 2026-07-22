@@ -280,34 +280,20 @@
       var s = Math.min(cw / w, ch / h, 2);
       APP.dom.previewCanvas.style.width  = Math.round(w * s) + 'px';
       APP.dom.previewCanvas.style.height = Math.round(h * s) + 'px';
-      // Show loading state while building gradient map
-      APP.ctx.fillStyle = '#f5f5f5';
-      APP.ctx.fillRect(0, 0, w, h);
-      APP.ctx.fillStyle = '#999';
-      APP.ctx.font = '14px sans-serif';
-      APP.ctx.textAlign = 'center';
-      APP.ctx.fillText('处理中...', w/2, h/2);
-      APP.ctx.textAlign = 'start';
-
       // Prepare offscreen data for flood-fill
       var oc = document.createElement('canvas'); oc.width = w; oc.height = h;
       var ocx = oc.getContext('2d');
       ocx.drawImage(img, 0, 0);
       var origImgData = ocx.getImageData(0, 0, w, h);
 
-      // Compute gradient map (edge detection) — may be null for very small images
-      var gradMap = null;
-      try { gradMap = buildGradientMap(origImgData.data, w, h); } catch(e) { gradMap = null; }
-
       _bgData = {
         w: w, h: h,
         origImageData: origImgData,
-        gradMap: gradMap,
         canvas: oc, ctx: ocx
       };
       _bgPrevCanvas = document.createElement('canvas'); _bgPrevCanvas.width = w; _bgPrevCanvas.height = h;
 
-      // Now ready — enable interaction
+      // Ready — enable interaction immediately
       APP.dom.previewCanvas.style.cursor = 'crosshair';
       APP.showToast('在预览图上按住并拖动来调整范围，白色背景直接点击即可');
     };
@@ -421,16 +407,12 @@
     APP.ctx.drawImage(pcv, 0, 0);
   }
 
-  // Compute flood-fill mask — hue-strict, S/L-generous, edge-aware
+  // Compute flood-fill mask — hue-strict, S/L-generous, edge-aware (on-the-fly)
   function computeFloodMask(bd) {
     var w = bd.w, h = bd.h, d = bd.origImageData.data;
-    var grad = bd.gradMap;
     var mask = new Uint8Array(w * h);
     var tol = _bgTolerance;
     var px = bd.seedPX, py = bd.seedPY;
-
-    // Edge threshold: gradient > EDGE_THRESH blocks flood propagation
-    var EDGE_THRESH = 40; // 0-255, higher = allow more through edges
 
     // Get seed HSL
     var seedIdx = (py * w + px) * 4;
@@ -440,11 +422,19 @@
 
     var hueTol = seedIsAchromatic ? 0 : Math.round(tol * 0.3);
     var slTol  = seedIsAchromatic ? 30 : 60;
+    var EDGE_THRESH = 60;
 
     var MAX_PIXELS = 500000;
     var count = 0;
     var queue = [px, py];
     mask[py * w + px] = 1;
+
+    // Inline grayscale: no pre-allocation, compute on demand
+    function getGray(px, py) {
+      if (px < 0 || px >= w || py < 0 || py >= h) return 0;
+      var j = (py * w + px) * 4;
+      return Math.round(d[j] * 0.299 + d[j+1] * 0.587 + d[j+2] * 0.114);
+    }
 
     while (queue.length > 0 && count < MAX_PIXELS) {
       var y = queue.shift(), x = queue.shift();
@@ -452,8 +442,12 @@
       for (var n = 0; n < 4; n++) {
         var nx = nb[n][0], ny = nb[n][1];
         if (nx >= 0 && nx < w && ny >= 0 && ny < h && !mask[ny * w + nx]) {
-          // Edge barrier: skip for achromatic seeds, or if gradient too strong
-          if (!seedIsAchromatic && grad && grad[ny * w + nx] >= EDGE_THRESH) continue;
+          // On-the-fly edge check (lazy grayscale)
+          if (!seedIsAchromatic) {
+            var g0 = getGray(nx, ny);
+            if (Math.abs(getGray(nx+1, ny) - g0) > EDGE_THRESH ||
+                Math.abs(getGray(nx, ny+1) - g0) > EDGE_THRESH) continue;
+          }
 
           var i = (ny * w + nx) * 4;
           var hsl = rgbToHsl(d[i], d[i+1], d[i+2]);
@@ -471,44 +465,6 @@
       }
     }
     return mask;
-  }
-
-  // Sobel edge detection → gradient magnitude (0-255)
-  function buildGradientMap(data, w, h) {
-    // Downscale large images for performance
-    var SCALE = 1;
-    if (w * h > 2000000) SCALE = 2;
-    if (w * h > 6000000) SCALE = 3;
-    var sw = Math.floor(w / SCALE), sh = Math.floor(h / SCALE);
-    var grad = new Uint8Array(w * h);
-    var tmp = new Float32Array(sw * sh);
-
-    // Compute grayscale at scaled resolution
-    for (var y = 0; y < sh; y++) {
-      for (var x = 0; x < sw; x++) {
-        var sx = Math.min(x * SCALE, w - 1), sy = Math.min(y * SCALE, h - 1);
-        var i = (sy * w + sx) * 4;
-        tmp[y * sw + x] = data[i] * 0.299 + data[i+1] * 0.587 + data[i+2] * 0.114;
-      }
-    }
-
-    // Sobel on scaled data
-    for (var y = 1; y < sh - 1; y++) {
-      for (var x = 1; x < sw - 1; x++) {
-        var tl = tmp[(y-1)*sw + (x-1)], tc = tmp[(y-1)*sw + x], tr = tmp[(y-1)*sw + (x+1)];
-        var ml = tmp[y*sw + (x-1)],                         mr = tmp[y*sw + (x+1)];
-        var bl = tmp[(y+1)*sw + (x-1)], bc = tmp[(y+1)*sw + x], br = tmp[(y+1)*sw + (x+1)];
-        var gx = -tl + tr - 2*ml + 2*mr - bl + br;
-        var gy = -tl - 2*tc - tr + bl + 2*bc + br;
-        var mag = Math.min(255, Math.sqrt(gx*gx + gy*gy));
-        // Expand back to full resolution
-        for (var dy = 0; dy < SCALE; dy++)
-          for (var dx = 0; dx < SCALE; dx++)
-            if (y*SCALE+dy < h && x*SCALE+dx < w)
-              grad[(y*SCALE+dy)*w + (x*SCALE+dx)] = mag;
-      }
-    }
-    return grad;
   }
 
   // RGB → HSL
