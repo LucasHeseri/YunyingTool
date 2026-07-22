@@ -252,6 +252,7 @@
   var _bgDragging = false;
   var _bgTolerance = 5;
   var _bgPrevCanvas = null;  // offscreen canvas for preview compositing
+  var _bgRenderPending = false;
 
   // "去背景" button → enter eyedropper on preview canvas
   APP.enterBgRemoval = function () {
@@ -327,7 +328,7 @@
     renderBgOverlay();
   };
 
-  // mousemove: straight-line distance → tolerance
+  // mousemove: straight-line distance → tolerance (throttled via RAF)
   APP.bgMousemove = function (e) {
     if (!_bgDragging || !_bgData) return;
     e.preventDefault();
@@ -335,7 +336,13 @@
     var dy = e.clientY - _bgDragStartY;
     var dist = Math.sqrt(dx * dx + dy * dy);
     _bgTolerance = Math.min(30, Math.max(5, Math.round(5 + dist * 0.5)));
-    renderBgOverlay();
+    if (!_bgRenderPending) {
+      _bgRenderPending = true;
+      requestAnimationFrame(function () {
+        _bgRenderPending = false;
+        renderBgOverlay();
+      });
+    }
   };
 
   // mouseup: finalize transparency
@@ -405,10 +412,12 @@
     var tol = _bgTolerance;
     var px = bd.seedPX, py = bd.seedPY;
 
+    var MAX_PIXELS = 500000;
+    var count = 0;
     var queue = [px, py];
     mask[py * w + px] = 1;
 
-    while (queue.length > 0) {
+    while (queue.length > 0 && count < MAX_PIXELS) {
       var y = queue.shift(), x = queue.shift();
       var nb = [[x-1,y],[x+1,y],[x,y-1],[x,y+1]];
       for (var n = 0; n < 4; n++) {
@@ -421,6 +430,7 @@
               Math.abs(hsl[2] - seedL) <= tol) {
             mask[ny * w + nx] = 1;
             queue.push(nx, ny);
+            count++;
           }
         }
       }
