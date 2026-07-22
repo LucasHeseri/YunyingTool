@@ -120,7 +120,8 @@
     // Center 96×96 guide outline
     M.drawGuideOverlay();
     // Scale
-    var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 32;
+    var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 80;
+    ch = Math.max(ch, 200);
     var s = Math.min(cw / size, ch / size, 2);
     cv.style.width  = Math.round(size * s) + 'px';
     cv.style.height = Math.round(size * s) + 'px';
