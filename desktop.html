@@ -37,6 +37,13 @@ body {
 }
 .app-header__title { font-size: 18px; font-weight: 600; }
 .app-header__subtitle { font-size: 13px; color: var(--text-tertiary); }
+.clear-cache-btn {
+  padding: 4px 12px; border-radius: 14px; border: 1px solid var(--border);
+  background: transparent; color: var(--text-secondary); font-size: 11px;
+  cursor: pointer; text-decoration: none; font-family: inherit;
+  transition: all var(--transition); white-space: nowrap; margin-left: auto;
+}
+.clear-cache-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
 
 .app-main {
   display: flex; flex: 1; padding: 24px; gap: 24px;
@@ -190,6 +197,7 @@ body {
 <header class="app-header">
   <span class="app-header__title">图片加工工具</span>
   <span class="app-header__subtitle">WalletKit机模 · 图片压缩 · logo处理</span>
+  <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
 
 <main class="app-main">
