@@ -151,7 +151,9 @@
       APP.dom.logoChipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
       APP.dom.logoGridBadgeGroup.style.display = (type === 'grid') ? '' : 'none';
-      if (APP.state.uploadedImage && APP.state.currentTab === 'circle') M.process();
+      if (APP.state.currentTab === 'circle') {
+        if (APP.state.uploadedImage) M.process(); else M.showPlaceholder();
+      }
     });
 
     // Scale slider
