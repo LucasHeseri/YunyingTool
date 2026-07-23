@@ -26,7 +26,18 @@
     APP.showPreview();
     APP.dom.downloadBtn.disabled = false;
     APP.dom.previewInfo.textContent = '原图 ' + srcW + '×' + srcH + ' → ' + outW + '×' + outH;
+    updateSizeEstimate(APP.state.processedDataUrl);
   };
+
+  function updateSizeEstimate(dataUrl) {
+    if (!dataUrl) { APP.dom.cmpSizeEst.textContent = '—'; return; }
+    var bytes = atob(dataUrl.split(',')[1]).length;
+    if (bytes >= 1024 * 1024) {
+      APP.dom.cmpSizeEst.textContent = '≈ ' + (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+    } else {
+      APP.dom.cmpSizeEst.textContent = '≈ ' + Math.round(bytes / 1024) + ' KB';
+    }
+  }
 
   // ========================================================================
   // Events

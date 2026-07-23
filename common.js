@@ -39,7 +39,7 @@
     previewCanvas: $('previewCanvas'), previewInfo: $('previewInfo'), bgToggleBtn: $('bgToggleBtn'),
     toast: $('toast'), chipsNav: $('chipsNav'),
     ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'),
-    cmpWidth: $('cmpWidth'), cmpWidthVal: $('cmpWidthVal'),
+    cmpWidth: $('cmpWidth'), cmpWidthVal: $('cmpWidthVal'), cmpSizeEst: $('cmpSizeEst'),
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
     colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck'),
