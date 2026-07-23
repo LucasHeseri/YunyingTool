@@ -70,12 +70,14 @@
     canvas.style.width  = Math.round(cw * scale) + 'px';
     canvas.style.height = Math.round(ch * scale) + 'px';
 
-    ctx.drawImage(baseImg, 0, 0, cw, ch);
-
     if (APP.state.uploadedImage) {
+      // Draw user image first, then SVG frame on top
+      // SVG's gradient/mask properly overlays the user image
       drawUserImageOnCard(cfg);
+      ctx.drawImage(baseImg, 0, 0, cw, ch);
       APP.state.processedDataUrl = canvas.toDataURL('image/png');
     } else {
+      ctx.drawImage(baseImg, 0, 0, cw, ch);
       drawGuideOverlay(cfg);
     }
   };
