@@ -61,13 +61,10 @@
     var outH = Math.round(VIEW_H * scale);
     var imgW = img.naturalWidth, imgH = img.naturalHeight;
 
-    // Scale image: width matches template width
-    var sw = imgW;
-    var sh = Math.round(imgH * (VIEW_W / imgW));
-    var sx = 0;
-    var sy = offset;
+    // Scale image: width matches template width, height proportional
+    var destH = Math.round(imgH * (VIEW_W / imgW));
 
-    // Render at full resolution then scale down if needed
+    // Render at full resolution
     var workC = document.createElement('canvas');
     workC.width = VIEW_W; workC.height = VIEW_H;
     var wCtx = workC.getContext('2d');
@@ -76,7 +73,7 @@
     wCtx.save();
     wCtx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
     wCtx.globalCompositeOperation = 'source-in';
-    wCtx.drawImage(img, sx, sy, sw, sh, 0, 0, VIEW_W, Math.round(VIEW_H * (VIEW_W / imgW)));
+    wCtx.drawImage(img, 0, 0, imgW, imgH, 0, offset, VIEW_W, destH);
     wCtx.restore();
 
     // Preview canvas (always full res for display)
