@@ -55,16 +55,21 @@
     var img = APP.state.uploadedImage;
     if (!img || !templateImg) return;
 
-    var offset = parseInt(APP.dom.cropOffset.value, 10);
+    var hOffset = parseInt(APP.dom.cropHOffset.value, 10);
+    var vOffset = parseInt(APP.dom.cropVOffset.value, 10);
     var zoom = parseInt(APP.dom.cropZoom.value, 10) / 100;
     var scale = getExportScale();
     var outW = Math.round(VIEW_W * scale);
     var outH = Math.round(VIEW_H * scale);
     var imgW = img.naturalWidth, imgH = img.naturalHeight;
 
-    // Scale image: width matches template width, height proportional, zoom applied
+    // Scale image proportionally, zoom from center, apply offsets
     var destW = Math.round(VIEW_W * zoom);
     var destH = Math.round(imgH * (destW / imgW));
+    var baseDestH = Math.round(imgH * (VIEW_W / imgW));
+    // Center zoom: extra size distributed equally around center
+    var destX = Math.round(-(destW - VIEW_W) / 2) + hOffset;
+    var destY = Math.round(-(destH - baseDestH) / 2) + vOffset;
 
     // Render at full resolution
     var workC = document.createElement('canvas');
@@ -75,7 +80,7 @@
     wCtx.save();
     wCtx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
     wCtx.globalCompositeOperation = 'source-in';
-    wCtx.drawImage(img, 0, 0, imgW, imgH, 0, offset, destW, destH);
+    wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
     wCtx.restore();
 
     // Preview canvas (always full res for display)
@@ -113,8 +118,12 @@
       APP.dom.cropZoomVal.textContent = this.value + '%';
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
     });
-    APP.dom.cropOffset.addEventListener('input', function () {
-      APP.dom.cropOffsetVal.textContent = this.value + 'px';
+    APP.dom.cropHOffset.addEventListener('input', function () {
+      APP.dom.cropHOffsetVal.textContent = this.value + 'px';
+      if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
+    });
+    APP.dom.cropVOffset.addEventListener('input', function () {
+      APP.dom.cropVOffsetVal.textContent = this.value + 'px';
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
     });
     var radios = document.querySelectorAll('input[name="cropSize"]');

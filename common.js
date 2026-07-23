@@ -44,8 +44,9 @@
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
     colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck'),
-    cropOffset: $('cropOffset'), cropOffsetVal: $('cropOffsetVal'),
     cropZoom: $('cropZoom'), cropZoomVal: $('cropZoomVal'),
+    cropHOffset: $('cropHOffset'), cropHOffsetVal: $('cropHOffsetVal'),
+    cropVOffset: $('cropVOffset'), cropVOffsetVal: $('cropVOffsetVal'),
     removeBgSection: $('removeBgSection'),
     removeBgTolGroup: $('removeBgTolGroup'), tolMinus: $('tolMinus'),
     tolPlus: $('tolPlus'), tolValue: $('tolValue')
