@@ -18,7 +18,7 @@
   // ========================================================================
   var CONFIG = {
     card:   { viewBoxW: 823, viewBoxH: 808, rect: { x: 94,  y: 159, w: 634, h: 400, rx: 48 }, fillMode: 'cover' },
-    ticket: { viewBoxW: 687, viewBoxH: 802, rect: { x: 91,  y: 123, w: 519, h: 806, rx: 36 }, fillMode: 'width' }
+    ticket: { viewBoxW: 687, viewBoxH: 802, rect: { x: 91,  y: 123, w: 519, h: 806, rx: 36 }, fillMode: 'width', fadeY1: 0.62, fadeY2: 0.83 }
   };
 
   var baseImgCache = {}; // { card: Image, ticket: Image }
@@ -70,14 +70,12 @@
     canvas.style.width  = Math.round(cw * scale) + 'px';
     canvas.style.height = Math.round(ch * scale) + 'px';
 
+    ctx.drawImage(baseImg, 0, 0, cw, ch);
+
     if (APP.state.uploadedImage) {
-      // Draw user image first, then SVG frame on top
-      // SVG's gradient/mask properly overlays the user image
       drawUserImageOnCard(cfg);
-      ctx.drawImage(baseImg, 0, 0, cw, ch);
       APP.state.processedDataUrl = canvas.toDataURL('image/png');
     } else {
-      ctx.drawImage(baseImg, 0, 0, cw, ch);
       drawGuideOverlay(cfg);
     }
   };
@@ -104,6 +102,18 @@
     }
 
     ctx.drawImage(APP.state.uploadedImage, sx, sy, sw, sh, r.x, r.y, r.w, r.h);
+
+    // Apply fade gradient at bottom for ticket template (matches SVG mask)
+    if (cfg.fadeY1) {
+      var fy1 = r.y + r.h * cfg.fadeY1;
+      var fy2 = r.y + r.h * cfg.fadeY2;
+      var fg = ctx.createLinearGradient(r.x, fy1, r.x, fy2);
+      fg.addColorStop(0, 'rgba(241,243,245,0)');
+      fg.addColorStop(1, 'rgba(241,243,245,1)');
+      ctx.fillStyle = fg;
+      ctx.fillRect(r.x, fy1, r.w, fy2 - fy1);
+    }
+
     ctx.restore();
   }
 
