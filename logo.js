@@ -110,6 +110,7 @@
     var size = LOGO_SIZE;
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
     cv.style.display = 'block';
+    APP.dom.bgToggleBtn.style.display = 'flex';
     cv.width = size; cv.height = size;
 
     if (M.state.type === 'grid') {
