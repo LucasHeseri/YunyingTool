@@ -39,11 +39,8 @@
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
     cv.style.display = 'block';
     cv.width = VIEW_W; cv.height = VIEW_H;
-    // Fill background with #F1F3F5 for the card area
     ctx.clearRect(0, 0, VIEW_W, VIEW_H);
-    // Draw template with semi-transparent gray
     ctx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
-    // Scale to fit
     var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
     var s = Math.min(cw / VIEW_W, ch / VIEW_H, 1);
     cv.style.width  = Math.round(VIEW_W * s) + 'px';
@@ -52,36 +49,34 @@
   };
 
   // ========================================================================
-  // Processing — composite user image into template shape
+  // Processing — image width-first, top-aligned, slider for vertical offset
   // ========================================================================
   M.process = function () {
     var img = APP.state.uploadedImage;
     if (!img || !templateImg) return;
 
+    var offset = parseInt(APP.dom.cropOffset.value, 10);
+    var imgW = img.naturalWidth, imgH = img.naturalHeight;
+
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
     cv.width = VIEW_W; cv.height = VIEW_H;
     cv.style.display = 'block';
 
-    // Draw user image, clipped to template shape
+    // Scale image: width matches template width
+    var sw = imgW;
+    var sh = Math.round(imgH * (VIEW_W / imgW));
+    var sx = 0;
+    var sy = offset; // slider controls vertical offset (default 0 = top-aligned)
+
+    // Clip to template shape
     ctx.save();
-    // Use template as clip path
     ctx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
     ctx.globalCompositeOperation = 'source-in';
-    // Scale user image to cover template area (object-fit: cover)
-    var imgW = img.naturalWidth, imgH = img.naturalHeight;
-    var imgRatio = imgW / imgH, viewRatio = VIEW_W / VIEW_H;
-    var sx, sy, sw, sh;
-    if (imgRatio > viewRatio) { sh = imgH; sw = imgH * viewRatio; sx = (imgW - sw) / 2; sy = 0; }
-    else { sw = imgW; sh = imgW / viewRatio; sx = 0; sy = (imgH - sh) / 2; }
-    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, VIEW_W, VIEW_H);
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, VIEW_W, Math.round(VIEW_H * (VIEW_W / imgW)));
     ctx.restore();
-
-    // Draw template outline on top for the border effect
-    ctx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
 
     APP.state.processedDataUrl = cv.toDataURL('image/png');
 
-    // Scale display
     var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
     var s = Math.min(cw / VIEW_W, ch / VIEW_H, 1);
     cv.style.width  = Math.round(VIEW_W * s) + 'px';
@@ -95,5 +90,9 @@
   // Events
   // ========================================================================
   M.bindEvents = function () {
+    APP.dom.cropOffset.addEventListener('input', function () {
+      APP.dom.cropOffsetVal.textContent = this.value + 'px';
+      if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
+    });
   };
 })();

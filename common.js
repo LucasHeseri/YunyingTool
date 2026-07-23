@@ -44,6 +44,7 @@
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
     colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck'),
+    cropOffset: $('cropOffset'), cropOffsetVal: $('cropOffsetVal'),
     removeBgSection: $('removeBgSection'),
     removeBgTolGroup: $('removeBgTolGroup'), tolMinus: $('tolMinus'),
     tolPlus: $('tolPlus'), tolValue: $('tolValue')
