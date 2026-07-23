@@ -24,7 +24,8 @@
   APP.TAB_CONFIG = {
     walletkit: { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
     compress:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
-    circle:    { maxSize: 1 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 1MB' }
+    circle:    { maxSize: 1 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 1MB' },
+    crop:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
   };
   var ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
@@ -38,7 +39,7 @@
     resetBtn: $('resetBtn'), downloadBtn: $('downloadBtn'), previewCard: $('previewCard'),
     previewCanvas: $('previewCanvas'), previewInfo: $('previewInfo'), bgToggleBtn: $('bgToggleBtn'),
     toast: $('toast'), chipsNav: $('chipsNav'),
-    ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'),
+    ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'), ctrlCrop: $('ctrlCrop'),
     cmpWidth: $('cmpWidth'), cmpWidthVal: $('cmpWidthVal'), cmpSizeEst: $('cmpSizeEst'),
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
@@ -94,6 +95,7 @@
         if (s.currentTab === 'walletkit') { if (APP.walletkit) APP.walletkit.afterUpload(); }
         else if (s.currentTab === 'compress') { if (APP.compress) APP.compress.process(); }
         else if (s.currentTab === 'circle') { if (APP.logo) APP.logo.process(); }
+        else if (s.currentTab === 'crop') { if (APP.crop) APP.crop.process(); }
       };
       img.onerror = function () { APP.showError('图片加载失败，请重试'); };
       img.src = e.target.result;
@@ -171,6 +173,7 @@
     APP.dom.ctrlWalletkit.style.display = (tab === 'walletkit') ? '' : 'none';
     APP.dom.ctrlCompress.style.display  = (tab === 'compress')  ? '' : 'none';
     APP.dom.ctrlCircle.style.display    = (tab === 'circle')    ? '' : 'none';
+    APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
     // Only logo tab shows 去背景
     APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';
     if (tab !== 'circle' && s.removeBgEnabled) {
@@ -197,6 +200,7 @@
     if (s.uploadedImage && tab !== 'walletkit') {
       if (tab === 'compress' && APP.compress) APP.compress.process();
       else if (tab === 'circle' && APP.logo) APP.logo.process();
+      else if (tab === 'crop' && APP.crop) APP.crop.process();
     }
   };
 

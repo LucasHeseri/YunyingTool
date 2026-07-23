@@ -205,6 +205,7 @@ body {
     <button class="tab-nav__btn active" data-tab="walletkit">WalletKit机模</button>
     <button class="tab-nav__btn" data-tab="circle">logo处理</button>
     <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
+    <button class="tab-nav__btn" data-tab="crop">裁切卡片</button>
   </nav>
   <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
@@ -289,6 +290,12 @@ body {
           </div>
         </div>
       </div>
+      <div id="ctrlCrop" style="display:none;">
+        <div class="control-group">
+          <div class="control-group__label"><span>裁切尺寸</span></div>
+          <p style="font-size:13px;color:var(--text-tertiary);">上传图片后可在此调整裁切区域</p>
+        </div>
+      </div>
     </div>
 
     <div class="btn-row">
@@ -327,6 +334,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 <script src="./walletkit.js"></script>
 <script src="./compress.js"></script>
 <script src="./logo.js"></script>
+<script src="./crop.js"></script>
 <script>
 (function () {
   'use strict';
@@ -338,6 +346,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   APP.walletkit.bindEvents();
   APP.compress.bindEvents();
   APP.logo.bindEvents();
+  APP.crop.bindEvents();
 
   // Init WalletKit (load SVGs)
   APP.walletkit.init(function (ok) {
