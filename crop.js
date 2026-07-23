@@ -49,42 +49,62 @@
   };
 
   // ========================================================================
-  // Processing — image width-first, top-aligned, slider for vertical offset
+  // Processing — width-first, top-aligned, vertical offset, export size
   // ========================================================================
   M.process = function () {
     var img = APP.state.uploadedImage;
     if (!img || !templateImg) return;
 
     var offset = parseInt(APP.dom.cropOffset.value, 10);
+    var scale = getExportScale();
+    var outW = Math.round(VIEW_W * scale);
+    var outH = Math.round(VIEW_H * scale);
     var imgW = img.naturalWidth, imgH = img.naturalHeight;
-
-    var cv = APP.dom.previewCanvas, ctx = APP.ctx;
-    cv.width = VIEW_W; cv.height = VIEW_H;
-    cv.style.display = 'block';
 
     // Scale image: width matches template width
     var sw = imgW;
     var sh = Math.round(imgH * (VIEW_W / imgW));
     var sx = 0;
-    var sy = offset; // slider controls vertical offset (default 0 = top-aligned)
+    var sy = offset;
+
+    // Render at full resolution then scale down if needed
+    var workC = document.createElement('canvas');
+    workC.width = VIEW_W; workC.height = VIEW_H;
+    var wCtx = workC.getContext('2d');
 
     // Clip to template shape
-    ctx.save();
-    ctx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
-    ctx.globalCompositeOperation = 'source-in';
-    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, VIEW_W, Math.round(VIEW_H * (VIEW_W / imgW)));
-    ctx.restore();
+    wCtx.save();
+    wCtx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
+    wCtx.globalCompositeOperation = 'source-in';
+    wCtx.drawImage(img, sx, sy, sw, sh, 0, 0, VIEW_W, Math.round(VIEW_H * (VIEW_W / imgW)));
+    wCtx.restore();
+
+    // Preview canvas (always full res for display)
+    var cv = APP.dom.previewCanvas, ctx = APP.ctx;
+    cv.width = outW; cv.height = outH;
+    cv.style.display = 'block';
+    if (scale < 1) {
+      ctx.drawImage(workC, 0, 0, outW, outH);
+    } else {
+      ctx.drawImage(workC, 0, 0);
+    }
 
     APP.state.processedDataUrl = cv.toDataURL('image/png');
 
     var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
-    var s = Math.min(cw / VIEW_W, ch / VIEW_H, 1);
-    cv.style.width  = Math.round(VIEW_W * s) + 'px';
-    cv.style.height = Math.round(VIEW_H * s) + 'px';
+    var ds = Math.min(cw / outW, ch / outH, 1);
+    cv.style.width  = Math.round(outW * ds) + 'px';
+    cv.style.height = Math.round(outH * ds) + 'px';
 
     APP.dom.downloadBtn.disabled = false;
-    APP.dom.previewInfo.textContent = '原图 ' + imgW + '×' + imgH + ' → ' + VIEW_W + '×' + VIEW_H;
+    APP.dom.previewInfo.textContent = '原图 ' + imgW + '×' + imgH + ' → ' + outW + '×' + outH;
   };
+
+  function getExportScale() {
+    var radio = document.querySelector('input[name="cropSize"]:checked');
+    if (radio && radio.value === '1x') return 1/3;
+    return 1; // 3x default (984×612)
+  }
 
   // ========================================================================
   // Events
@@ -94,5 +114,11 @@
       APP.dom.cropOffsetVal.textContent = this.value + 'px';
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
     });
+    var radios = document.querySelectorAll('input[name="cropSize"]');
+    for (var i = 0; i < radios.length; i++) {
+      radios[i].addEventListener('change', function () {
+        if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
+      });
+    }
   };
 })();

@@ -295,6 +295,15 @@ body {
           <div class="control-group__label"><span>垂直偏移</span><span class="control-group__value" id="cropOffsetVal">0px</span></div>
           <input type="range" class="control-group__slider" id="cropOffset" min="-100" max="100" value="0" step="5">
         </div>
+        <div style="margin-top:18px;">
+          <div class="control-group__label" style="margin-bottom:8px;"><span>导出尺寸</span></div>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);cursor:pointer;margin-bottom:6px;">
+            <input type="radio" name="cropSize" value="3x" checked style="accent-color:var(--brand);"> 正常大卡（328vp × 204vp）— 984×612
+          </label>
+          <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);cursor:pointer;">
+            <input type="radio" name="cropSize" value="1x" style="accent-color:var(--brand);"> 小图预览（108vp × 67vp）— 328×204
+          </label>
+        </div>
       </div>
     </div>
 
