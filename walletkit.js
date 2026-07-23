@@ -103,16 +103,16 @@
 
     ctx.drawImage(APP.state.uploadedImage, sx, sy, sw, sh, r.x, r.y, r.w, r.h);
 
-    // Apply fade-to-transparent at bottom for ticket template
+    // Apply fade-to-transparent at bottom (relative to full image height)
     if (cfg.fadeY1) {
-      var fy1 = r.y + r.h * cfg.fadeY1;
-      var fy2 = r.y + r.h * cfg.fadeY2;
+      var fy1 = cfg.viewBoxH * cfg.fadeY1;
+      var fy2 = cfg.viewBoxH * cfg.fadeY2;
       ctx.globalCompositeOperation = 'destination-out';
-      var fg = ctx.createLinearGradient(r.x, fy1, r.x, fy2);
+      var fg = ctx.createLinearGradient(0, fy1, 0, fy2);
       fg.addColorStop(0, 'rgba(0,0,0,0)');
       fg.addColorStop(1, 'rgba(0,0,0,1)');
       ctx.fillStyle = fg;
-      ctx.fillRect(r.x, fy1, r.w, fy2 - fy1);
+      ctx.fillRect(0, fy1, cfg.viewBoxW, fy2 - fy1);
       ctx.globalCompositeOperation = 'source-over';
     }
 
