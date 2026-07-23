@@ -56,13 +56,15 @@
     if (!img || !templateImg) return;
 
     var offset = parseInt(APP.dom.cropOffset.value, 10);
+    var zoom = parseInt(APP.dom.cropZoom.value, 10) / 100;
     var scale = getExportScale();
     var outW = Math.round(VIEW_W * scale);
     var outH = Math.round(VIEW_H * scale);
     var imgW = img.naturalWidth, imgH = img.naturalHeight;
 
-    // Scale image: width matches template width, height proportional
-    var destH = Math.round(imgH * (VIEW_W / imgW));
+    // Scale image: width matches template width, height proportional, zoom applied
+    var destW = Math.round(VIEW_W * zoom);
+    var destH = Math.round(imgH * (destW / imgW));
 
     // Render at full resolution
     var workC = document.createElement('canvas');
@@ -73,7 +75,7 @@
     wCtx.save();
     wCtx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
     wCtx.globalCompositeOperation = 'source-in';
-    wCtx.drawImage(img, 0, 0, imgW, imgH, 0, offset, VIEW_W, destH);
+    wCtx.drawImage(img, 0, 0, imgW, imgH, 0, offset, destW, destH);
     wCtx.restore();
 
     // Preview canvas (always full res for display)
@@ -107,6 +109,10 @@
   // Events
   // ========================================================================
   M.bindEvents = function () {
+    APP.dom.cropZoom.addEventListener('input', function () {
+      APP.dom.cropZoomVal.textContent = this.value + '%';
+      if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
+    });
     APP.dom.cropOffset.addEventListener('input', function () {
       APP.dom.cropOffsetVal.textContent = this.value + 'px';
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();

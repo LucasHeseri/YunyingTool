@@ -45,6 +45,7 @@
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
     colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck'),
     cropOffset: $('cropOffset'), cropOffsetVal: $('cropOffsetVal'),
+    cropZoom: $('cropZoom'), cropZoomVal: $('cropZoomVal'),
     removeBgSection: $('removeBgSection'),
     removeBgTolGroup: $('removeBgTolGroup'), tolMinus: $('tolMinus'),
     tolPlus: $('tolPlus'), tolValue: $('tolValue')

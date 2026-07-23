@@ -292,6 +292,10 @@ body {
       </div>
       <div id="ctrlCrop" style="display:none;">
         <div class="control-group">
+          <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="cropZoomVal">100%</span></div>
+          <input type="range" class="control-group__slider" id="cropZoom" min="100" max="110" value="100" step="1">
+        </div>
+        <div class="control-group" style="margin-top:12px;">
           <div class="control-group__label"><span>垂直偏移</span><span class="control-group__value" id="cropOffsetVal">0px</span></div>
           <input type="range" class="control-group__slider" id="cropOffset" min="-100" max="100" value="0" step="5">
         </div>
