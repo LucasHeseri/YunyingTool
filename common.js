@@ -130,6 +130,7 @@
       APP.dom.previewCanvas.style.display = 'block';
       if (APP.walletkit && APP.walletkit.isReady()) APP.walletkit.drawPreview();
     }
+    if (s.currentTab === 'circle' && APP.logo) APP.logo.showPlaceholder();
   };
 
   // ========================================================================
