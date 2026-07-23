@@ -43,6 +43,7 @@
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
     colorPicker: $('colorPicker'), removeBgCheck: $('removeBgCheck'),
+    removeBgSection: $('removeBgSection'),
     removeBgTolGroup: $('removeBgTolGroup'), tolMinus: $('tolMinus'),
     tolPlus: $('tolPlus'), tolValue: $('tolValue')
   };
@@ -169,6 +170,13 @@
     APP.dom.ctrlWalletkit.style.display = (tab === 'walletkit') ? '' : 'none';
     APP.dom.ctrlCompress.style.display  = (tab === 'compress')  ? '' : 'none';
     APP.dom.ctrlCircle.style.display    = (tab === 'circle')    ? '' : 'none';
+    // Only logo tab shows 去背景
+    APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';
+    if (tab !== 'circle' && s.removeBgEnabled) {
+      s.removeBgEnabled = false;
+      APP.dom.removeBgCheck.checked = false;
+      APP.dom.removeBgTolGroup.style.display = 'none';
+    }
     APP.dom.uploadLimits.textContent = APP.TAB_CONFIG[tab].limits;
     if (tab === 'walletkit') {
       APP.dom.previewCanvas.style.display = 'block';
