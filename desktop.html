@@ -334,6 +334,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 <script src="./walletkit.js"></script>
 <script src="./compress.js"></script>
 <script src="./logo.js"></script>
+<script src="./crop-template.js"></script>
 <script src="./crop.js"></script>
 <script>
 (function () {
@@ -351,6 +352,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   // Init WalletKit (load SVGs)
   APP.walletkit.init(function (ok) {
     if (ok) setTimeout(function () { APP.walletkit.drawPreview(); }, 50);
+  });
+  APP.crop.init(function (ok) {
+    if (ok && APP.state.currentTab === 'crop') APP.crop.showPlaceholder();
   });
 
 })();

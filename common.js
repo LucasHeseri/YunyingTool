@@ -133,6 +133,7 @@
       if (APP.walletkit && APP.walletkit.isReady()) APP.walletkit.drawPreview();
     }
     if (s.currentTab === 'circle' && APP.logo) APP.logo.showPlaceholder();
+    if (s.currentTab === 'crop' && APP.crop) APP.crop.showPlaceholder();
   };
 
   // ========================================================================
@@ -197,6 +198,7 @@
     }
     APP.resetAll();
     if (tab === 'circle' && !s.uploadedImage && APP.logo) APP.logo.showPlaceholder();
+    if (tab === 'crop' && !s.uploadedImage && APP.crop) APP.crop.showPlaceholder();
     if (s.uploadedImage && tab !== 'walletkit') {
       if (tab === 'compress' && APP.compress) APP.compress.process();
       else if (tab === 'circle' && APP.logo) APP.logo.process();
@@ -248,6 +250,7 @@
     if (s.currentTab === 'walletkit') { if (APP.walletkit) { APP.walletkit.drawPreview(); APP.dom.downloadBtn.disabled = false; } }
     else if (s.currentTab === 'compress') { if (APP.compress) APP.compress.process(); }
     else if (s.currentTab === 'circle') { if (APP.logo) APP.logo.process(); }
+    else if (s.currentTab === 'crop') { if (APP.crop) APP.crop.process(); }
   }
 
   function getPx(data, w, x, y) { var idx = (y*w+x)*4; return [data[idx], data[idx+1], data[idx+2]]; }
