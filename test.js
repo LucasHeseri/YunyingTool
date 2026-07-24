@@ -77,12 +77,15 @@
     ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
-    // HarmonyOS chip: h=14, r=8, padding 8px, font 10px
+    // Outlined tag: 1px #ED6F21 border, transparent bg, orange text, h=14, 10px font
     function drawTag(x, y, text) {
-      var pad = 8, tagH = 14, tagR = 8;
+      var pad = 5, tagH = 14, tagR = 4;
       var tw = ctx.measureText(text).width + pad * 2;
-      ctx.fillStyle = '#ED6F21'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.font = '10px "PingFang SC",sans-serif';
+      // Border
+      ctx.strokeStyle = '#ED6F21'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.stroke();
+      // Text (orange, vertically centered)
+      ctx.fillStyle = '#ED6F21'; ctx.font = '10px "PingFang SC",sans-serif';
       ctx.textBaseline = 'middle';
       ctx.fillText(text, x + pad, y + tagH / 2 + 1);
       ctx.textBaseline = 'alphabetic';
@@ -90,9 +93,10 @@
 
     // Tag 1
     if (vals.tag1) drawTag(121, 79, vals.tag1);
-    // Tag 2 (6px gap)
+    // Tag 2 (6px gap from tag 1)
     if (vals.tag2) {
-      var x2 = vals.tag1 ? 121 + ctx.measureText(vals.tag1).width + 22 : 121;
+      var tag1W = vals.tag1 ? ctx.measureText(vals.tag1).width + 10 : 0;
+      var x2 = vals.tag1 ? 121 + tag1W + 6 : 121;
       drawTag(x2, 79, vals.tag2);
     }
 
