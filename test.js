@@ -83,9 +83,10 @@
       ctx.font = '10px "PingFang SC",sans-serif';
       var textW = ctx.measureText(text).width;
       var tw = textW + padH * 2;
-      // 1px orange border + white inner
-      ctx.fillStyle = '#ED6F21'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
-      ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.roundRect(x+1, y+1, tw-2, tagH-2, tagR-1); ctx.fill();
+      // 10% opacity orange bg + 1px border
+      ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
+      ctx.strokeStyle = '#ED6F21'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.stroke();
       // Orange text, centered
       ctx.fillStyle = '#ED6F21';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
