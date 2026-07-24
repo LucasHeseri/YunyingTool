@@ -77,25 +77,23 @@
     ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
-    // Tag: 10% #ED6F21 fill, 1px border, orange text, width auto-fits content
+    // HarmonyOS chip proportions: H=36 r=20 pad=8-16 gap=8 → scaled H=14 r=8 pad=6-10
     function drawTag(x, y, text) {
-      var padH = 5, tagH = 14, tagR = 4;
+      var padH = 10, padV = 0, tagH = 14, tagR = 8;
       var tw = ctx.measureText(text).width + padH * 2;
-      // 10% opacity fill
-      ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
-      // 1px border
-      ctx.strokeStyle = '#ED6F21'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.stroke();
-      // Orange text
+      // Background: 10% orange per HarmonyOS chip enable state
+      ctx.fillStyle = 'rgba(237,111,33,0.1)';
+      ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
+      // Text: orange, vertically centered
       ctx.fillStyle = '#ED6F21'; ctx.font = '10px "PingFang SC",sans-serif';
       ctx.textBaseline = 'middle';
       ctx.fillText(text, x + padH, y + tagH / 2 + 1);
       ctx.textBaseline = 'alphabetic';
     }
 
-    // Tags with 6px gap
+    // Tags with 8px gap (HarmonyOS chip gap)
     var tagX = 121;
-    if (vals.tag1) { drawTag(tagX, 79, vals.tag1); tagX += ctx.measureText(vals.tag1).width + 16; }
+    if (vals.tag1) { drawTag(tagX, 79, vals.tag1); tagX += ctx.measureText(vals.tag1).width + 28; }
     if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
 
     // CTA button — per Figma SVG: red bg, 1px inner inset, white centered text
