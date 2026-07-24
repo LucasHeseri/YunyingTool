@@ -42,16 +42,19 @@
       vals[k] = el ? el.value : defaults[k];
     });
 
-    // Icon area (16×16)
-    ctx.fillStyle = '#E8F5FF';
-    ctx.beginPath(); ctx.roundRect(16, 16, 16, 16, 3); ctx.fill();
-    ctx.fillStyle = '#018FF9';
-    ctx.fillRect(20, 20, 8, 8);
-
-    // Top-left icon circle
-    ctx.beginPath(); ctx.arc(24, 24, 6, 0, Math.PI * 2); ctx.fillStyle = '#018FF9'; ctx.fill();
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-    ctx.fillText('¥', 24, 24); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    // Icon (16×16) — uploaded image or default placeholder
+    if (APP.state.uploadedImage) {
+      ctx.save();
+      ctx.beginPath(); ctx.roundRect(16, 16, 16, 16, 3); ctx.clip();
+      ctx.drawImage(APP.state.uploadedImage, 16, 16, 16, 16);
+      ctx.restore();
+    } else {
+      ctx.fillStyle = '#E8F5FF';
+      ctx.beginPath(); ctx.roundRect(16, 16, 16, 16, 3); ctx.fill();
+      ctx.beginPath(); ctx.arc(24, 24, 6, 0, Math.PI * 2); ctx.fillStyle = '#018FF9'; ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText('¥', 24, 24); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+    }
 
     // Brand | Product name
     ctx.fillStyle = '#000000'; ctx.font = '12px "PingFang SC",sans-serif';
@@ -87,12 +90,13 @@
       drawTag(x2, 79, vals.tag2);
     }
 
-    // CTA button
+    // CTA button (centered text)
     var btnW = 72, btnH = 28, btnX = 244, btnY = 58;
     ctx.fillStyle = '#F34D4F'; ctx.beginPath(); ctx.roundRect(btnX, btnY, btnW, btnH, 14); ctx.fill();
     ctx.fillStyle = '#ffffff'; ctx.font = '14px "PingFang SC",sans-serif';
-    ctx.textAlign = 'center'; ctx.fillText(vals.btnText, btnX + btnW / 2, btnY + btnH / 2 + 1);
-    ctx.textAlign = 'start';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(vals.btnText, btnX + btnW / 2, btnY + btnH / 2 + 1);
+    ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
 
     APP.state.processedDataUrl = c.toDataURL('image/png');
 
