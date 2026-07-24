@@ -41,7 +41,7 @@
   function generateCardTemplate() {
     var c = document.createElement('canvas'); c.width = VIEW_W; c.height = VIEW_H;
     var cx = c.getContext('2d');
-    var r = 96;
+    var r = 72;
     cx.beginPath();
     cx.moveTo(r, 0); cx.lineTo(VIEW_W - r, 0);
     cx.arcTo(VIEW_W, 0, VIEW_W, r, r);
