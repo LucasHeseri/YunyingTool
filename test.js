@@ -77,19 +77,19 @@
     ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
-    // Tag per Figma: 1px orange border + white fill + orange text, padH=4
+    // Tag per Figma: 1px orange border + white fill + orange text, centered
     function drawTag(x, y, text) {
       var padH = 4, tagH = 14, tagR = 4;
-      var tw = ctx.measureText(text).width + padH * 2;
-      // 1px orange border
+      var textW = ctx.measureText(text).width;
+      var tw = textW + padH * 2;
+      // 1px orange border + white inner
       ctx.fillStyle = '#ED6F21'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
-      // White inner (1px inset)
       ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.roundRect(x+1, y+1, tw-2, tagH-2, tagR-1); ctx.fill();
-      // Orange text
+      // Orange text, centered
       ctx.fillStyle = '#ED6F21'; ctx.font = '10px "PingFang SC",sans-serif';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(text, x + padH, y + tagH / 2 + 1);
-      ctx.textBaseline = 'alphabetic';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, x + tw / 2, y + tagH / 2 + 1);
+      ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
     }
 
     // Tags grouped from left, 4px gap (per Figma)
