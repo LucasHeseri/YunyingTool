@@ -22,9 +22,20 @@
   --radius: 12px;
   --transition: 0.2s ease;
 }
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("./HarmonyOS_Sans_SC.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("./HarmonyOS_Sans_SC.ttf") format("truetype");
+  font-weight: 700;
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "HarmonyOS Sans SC", "PingFang SC", "Segoe UI", "Noto Sans SC", sans-serif;
+  font-family: "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
   background: var(--bg-app); color: var(--text-primary);
   min-height: 100vh; display: flex; flex-direction: column;
   -webkit-font-smoothing: antialiased;

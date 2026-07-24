@@ -57,7 +57,7 @@
     }
 
     // Brand | Product name — dynamic left-aligned with 6px gap
-    ctx.fillStyle = '#000000'; ctx.font = '12px "PingFang SC",sans-serif';
+    ctx.fillStyle = '#000000'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.brand, 36, 27);
     var brandW = ctx.measureText(vals.brand).width;
     var dividerX = 36 + brandW + 6;
@@ -66,27 +66,25 @@
     ctx.fillText(vals.product, dividerX + 6, 27);
 
     // Main amount
-    ctx.fillStyle = '#F34D4F'; ctx.font = 'bold 20px "PingFang SC",sans-serif';
+    ctx.fillStyle = '#F34D4F'; ctx.font = 'bold 20px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.amount, 10, 67);
 
     // Amount label
-    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.font = '12px "PingFang SC",sans-serif';
+    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.amountLabel, 11, 93);
 
     // Right description
-    ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
+    ctx.fillStyle = '#000000'; ctx.font = '14px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
     // Tag per Figma: returns width for proper gap calculation
     function drawTag(x, y, text) {
       var padH = 4, tagH = 14, tagR = 4;
-      ctx.font = '10px "PingFang SC",sans-serif';
+      ctx.font = '10px "HarmonyOS Sans SC",sans-serif';
       var textW = ctx.measureText(text).width;
       var tw = textW + padH * 2;
-      // 10% opacity orange bg + 1px border
+      // 10% opacity orange bg, no border
       ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
-      ctx.strokeStyle = '#ED6F21'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.stroke();
       // Orange text, centered
       ctx.fillStyle = '#ED6F21';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
@@ -104,7 +102,7 @@
     var btnW = 72, btnH = 28, btnX = 244, btnY = 58, btnR = 14;
     ctx.fillStyle = '#F34D4F'; ctx.beginPath(); ctx.roundRect(btnX, btnY, btnW, btnH, btnR); ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.roundRect(btnX+1, btnY+1, btnW-2, btnH-2, btnR-1); ctx.fill();
-    ctx.fillStyle = '#ffffff'; ctx.font = '14px "PingFang SC",sans-serif';
+    ctx.fillStyle = '#ffffff'; ctx.font = '14px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(vals.btnText, btnX + btnW / 2, btnY + btnH / 2 + 1);
     ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
