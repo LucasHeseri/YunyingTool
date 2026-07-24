@@ -206,6 +206,7 @@ body {
     <button class="tab-nav__btn" data-tab="circle">logo处理</button>
     <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
     <button class="tab-nav__btn" data-tab="crop">裁切卡券</button>
+    <button class="tab-nav__btn" data-tab="test">test</button>
   </nav>
   <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
@@ -322,6 +323,42 @@ body {
           </div>
         </div>
       </div>
+      <div id="ctrlTest" style="display:none;">
+        <div class="control-group">
+          <div class="control-group__label"><span>品牌名</span></div>
+          <input type="text" id="testBrand" value="苏宁" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+          <div class="control-group">
+            <div class="control-group__label"><span>产品名</span></div>
+            <input type="text" id="testProduct" value="任性贷" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>金额</span></div>
+            <input type="text" id="testAmount" value="3,00,000" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>金额说明</span></div>
+            <input type="text" id="testAmountLabel" value="最高额度 (元)" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>描述文案</span></div>
+            <input type="text" id="testDesc" value="最长可借 48 期" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>标签 1</span></div>
+            <input type="text" id="testTag1" value="免押车" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>标签 2</span></div>
+            <input type="text" id="testTag2" value="最快当天放款" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>按钮文案</span></div>
+            <input type="text" id="testBtnText" value="去申请" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="btn-row">
@@ -362,6 +399,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 <script src="./logo.js"></script>
 <script src="./crop-template.js"></script>
 <script src="./crop.js"></script>
+<script src="./test.js"></script>
 <script>
 (function () {
   'use strict';
@@ -374,6 +412,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   APP.compress.bindEvents();
   APP.logo.bindEvents();
   APP.crop.bindEvents();
+  APP.test.bindEvents();
 
   // Init WalletKit (load SVGs)
   APP.walletkit.init(function (ok) {

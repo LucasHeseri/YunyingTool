@@ -25,7 +25,8 @@
     walletkit: { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
     compress:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
     circle:    { maxSize: 1 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 1MB' },
-    crop:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
+    crop:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
+    test:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
   };
   var ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
@@ -39,7 +40,7 @@
     resetBtn: $('resetBtn'), downloadBtn: $('downloadBtn'), previewCard: $('previewCard'),
     previewCanvas: $('previewCanvas'), previewInfo: $('previewInfo'), bgToggleBtn: $('bgToggleBtn'),
     toast: $('toast'), chipsNav: $('chipsNav'),
-    ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'), ctrlCrop: $('ctrlCrop'),
+    ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'), ctrlCrop: $('ctrlCrop'), ctrlTest: $('ctrlTest'),
     cmpWidth: $('cmpWidth'), cmpWidthVal: $('cmpWidthVal'), cmpSizeEst: $('cmpSizeEst'),
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
@@ -178,6 +179,7 @@
     APP.dom.ctrlCompress.style.display  = (tab === 'compress')  ? '' : 'none';
     APP.dom.ctrlCircle.style.display    = (tab === 'circle')    ? '' : 'none';
     APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
+    APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     // Only logo tab shows 去背景
     APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';
     if (tab !== 'circle' && s.removeBgEnabled) {
@@ -206,6 +208,7 @@
       if (tab === 'compress' && APP.compress) APP.compress.process();
       else if (tab === 'circle' && APP.logo) APP.logo.process();
       else if (tab === 'crop' && APP.crop) APP.crop.process();
+      else if (tab === 'test' && APP.test) APP.test.process();
     }
   };
 
