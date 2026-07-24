@@ -77,22 +77,19 @@
     ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
-    // HarmonyOS chip activated state: solid bg + white text
-    // Proportions: H=36 r=20 pad=10-20 gap=8 → scaled H=14 r=8 pad=6-10
+    // HarmonyOS chip activated state, r=4, grouped from left
     function drawTag(x, y, text) {
-      var padH = 10, tagH = 14, tagR = 8;
+      var padH = 10, tagH = 14, tagR = 4;
       var tw = ctx.measureText(text).width + padH * 2;
-      // Solid bg (activated state)
       ctx.fillStyle = '#ED6F21';
       ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
-      // White text (activated state)
       ctx.fillStyle = '#ffffff'; ctx.font = '10px "PingFang SC",sans-serif';
       ctx.textBaseline = 'middle';
       ctx.fillText(text, x + padH, y + tagH / 2 + 1);
       ctx.textBaseline = 'alphabetic';
     }
 
-    // Tags with 8px gap
+    // Tags grouped from left, 8px gap
     var tagX = 121;
     if (vals.tag1) { drawTag(tagX, 79, vals.tag1); tagX += ctx.measureText(vals.tag1).width + 28; }
     if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
