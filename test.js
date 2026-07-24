@@ -75,7 +75,7 @@
 
     // Right description
     ctx.fillStyle = '#000000'; ctx.font = '14px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(vals.desc, 121, 65);
+    ctx.fillText(vals.desc, 111, 65);
 
     // Tag per Figma: returns width for proper gap calculation
     function drawTag(x, y, text) {
@@ -94,7 +94,7 @@
     }
 
     // Tags grouped from left, 4px gap
-    var tagX = 121, GAP = 4;
+    var tagX = 111, GAP = 4;
     if (vals.tag1) { tagX += drawTag(tagX, 79, vals.tag1) + GAP; }
     if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
 
