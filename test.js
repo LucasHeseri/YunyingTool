@@ -77,32 +77,31 @@
     ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
-    // Outlined tag: 1px #ED6F21 border, transparent bg, orange text, h=14, 10px font
+    // Tag: 10% #ED6F21 fill, 1px border, orange text, width auto-fits content
     function drawTag(x, y, text) {
-      var pad = 5, tagH = 14, tagR = 4;
-      var tw = ctx.measureText(text).width + pad * 2;
-      // Border
+      var padH = 5, tagH = 14, tagR = 4;
+      var tw = ctx.measureText(text).width + padH * 2;
+      // 10% opacity fill
+      ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
+      // 1px border
       ctx.strokeStyle = '#ED6F21'; ctx.lineWidth = 1;
       ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.stroke();
-      // Text (orange, vertically centered)
+      // Orange text
       ctx.fillStyle = '#ED6F21'; ctx.font = '10px "PingFang SC",sans-serif';
       ctx.textBaseline = 'middle';
-      ctx.fillText(text, x + pad, y + tagH / 2 + 1);
+      ctx.fillText(text, x + padH, y + tagH / 2 + 1);
       ctx.textBaseline = 'alphabetic';
     }
 
-    // Tag 1
-    if (vals.tag1) drawTag(121, 79, vals.tag1);
-    // Tag 2 (6px gap from tag 1)
-    if (vals.tag2) {
-      var tag1W = vals.tag1 ? ctx.measureText(vals.tag1).width + 10 : 0;
-      var x2 = vals.tag1 ? 121 + tag1W + 6 : 121;
-      drawTag(x2, 79, vals.tag2);
-    }
+    // Tags with 6px gap
+    var tagX = 121;
+    if (vals.tag1) { drawTag(tagX, 79, vals.tag1); tagX += ctx.measureText(vals.tag1).width + 16; }
+    if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
 
-    // HarmonyOS small button: 72×28, r=14, text centered
+    // CTA button — per Figma SVG: red bg, 1px inner inset, white centered text
     var btnW = 72, btnH = 28, btnX = 244, btnY = 58;
     ctx.fillStyle = '#F34D4F'; ctx.beginPath(); ctx.roundRect(btnX, btnY, btnW, btnH, 14); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,0.15)'; ctx.beginPath(); ctx.roundRect(btnX+1, btnY, btnW-1, btnH-1, 13); ctx.fill();
     ctx.fillStyle = '#ffffff'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(vals.btnText, btnX + btnW / 2, btnY + btnH / 2 + 1);
