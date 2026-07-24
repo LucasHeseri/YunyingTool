@@ -133,20 +133,16 @@
     cv.style.height = Math.round(outH * ds) + 'px';
 
     APP.dom.downloadBtn.disabled = false;
-    APP.dom.previewInfo.textContent = '原图 ' + imgW + '×' + imgH + ' → ' + outW + '×' + outH;
-    updateSizeEstimate();
+    var sizeStr = getSizeStr();
+    APP.dom.previewInfo.textContent = '原图 ' + imgW + '×' + imgH + ' → ' + outW + '×' + outH + '（' + sizeStr + '）';
   };
 
-  function updateSizeEstimate() {
-    var el = document.getElementById('cropSizeEst');
+  function getSizeStr() {
     var dataUrl = APP.state.processedDataUrl;
-    if (!dataUrl) { el.textContent = '—'; return; }
+    if (!dataUrl) return '—';
     var bytes = atob(dataUrl.split(',')[1]).length;
-    if (bytes >= 1024 * 1024) {
-      el.textContent = '≈ ' + (bytes / (1024 * 1024)).toFixed(2) + ' MB';
-    } else {
-      el.textContent = '≈ ' + Math.round(bytes / 1024) + ' KB';
-    }
+    if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(2) + 'MB';
+    return Math.round(bytes / 1024) + 'KB';
   }
 
   function getExportScale() {
