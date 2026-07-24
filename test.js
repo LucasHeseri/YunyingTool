@@ -56,11 +56,14 @@
       ctx.fillText('¥', 24, 24); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
     }
 
-    // Brand | Product name
+    // Brand | Product name — dynamic left-aligned with 6px gap
     ctx.fillStyle = '#000000'; ctx.font = '12px "PingFang SC",sans-serif';
     ctx.fillText(vals.brand, 36, 27);
-    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(66, 19, 1, 10);
-    ctx.fillStyle = '#000000'; ctx.fillText(vals.product, 72, 27);
+    var brandW = ctx.measureText(vals.brand).width;
+    var dividerX = 36 + brandW + 6;
+    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(dividerX, 19, 1, 10);
+    ctx.fillStyle = '#000000';
+    ctx.fillText(vals.product, dividerX + 6, 27);
 
     // Main amount
     ctx.fillStyle = '#F34D4F'; ctx.font = 'bold 20px "PingFang SC",sans-serif';
@@ -74,23 +77,26 @@
     ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
-    // Tag pill helper
+    // HarmonyOS chip: h=14, r=8, padding 8px, font 10px
     function drawTag(x, y, text) {
-      var tw = ctx.measureText(text).width + 12;
-      ctx.fillStyle = '#ED6F21'; ctx.beginPath(); ctx.roundRect(x, y, tw, 14, 7); ctx.fill();
+      var pad = 8, tagH = 14, tagR = 8;
+      var tw = ctx.measureText(text).width + pad * 2;
+      ctx.fillStyle = '#ED6F21'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
       ctx.fillStyle = '#fff'; ctx.font = '10px "PingFang SC",sans-serif';
-      ctx.fillText(text, x + 6, y + 10);
+      ctx.textBaseline = 'middle';
+      ctx.fillText(text, x + pad, y + tagH / 2 + 1);
+      ctx.textBaseline = 'alphabetic';
     }
 
     // Tag 1
     if (vals.tag1) drawTag(121, 79, vals.tag1);
-    // Tag 2
+    // Tag 2 (6px gap)
     if (vals.tag2) {
-      var x2 = vals.tag1 ? 121 + ctx.measureText(vals.tag1).width + 18 : 121;
+      var x2 = vals.tag1 ? 121 + ctx.measureText(vals.tag1).width + 22 : 121;
       drawTag(x2, 79, vals.tag2);
     }
 
-    // CTA button (centered text)
+    // HarmonyOS small button: 72×28, r=14, text centered
     var btnW = 72, btnH = 28, btnX = 244, btnY = 58;
     ctx.fillStyle = '#F34D4F'; ctx.beginPath(); ctx.roundRect(btnX, btnY, btnW, btnH, 14); ctx.fill();
     ctx.fillStyle = '#ffffff'; ctx.font = '14px "PingFang SC",sans-serif';
