@@ -1,5 +1,5 @@
 /**
- * crop.js — 裁切卡片 module.
+ * crop.js — 裁切卡券 module (票券 / 卡片).
  * Depends on APP (common.js) and CROP_TEMPLATE global.
  */
 (function () {
@@ -12,35 +12,70 @@
   // Config
   // ========================================================================
   var VIEW_W = 984, VIEW_H = 612;
-  var templateImg = null;
+  var templateImg = null;    // Subtract.svg for ticket
+  var cardTemplate = null;   // generated canvas for card (rounded rect)
   var ready = false;
 
   // ========================================================================
-  // Load template SVG
+  // State
+  // ========================================================================
+  M.state = { type: 'ticket' }; // 'ticket' | 'card'
+
+  // ========================================================================
+  // Load ticket template (Subtract.svg)
   // ========================================================================
   M.init = function (callback) {
-    if (typeof CROP_TEMPLATE === 'undefined') {
-      if (callback) callback(false);
-      return;
-    }
+    if (typeof CROP_TEMPLATE === 'undefined') { if (callback) callback(false); return; }
     var img = new Image();
-    img.onload = function () { templateImg = img; ready = true; if (callback) callback(true); };
+    img.onload = function () {
+      templateImg = img;
+      generateCardTemplate();
+      ready = true;
+      if (callback) callback(true);
+    };
     img.onerror = function () { if (callback) callback(false); };
     img.src = CROP_TEMPLATE;
   };
 
+  // Generate card template: 984×612 rounded rect (96px radius), #F1F3F5 fill
+  function generateCardTemplate() {
+    var c = document.createElement('canvas'); c.width = VIEW_W; c.height = VIEW_H;
+    var cx = c.getContext('2d');
+    var r = 96;
+    cx.beginPath();
+    cx.moveTo(r, 0); cx.lineTo(VIEW_W - r, 0);
+    cx.arcTo(VIEW_W, 0, VIEW_W, r, r);
+    cx.lineTo(VIEW_W, VIEW_H - r);
+    cx.arcTo(VIEW_W, VIEW_H, VIEW_W - r, VIEW_H, r);
+    cx.lineTo(r, VIEW_H);
+    cx.arcTo(0, VIEW_H, 0, VIEW_H - r, r);
+    cx.lineTo(0, r);
+    cx.arcTo(0, 0, r, 0, r);
+    cx.closePath();
+    cx.fillStyle = '#B3B3B3';
+    cx.globalAlpha = 0.83;
+    cx.fill();
+    cx.globalAlpha = 1;
+    cardTemplate = c;
+  }
+
+  function getTemplate() {
+    return M.state.type === 'ticket' ? templateImg : cardTemplate;
+  }
+
   M.isReady = function () { return ready; };
 
   // ========================================================================
-  // Show placeholder before upload
+  // Show placeholder
   // ========================================================================
   M.showPlaceholder = function () {
-    if (!templateImg) return;
+    var tmpl = getTemplate();
+    if (!tmpl) return;
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
     cv.style.display = 'block';
     cv.width = VIEW_W; cv.height = VIEW_H;
     ctx.clearRect(0, 0, VIEW_W, VIEW_H);
-    ctx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
+    ctx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
     var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
     var s = Math.min(cw / VIEW_W, ch / VIEW_H, 1);
     cv.style.width  = Math.round(VIEW_W * s) + 'px';
@@ -49,11 +84,12 @@
   };
 
   // ========================================================================
-  // Processing — width-first, top-aligned, vertical offset, export size
+  // Processing
   // ========================================================================
   M.process = function () {
     var img = APP.state.uploadedImage;
-    if (!img || !templateImg) return;
+    var tmpl = getTemplate();
+    if (!img || !tmpl) return;
 
     var hOffset = parseInt(APP.dom.cropHOffset.value, 10);
     var vOffset = parseInt(APP.dom.cropVOffset.value, 10);
@@ -63,27 +99,23 @@
     var outH = Math.round(VIEW_H * scale);
     var imgW = img.naturalWidth, imgH = img.naturalHeight;
 
-    // Scale image proportionally, zoom from center, apply offsets
     var destW = Math.round(VIEW_W * zoom);
     var destH = Math.round(imgH * (destW / imgW));
     var baseDestH = Math.round(imgH * (VIEW_W / imgW));
-    // Center zoom: extra size distributed equally around center
     var destX = Math.round(-(destW - VIEW_W) / 2) + hOffset;
     var destY = Math.round(-(destH - baseDestH) / 2) + vOffset;
 
-    // Render at full resolution
     var workC = document.createElement('canvas');
     workC.width = VIEW_W; workC.height = VIEW_H;
     var wCtx = workC.getContext('2d');
 
     // Clip to template shape
     wCtx.save();
-    wCtx.drawImage(templateImg, 0, 0, VIEW_W, VIEW_H);
+    wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
     wCtx.globalCompositeOperation = 'source-in';
     wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
     wCtx.restore();
 
-    // Preview canvas (always full res for display)
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
     cv.width = outW; cv.height = outH;
     cv.style.display = 'block';
@@ -107,13 +139,27 @@
   function getExportScale() {
     var radio = document.querySelector('input[name="cropSize"]:checked');
     if (radio && radio.value === '1x') return 1/3;
-    return 1; // 3x default (984×612)
+    return 1;
   }
 
   // ========================================================================
   // Events
   // ========================================================================
   M.bindEvents = function () {
+    // Crop chips (票券 / 卡片)
+    var chipsNav = document.getElementById('cropChipsNav');
+    chipsNav.addEventListener('click', function (e) {
+      var btn = e.target.closest('.chips-nav__btn');
+      if (!btn) return;
+      var type = btn.dataset.crop;
+      if (type === M.state.type) return;
+      M.state.type = type;
+      chipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
+      else M.showPlaceholder();
+    });
+
     APP.dom.cropZoom.addEventListener('input', function () {
       APP.dom.cropZoomVal.textContent = this.value + '%';
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
