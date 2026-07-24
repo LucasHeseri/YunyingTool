@@ -180,6 +180,9 @@
     APP.dom.ctrlCircle.style.display    = (tab === 'circle')    ? '' : 'none';
     APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
+    // Hide upload zone for test tab, restore for others
+    APP.dom.uploadZone.parentNode.style.display = (tab === 'test') ? 'none' : '';
+    APP.dom.previewCard.style.background = (tab === 'test') ? '#F1F3F5' : '';
     // Only logo tab shows 去背景
     APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';
     if (tab !== 'circle' && s.removeBgEnabled) {

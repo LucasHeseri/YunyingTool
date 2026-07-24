@@ -77,24 +77,26 @@
     ctx.fillStyle = '#000000'; ctx.font = '14px "PingFang SC",sans-serif';
     ctx.fillText(vals.desc, 121, 65);
 
-    // Tag per Figma: 1px orange border + white fill + orange text, centered
+    // Tag per Figma: returns width for proper gap calculation
     function drawTag(x, y, text) {
       var padH = 4, tagH = 14, tagR = 4;
+      ctx.font = '10px "PingFang SC",sans-serif';
       var textW = ctx.measureText(text).width;
       var tw = textW + padH * 2;
       // 1px orange border + white inner
       ctx.fillStyle = '#ED6F21'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
       ctx.fillStyle = '#ffffff'; ctx.beginPath(); ctx.roundRect(x+1, y+1, tw-2, tagH-2, tagR-1); ctx.fill();
       // Orange text, centered
-      ctx.fillStyle = '#ED6F21'; ctx.font = '10px "PingFang SC",sans-serif';
+      ctx.fillStyle = '#ED6F21';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(text, x + tw / 2, y + tagH / 2 + 1);
       ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      return tw;
     }
 
-    // Tags grouped from left, 4px gap (per Figma)
-    var tagX = 121;
-    if (vals.tag1) { drawTag(tagX, 79, vals.tag1); tagX += ctx.measureText(vals.tag1).width + 12; }
+    // Tags grouped from left, 4px gap
+    var tagX = 121, GAP = 4;
+    if (vals.tag1) { tagX += drawTag(tagX, 79, vals.tag1) + GAP; }
     if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
 
     // CTA button — per Figma: red outer, white inner 1px inset, white centered text
