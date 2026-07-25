@@ -15,6 +15,7 @@
   // Load SVG template
   // ========================================================================
   M.init = function (cb) {
+    if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
     var img = new Image();
     img.onload = function () {
       templateImg = img; ready = true;
@@ -22,7 +23,7 @@
       if (cb) cb(true);
     };
     img.onerror = function () { if (cb) cb(false); };
-    img.src = './card-template.svg';
+    img.src = GOLDCARD_TEMPLATE;
   };
 
   M.isReady = function () { return ready; };
