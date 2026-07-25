@@ -391,6 +391,48 @@ body {
               <input type="number" id="gcTopRightY" value="40" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
             </div>
           </div>
+          <!-- Boarding Info: passenger, flight, date, from/to, gate, time, seat -->
+          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">登机信息（y:72~170）</div>
+          <div class="control-group">
+            <div class="control-group__label"><span>旅客姓名 / 航班号</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcPassenger" value="WANG/HONG" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcFlight" value="CA1234" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="number" id="gcPassX" value="24" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
+              <input type="number" id="gcPassY" value="90" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>日期 / 舱位</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcDate" value="26JUL 2026" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcClass" value="Y" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="number" id="gcDateX" value="24" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
+              <input type="number" id="gcDateY" value="115" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>出发 → 到达</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcFrom" value="PEK" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcArrow" value="→" style="width:30px;padding:6px 0;border:0;background:transparent;text-align:center;font-size:14px;font-family:inherit;">
+              <input type="text" id="gcTo" value="SHA" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="number" id="gcFromX" value="24" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
+              <input type="number" id="gcFromY" value="140" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>登机口 / 登机时间 / 座位号</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcGate" value="A12" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcBoarding" value="14:30" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcSeat" value="32A" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="number" id="gcGateX" value="24" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
+              <input type="number" id="gcGateY" value="165" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
+            </div>
+          </div>
+          <!-- Data fields A-E -->
+          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">数据区（y:195~280）</div>
           <!-- Field A -->
           <div class="control-group">
             <div class="control-group__label"><span>字段A 标签 / 值</span></div>

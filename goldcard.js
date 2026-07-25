@@ -50,6 +50,39 @@
     ctx.fillText(v('gcTopRight'), n('gcTopRightX'), n('gcTopRightY'));
     ctx.textAlign = 'start';
 
+    // Boarding info section
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    // Passenger + Flight
+    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcPassenger'), n('gcPassX'), n('gcPassY'));
+    ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcFlight'), n('gcPassX') + 140, n('gcPassY'));
+    // Date + Class
+    ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcDate'), n('gcDateX'), n('gcDateY'));
+    ctx.fillText(v('gcClass'), n('gcDateX') + 100, n('gcDateY'));
+    // From → To (large)
+    ctx.font = 'bold 26px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcFrom'), n('gcFromX'), n('gcFromY'));
+    ctx.textAlign = 'center';
+    ctx.fillText(v('gcArrow'), n('gcFromX') + 120, n('gcFromY'));
+    ctx.textAlign = 'start';
+    ctx.fillText(v('gcTo'), n('gcFromX') + 150, n('gcFromY'));
+    // Gate / Boarding / Seat
+    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
+    var gx = n('gcGateX'), gy = n('gcGateY');
+    ctx.fillText('GATE', gx, gy);
+    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcGate'), gx, gy + 18);
+    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText('BOARDING', gx + 70, gy);
+    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcBoarding'), gx + 70, gy + 18);
+    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText('SEAT', gx + 160, gy);
+    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcSeat'), gx + 160, gy + 18);
+
     // Fields A-E: label + value pairs
     ctx.fillStyle = '#ffffff';
     drawPair(ctx, 'gcLabelA', 'gcValueA', 'gcAX', 'gcAY', '400 11px "HarmonyOS Sans SC",sans-serif', 'bold 18px "HarmonyOS Sans SC",sans-serif');
@@ -74,6 +107,10 @@
 
   M.bindEvents = function () {
     var ids = ['gcTitle','gcTitleX','gcTitleY','gcTopRight','gcTopRightX','gcTopRightY',
+      'gcPassenger','gcFlight','gcPassX','gcPassY',
+      'gcDate','gcClass','gcDateX','gcDateY',
+      'gcFrom','gcArrow','gcTo','gcFromX','gcFromY',
+      'gcGate','gcBoarding','gcSeat','gcGateX','gcGateY',
       'gcLabelA','gcValueA','gcAX','gcAY','gcLabelB','gcValueB','gcBX','gcBY',
       'gcLabelC','gcValueC','gcCX','gcCY','gcLabelD','gcValueD','gcDX','gcDY',
       'gcLabelE','gcValueE','gcEX','gcEY'];
