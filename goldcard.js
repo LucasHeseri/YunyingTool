@@ -1,41 +1,29 @@
 /**
  * goldcard.js — 金色卡片 template (328×472 SVG).
- * Depends on APP (common.js).
+ * Depends on APP (common.js) and GOLDCARD_TEMPLATE global.
  */
 (function () {
   'use strict';
   if (!window.APP) throw new Error('common.js must load before goldcard.js');
 
   var M = APP.goldcard = {};
-  var W = 328, H = 472, S = 2; // render at 2x
+  var W = 328, H = 472, S = 2;
 
   var templateImg = null, ready = false;
 
-  // ========================================================================
-  // Load SVG template
-  // ========================================================================
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
     var img = new Image();
-    img.onload = function () {
-      templateImg = img; ready = true;
-      if (APP.state.currentTab === 'goldcard') M.process();
-      if (cb) cb(true);
-    };
+    img.onload = function () { templateImg = img; ready = true; if (APP.state.currentTab === 'goldcard') M.process(); if (cb) cb(true); };
     img.onerror = function () { if (cb) cb(false); };
     img.src = GOLDCARD_TEMPLATE;
   };
 
   M.isReady = function () { return ready; };
 
-  // ========================================================================
-  // Get field values
-  // ========================================================================
   function val(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+  function num(id) { var e = document.getElementById(id); return e ? parseInt(e.value, 10) || 0 : 0; }
 
-  // ========================================================================
-  // Render
-  // ========================================================================
   M.process = function () {
     if (!templateImg) return;
     var c = document.createElement('canvas');
@@ -43,48 +31,45 @@
     var ctx = c.getContext('2d');
     ctx.scale(S, S);
 
-    // 1. Draw SVG template
     ctx.drawImage(templateImg, 0, 0, W, H);
-
-    // 2. Overlay editable text fields
     ctx.textBaseline = 'middle';
-    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
 
-    // Top title area (72,34 → 190,46) — white 90% opacity
+    // Title
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(val('gcTitle'), 72, 40);
+    ctx.fillText(val('gcTitle'), num('gcTitleX'), num('gcTitleY'));
 
-    // Top-right value
+    // Top Right
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText(val('gcTopRight'), 300, 40);
+    ctx.fillText(val('gcTopRight'), num('gcTopRightX'), num('gcTopRightY'));
     ctx.textAlign = 'start';
 
-    // Row 1 left (x=16,y=180,w=144,h=42)
+    // Field A label
     ctx.fillStyle = '#ffffff';
     ctx.font = '400 11px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(val('gcLabelA'), 24, 195);
+    ctx.fillText(val('gcLabelA'), num('gcLabelAX'), num('gcLabelAY'));
+    // Field A value
     ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(val('gcValueA'), 24, 214);
+    ctx.fillText(val('gcValueA'), num('gcValueAX'), num('gcValueAY'));
 
-    // Row 1 right (x=168,y=180,w=144,h=42)
+    // Field B label
     ctx.font = '400 11px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(val('gcLabelB'), 176, 195);
+    ctx.fillText(val('gcLabelB'), num('gcLabelBX'), num('gcLabelBY'));
+    // Field B value
     ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(val('gcValueB'), 176, 214);
+    ctx.fillText(val('gcValueB'), num('gcValueBX'), num('gcValueBY'));
 
-    // Row 2 three columns (y=235, h=33, w=94 each)
+    // Fields C, D, E
     ctx.fillStyle = '#ffffff';
     ctx.font = '400 11px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(val('gcFieldC'), 24, 251);
-    ctx.fillText(val('gcFieldD'), 125, 251);
-    ctx.fillText(val('gcFieldE'), 226, 251);
+    ctx.fillText(val('gcFieldC'), num('gcFieldCX'), num('gcFieldCY'));
+    ctx.fillText(val('gcFieldD'), num('gcFieldDX'), num('gcFieldDY'));
+    ctx.fillText(val('gcFieldE'), num('gcFieldEX'), num('gcFieldEY'));
 
     APP.state.processedDataUrl = c.toDataURL('image/png');
 
-    // Preview
     var cv = APP.dom.previewCanvas, pctx = APP.ctx;
     cv.width = W * S; cv.height = H * S;
     cv.style.display = 'block';
@@ -98,11 +83,16 @@
     APP.dom.previewInfo.textContent = '328×472 金色卡片';
   };
 
-  // ========================================================================
-  // Events
-  // ========================================================================
   M.bindEvents = function () {
-    var ids = ['gcTitle','gcTopRight','gcLabelA','gcValueA','gcLabelB','gcValueB','gcFieldC','gcFieldD','gcFieldE'];
+    var ids = [
+      'gcTitle','gcTitleX','gcTitleY',
+      'gcTopRight','gcTopRightX','gcTopRightY',
+      'gcLabelA','gcValueA','gcLabelAX','gcLabelAY','gcValueAX','gcValueAY',
+      'gcLabelB','gcValueB','gcLabelBX','gcLabelBY','gcValueBX','gcValueBY',
+      'gcFieldC','gcFieldCX','gcFieldCY',
+      'gcFieldD','gcFieldDX','gcFieldDY',
+      'gcFieldE','gcFieldEX','gcFieldEY'
+    ];
     ids.forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function () {

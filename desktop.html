@@ -372,40 +372,79 @@ body {
         </div>
       </div>
       <div id="ctrlGoldcard" style="display:none;">
-        <div class="control-group">
-          <div class="control-group__label"><span>标题</span></div>
-          <input type="text" id="gcTitle" value="Hello World" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-        </div>
-        <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <!-- Title -->
+          <div class="control-group">
+            <div class="control-group__label"><span>标题</span></div>
+            <input type="text" id="gcTitle" value="Hello World" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcTitleX" value="72" placeholder="X" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcTitleY" value="40" placeholder="Y" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
+          </div>
+          <!-- Top Right -->
           <div class="control-group">
             <div class="control-group__label"><span>右上数值</span></div>
             <input type="text" id="gcTopRight" value="128" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcTopRightX" value="300" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcTopRightY" value="40" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
           </div>
+          <!-- Field A -->
           <div class="control-group">
-            <div class="control-group__label"><span>字段A标签 / 值</span></div>
+            <div class="control-group__label"><span>字段A 标签 / 值</span></div>
             <div style="display:flex;gap:6px;">
               <input type="text" id="gcLabelA" value="Label A" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
               <input type="text" id="gcValueA" value="1,234" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
             </div>
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcLabelAX" value="24" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcLabelAY" value="195" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcValueAX" value="24" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcValueAY" value="214" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
           </div>
+          <!-- Field B -->
           <div class="control-group">
-            <div class="control-group__label"><span>字段B标签 / 值</span></div>
+            <div class="control-group__label"><span>字段B 标签 / 值</span></div>
             <div style="display:flex;gap:6px;">
               <input type="text" id="gcLabelB" value="Label B" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
               <input type="text" id="gcValueB" value="5,678" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
             </div>
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcLabelBX" value="176" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcLabelBY" value="195" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcValueBX" value="176" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcValueBY" value="214" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
           </div>
+          <!-- Field C -->
           <div class="control-group">
             <div class="control-group__label"><span>字段C</span></div>
             <input type="text" id="gcFieldC" value="9,012" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcFieldCX" value="24" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcFieldCY" value="251" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
           </div>
+          <!-- Field D -->
           <div class="control-group">
             <div class="control-group__label"><span>字段D</span></div>
             <input type="text" id="gcFieldD" value="3,456" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcFieldDX" value="125" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcFieldDY" value="251" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
           </div>
+          <!-- Field E -->
           <div class="control-group">
             <div class="control-group__label"><span>字段E</span></div>
             <input type="text" id="gcFieldE" value="7,890" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcFieldEX" value="226" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcFieldEY" value="251" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
           </div>
         </div>
       </div>
