@@ -16,7 +16,11 @@
   // ========================================================================
   M.init = function (cb) {
     var img = new Image();
-    img.onload = function () { templateImg = img; ready = true; if (cb) cb(true); };
+    img.onload = function () {
+      templateImg = img; ready = true;
+      if (APP.state.currentTab === 'goldcard') M.process();
+      if (cb) cb(true);
+    };
     img.onerror = function () { if (cb) cb(false); };
     img.src = './card-template.svg';
   };

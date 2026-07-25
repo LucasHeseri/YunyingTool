@@ -183,7 +183,7 @@
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     // Hide upload zone for test tab, restore for others
-    APP.dom.uploadZone.parentNode.style.display = (tab === 'test') ? 'none' : '';
+    APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
     APP.dom.previewCard.style.background = (tab === 'test') ? '#F1F3F5' : '';
     // Only logo tab shows 去背景
     APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';
@@ -210,12 +210,15 @@
     if (tab === 'circle' && !s.uploadedImage && APP.logo) APP.logo.showPlaceholder();
     if (tab === 'crop' && !s.uploadedImage && APP.crop) APP.crop.showPlaceholder();
     if (tab === 'test' && APP.test) APP.test.process();
-    if (tab === 'goldcard' && APP.goldcard) APP.goldcard.process();
+    if (tab === 'goldcard' && APP.goldcard) {
+      if (APP.goldcard.isReady()) APP.goldcard.process();
+    }
     if (s.uploadedImage && tab !== 'walletkit') {
       if (tab === 'compress' && APP.compress) APP.compress.process();
       else if (tab === 'circle' && APP.logo) APP.logo.process();
       else if (tab === 'crop' && APP.crop) APP.crop.process();
       else if (tab === 'test' && APP.test) APP.test.process();
+      else if (tab === 'goldcard' && APP.goldcard && APP.goldcard.isReady()) APP.goldcard.process();
     }
   };
 
