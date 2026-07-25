@@ -26,7 +26,8 @@
     compress:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
     circle:    { maxSize: 1 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 1MB' },
     crop:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
-    test:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
+    test:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
+    goldcard:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
   };
   var ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
@@ -40,7 +41,7 @@
     resetBtn: $('resetBtn'), downloadBtn: $('downloadBtn'), previewCard: $('previewCard'),
     previewCanvas: $('previewCanvas'), previewInfo: $('previewInfo'), bgToggleBtn: $('bgToggleBtn'),
     toast: $('toast'), chipsNav: $('chipsNav'),
-    ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'), ctrlCrop: $('ctrlCrop'), ctrlTest: $('ctrlTest'),
+    ctrlWalletkit: $('ctrlWalletkit'), ctrlCompress: $('ctrlCompress'), ctrlCircle: $('ctrlCircle'), ctrlCrop: $('ctrlCrop'), ctrlTest: $('ctrlTest'), ctrlGoldcard: $('ctrlGoldcard'),
     cmpWidth: $('cmpWidth'), cmpWidthVal: $('cmpWidthVal'), cmpSizeEst: $('cmpSizeEst'),
     logoChipsNav: $('logoChipsNav'), logoBadgeCheck: $('logoBadgeCheck'),
     logoGridBadgeGroup: $('logoGridBadgeGroup'), logoScale: $('logoScale'), logoScaleVal: $('logoScaleVal'),
@@ -180,6 +181,7 @@
     APP.dom.ctrlCircle.style.display    = (tab === 'circle')    ? '' : 'none';
     APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
+    APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     // Hide upload zone for test tab, restore for others
     APP.dom.uploadZone.parentNode.style.display = (tab === 'test') ? 'none' : '';
     APP.dom.previewCard.style.background = (tab === 'test') ? '#F1F3F5' : '';
@@ -208,6 +210,7 @@
     if (tab === 'circle' && !s.uploadedImage && APP.logo) APP.logo.showPlaceholder();
     if (tab === 'crop' && !s.uploadedImage && APP.crop) APP.crop.showPlaceholder();
     if (tab === 'test' && APP.test) APP.test.process();
+    if (tab === 'goldcard' && APP.goldcard) APP.goldcard.process();
     if (s.uploadedImage && tab !== 'walletkit') {
       if (tab === 'compress' && APP.compress) APP.compress.process();
       else if (tab === 'circle' && APP.logo) APP.logo.process();

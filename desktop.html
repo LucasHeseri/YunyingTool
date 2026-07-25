@@ -218,6 +218,7 @@ body {
     <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
     <button class="tab-nav__btn" data-tab="crop">裁切卡券</button>
     <button class="tab-nav__btn" data-tab="test">test</button>
+    <button class="tab-nav__btn" data-tab="goldcard">金色卡片</button>
   </nav>
   <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
@@ -370,6 +371,44 @@ body {
           </div>
         </div>
       </div>
+      <div id="ctrlGoldcard" style="display:none;">
+        <div class="control-group">
+          <div class="control-group__label"><span>标题</span></div>
+          <input type="text" id="gcTitle" value="Hello World" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:12px;margin-top:12px;">
+          <div class="control-group">
+            <div class="control-group__label"><span>右上数值</span></div>
+            <input type="text" id="gcTopRight" value="128" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>字段A标签 / 值</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcLabelA" value="Label A" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcValueA" value="1,234" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>字段B标签 / 值</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcLabelB" value="Label B" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcValueB" value="5,678" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>字段C</span></div>
+            <input type="text" id="gcFieldC" value="9,012" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>字段D</span></div>
+            <input type="text" id="gcFieldD" value="3,456" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>字段E</span></div>
+            <input type="text" id="gcFieldE" value="7,890" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="btn-row">
@@ -411,6 +450,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 <script src="./crop-template.js"></script>
 <script src="./crop.js"></script>
 <script src="./test.js"></script>
+<script src="./goldcard.js"></script>
 <script>
 (function () {
   'use strict';
@@ -424,6 +464,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   APP.logo.bindEvents();
   APP.crop.bindEvents();
   APP.test.bindEvents();
+  APP.goldcard.bindEvents();
+  APP.goldcard.init();
 
   // Init WalletKit (load SVGs)
   APP.walletkit.init(function (ok) {
