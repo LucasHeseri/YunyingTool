@@ -98,22 +98,23 @@
     var bg = M.bgColor || '#B97600';
 
     if (M.mode === 'ticket') {
-      // === 门票: 卡身形狀 + 可换色渐变遮罩 ===
-      // All #000111 replaced with selected bg color parameter
+      // === 门票: 可换色渐变遮罩 ===
       var hex = bg.replace('#', '');
       var tc = [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
-      // Use SVG template for card shape mask (with notch)
-      ctx.drawImage(templateImg, 0, 0, W, H);
-      ctx.globalCompositeOperation = 'source-in';
-
-      // Layer 1: #F1F3F5 placeholder background
+      // Card body: rounded rect base
       ctx.fillStyle = '#F1F3F5';
-      ctx.fillRect(0, 0, W, H);
+      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
+      ctx.fill();
       if (ticketMidImg) ctx.drawImage(ticketMidImg, 0, 0, W, 238);
 
-      // Layer 2: Top gradient mask (55px) — using selected color
+      // Clip to card shape for gradient overlays
+      ctx.save();
+      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
+      ctx.clip();
+
+      // Top gradient (55px)
       var topGrad = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
@@ -121,7 +122,7 @@
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, W, 55);
 
-      // Layer 3: Bottom gradient mask (280px) — using selected color
+      // Bottom gradient (280px)
       var btmGrad = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
       btmGrad.addColorStop(0, rgba(0.9));
       btmGrad.addColorStop(0.33, rgba(0.3));
@@ -129,7 +130,7 @@
       ctx.fillStyle = btmGrad;
       ctx.fillRect(0, H - 280, W, 280);
 
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.restore();
     } else {
       // === 登机牌: fill SVG shape with selected bg color ===
       ctx.drawImage(templateImg, 0, 0, W, H);
