@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 python3 << 'PYEOF'
 import re, os
-with open('desktop.html', 'r') as f:
+with open('图片加工工具.html', 'r') as f:
     html = f.read()
 def replace_src(match):
     src = match.group(2)
