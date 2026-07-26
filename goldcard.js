@@ -38,7 +38,7 @@
     ctx.drawImage(templateImg, 0, 0, W, H);
     ctx.textBaseline = 'middle';
 
-    // Title
+    // Title (top area, same as before)
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcTitle'), n('gcTitleX'), n('gcTitleY'));
@@ -50,40 +50,38 @@
     ctx.fillText(v('gcTopRight'), n('gcTopRightX'), n('gcTopRightY'));
     ctx.textAlign = 'start';
 
-    // Boarding info section
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    // Passenger + Flight
-    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcPassenger'), n('gcPassX'), n('gcPassY'));
-    ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcFlight'), n('gcPassX') + 140, n('gcPassY'));
-    // Date + Class
+    // === Flight info at y=72 (Pixso layout, 296px wide) ===
+    var FY = 72;
+    // Row 1: Departure airport (left) / Arrival airport (right) — 12px, 60% white
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcDate'), n('gcDateX'), n('gcDateY'));
-    ctx.fillText(v('gcClass'), n('gcDateX') + 100, n('gcDateY'));
-    // From → To (large)
-    ctx.font = 'bold 26px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcFrom'), n('gcFromX'), n('gcFromY'));
-    ctx.textAlign = 'center';
-    ctx.fillText(v('gcArrow'), n('gcFromX') + 120, n('gcFromY'));
+    ctx.fillText(v('gcDepAirport'), 16, FY + 12);
+    ctx.textAlign = 'right';
+    ctx.fillText(v('gcArrAirport'), 312, FY + 12);
     ctx.textAlign = 'start';
-    ctx.fillText(v('gcTo'), n('gcFromX') + 150, n('gcFromY'));
-    // Gate / Boarding / Seat
-    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
-    var gx = n('gcGateX'), gy = n('gcGateY');
-    ctx.fillText('GATE', gx, gy);
-    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcGate'), gx, gy + 18);
-    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText('BOARDING', gx + 70, gy);
-    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcBoarding'), gx + 70, gy + 18);
-    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText('SEAT', gx + 160, gy);
-    ctx.font = 'bold 18px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcSeat'), gx + 160, gy + 18);
 
-    // Fields A-E: label + value pairs
+    // Row 2: Departure time (left) / Arrival time (right) — 36px Bold, white, 96px gap
+    ctx.fillStyle = 'rgba(255,255,255,1)';
+    ctx.font = '400 36px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcDepTime'), 16, FY + 42);
+    ctx.textAlign = 'right';
+    ctx.fillText(v('gcArrTime'), 312, FY + 42);
+    ctx.textAlign = 'start';
+
+    // Row 3: Date (left) / Flight No (center) / Date (right) — 12px
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcDateL'), 16, FY + 64);
+    ctx.fillStyle = 'rgba(255,255,255,1)';
+    ctx.textAlign = 'center';
+    ctx.fillText(v('gcFlightNo'), 164, FY + 64);
+    ctx.textAlign = 'start';
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.textAlign = 'right';
+    ctx.fillText(v('gcDateR'), 312, FY + 64);
+    ctx.textAlign = 'start';
+
+    // === Data fields A-E ===
     ctx.fillStyle = '#ffffff';
     drawPair(ctx, 'gcLabelA', 'gcValueA', 'gcAX', 'gcAY', '400 11px "HarmonyOS Sans SC",sans-serif', 'bold 18px "HarmonyOS Sans SC",sans-serif');
     drawPair(ctx, 'gcLabelB', 'gcValueB', 'gcBX', 'gcBY', '400 11px "HarmonyOS Sans SC",sans-serif', 'bold 18px "HarmonyOS Sans SC",sans-serif');
@@ -107,10 +105,7 @@
 
   M.bindEvents = function () {
     var ids = ['gcTitle','gcTitleX','gcTitleY','gcTopRight','gcTopRightX','gcTopRightY',
-      'gcPassenger','gcFlight','gcPassX','gcPassY',
-      'gcDate','gcClass','gcDateX','gcDateY',
-      'gcFrom','gcArrow','gcTo','gcFromX','gcFromY',
-      'gcGate','gcBoarding','gcSeat','gcGateX','gcGateY',
+      'gcDepAirport','gcArrAirport','gcDepTime','gcArrTime','gcDateL','gcFlightNo','gcDateR',
       'gcLabelA','gcValueA','gcAX','gcAY','gcLabelB','gcValueB','gcBX','gcBY',
       'gcLabelC','gcValueC','gcCX','gcCY','gcLabelD','gcValueD','gcDX','gcDY',
       'gcLabelE','gcValueE','gcEX','gcEY'];
