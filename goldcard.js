@@ -215,7 +215,7 @@
       });
     }
 
-    // Card background color picker — HarmonyOS colors
+    // Card background color picker — HarmonyOS colors + custom
     var picker = document.getElementById('gcColorPicker');
     if (picker) {
       var colors = [
@@ -229,6 +229,9 @@
         { color: '#F1F3F5', label: '灰' }
       ];
       picker.innerHTML = '';
+      // Color dots
+      var dotsContainer = document.createElement('div');
+      dotsContainer.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;width:100%;';
       colors.forEach(function (c) {
         var dot = document.createElement('span');
         var isWhite = c.color === '#FFFFFF';
@@ -239,12 +242,48 @@
         dot.title = c.label;
         dot.addEventListener('click', function () {
           M.bgColor = c.color;
-          picker.querySelectorAll('span').forEach(function (d) { d.style.outline = ''; });
-          dot.style.outline = '2px solid var(--brand)'; dot.style.outlineOffset = '2px';
+          highlightDot(dot);
           if (APP.state.currentTab === 'goldcard') M.process();
         });
-        picker.appendChild(dot);
+        dotsContainer.appendChild(dot);
       });
+      picker.appendChild(dotsContainer);
+
+      function highlightDot(active) {
+        dotsContainer.querySelectorAll('span').forEach(function (d) { d.style.outline = ''; });
+        if (active) { active.style.outline = '2px solid var(--brand)'; active.style.outlineOffset = '2px'; }
+      }
+
+      // Custom color picker + hex input
+      var customRow = document.createElement('div');
+      customRow.style.cssText = 'display:flex;gap:6px;align-items:center;margin-top:6px;';
+      var nativePicker = document.createElement('input');
+      nativePicker.type = 'color';
+      nativePicker.value = M.bgColor;
+      nativePicker.style.cssText = 'width:28px;height:28px;border:none;cursor:pointer;padding:0;border-radius:4px;';
+      var hexInput = document.createElement('input');
+      hexInput.type = 'text';
+      hexInput.value = M.bgColor;
+      hexInput.placeholder = '#000000';
+      hexInput.style.cssText = 'flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:monospace;';
+
+      function setCustomColor(color) {
+        M.bgColor = color;
+        nativePicker.value = color;
+        hexInput.value = color;
+        highlightDot(null);
+        if (APP.state.currentTab === 'goldcard') M.process();
+      }
+
+      nativePicker.addEventListener('input', function () { setCustomColor(nativePicker.value); });
+      hexInput.addEventListener('change', function () {
+        var val = hexInput.value.trim();
+        if (/^#[0-9a-fA-F]{6}$/.test(val)) setCustomColor(val);
+      });
+
+      customRow.appendChild(nativePicker);
+      customRow.appendChild(hexInput);
+      picker.appendChild(customRow);
     }
 
     // Avatar upload
