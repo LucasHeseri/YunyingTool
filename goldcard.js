@@ -114,21 +114,22 @@
       APP.drawRoundRect(ctx, 0, 0, W, H, 24);
       ctx.clip();
 
-      // Top gradient (55px)
-      var topGrad = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
+      // Top gradient (solid top 28px, then vertical fade y=28→55)
+      var topGrad = ctx.createLinearGradient(0, 28, 0, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
       topGrad.addColorStop(1, rgba(0));
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, W, 55);
 
-      // Bottom gradient (280px)
-      var btmGrad = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
-      btmGrad.addColorStop(0, rgba(0.9));
-      btmGrad.addColorStop(0.33, rgba(0.3));
-      btmGrad.addColorStop(1, rgba(0));
+      // Bottom gradient (concentrated fade at top ~34px, then solid + blur)
+      ctx.filter = 'blur(6px)';
+      var btmGrad = ctx.createLinearGradient(0, H - 264, 0, H - 230);
+      btmGrad.addColorStop(0, rgba(0));
+      btmGrad.addColorStop(1, rgba(0.9));
       ctx.fillStyle = btmGrad;
       ctx.fillRect(0, H - 280, W, 280);
+      ctx.filter = 'none';
 
       ctx.restore();
     } else {
