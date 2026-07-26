@@ -7,14 +7,27 @@
 
   var M = APP.goldcard = {};
   var W = 328, H = 472, S = 2;
-  var templateImg = null, ready = false;
+  var templateImg = null, airplaneImg = null, ready = false;
 
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
-    var img = new Image();
-    img.onload = function () { templateImg = img; ready = true; if (APP.state.currentTab === 'goldcard') M.process(); if (cb) cb(true); };
-    img.onerror = function () { if (cb) cb(false); };
-    img.src = GOLDCARD_TEMPLATE;
+    var loaded = 0, total = 2;
+    function checkDone() {
+      if (loaded >= total) {
+        ready = true;
+        if (APP.state.currentTab === 'goldcard') M.process();
+        if (cb) cb(true);
+      }
+    }
+    var timg = new Image();
+    timg.onload = function () { templateImg = timg; loaded++; checkDone(); };
+    timg.onerror = function () { loaded++; checkDone(); };
+    timg.src = GOLDCARD_TEMPLATE;
+
+    var aimg = new Image();
+    aimg.onload = function () { airplaneImg = aimg; loaded++; checkDone(); };
+    aimg.onerror = function () { loaded++; checkDone(); };
+    aimg.src = typeof AIRPLANE_ICON !== 'undefined' ? AIRPLANE_ICON : '';
   };
   M.isReady = function () { return ready; };
 
@@ -80,6 +93,11 @@
     ctx.textAlign = 'right';
     ctx.fillText(v('gcDateR'), 312, FY + 64);
     ctx.textAlign = 'start';
+
+    // Airplane + dots icon at y=99, centered (74×25, Pixso frame 821_5608)
+    if (airplaneImg) {
+      ctx.drawImage(airplaneImg, 127, 99, 74, 25);
+    }
 
     // === Data fields A-E ===
     ctx.fillStyle = '#ffffff';
