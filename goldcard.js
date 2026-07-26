@@ -65,44 +65,12 @@
 
     var bg = M.bgColor || '#B97600';
 
-    if (M.mode === 'ticket') {
-      // === 门票 template (Pixso frame 1052_27226, 328×472) ===
-      // Shared ticket color — #000111 = rgb(0,1,17)
-      var tc = [0, 1, 17];
-      function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
-
-      // Fill card shape using SVG as clip mask
-      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-      ctx.fillStyle = 'rgb(' + tc.join(',') + ')';
-      ctx.fill();
-
-      // Layer 2: top gradient fade (55px)
-      ctx.save();
-      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-      ctx.clip();
-      var topDark = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
-      topDark.addColorStop(0, rgba(1));
-      topDark.addColorStop(0.47, rgba(0.66));
-      topDark.addColorStop(1, rgba(0));
-      ctx.fillStyle = topDark;
-      ctx.fillRect(0, 0, W, 55);
-
-      // Layer 3: bottom gradient (280px)
-      var btmDark = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
-      btmDark.addColorStop(0, rgba(0.9));
-      btmDark.addColorStop(0.33, rgba(0.3));
-      btmDark.addColorStop(1, rgba(0));
-      ctx.fillStyle = btmDark;
-      ctx.fillRect(0, H - 280, W, 280);
-      ctx.restore();
-    } else {
-      // === 登机牌: fill SVG shape with selected bg color ===
-      ctx.drawImage(templateImg, 0, 0, W, H);
-      ctx.globalCompositeOperation = 'source-in';
-      ctx.fillStyle = bg;
-      ctx.fillRect(0, 0, W, H);
-      ctx.globalCompositeOperation = 'source-over';
-    }
+    // Draw SVG to establish card shape, then fill with bg color
+    ctx.drawImage(templateImg, 0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-in';
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
 
     ctx.textBaseline = 'middle';
 
