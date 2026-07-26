@@ -369,14 +369,25 @@ body {
             <div class="control-group__label"><span>按钮文案</span></div>
             <input type="text" id="testBtnText" value="去申请" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
           </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>导出尺寸</span></div>
+            <div style="display:flex;gap:16px;">
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+                <input type="radio" name="testScale" value="3"> 三倍图
+              </label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+                <input type="radio" name="testScale" value="2" checked> 二倍图
+              </label>
+            </div>
+          </div>
         </div>
       </div>
       <div id="ctrlGoldcard" style="display:none;">
-        <div class="chips-nav" id="gcChipsNav" style="margin-bottom:4px;">
-          <button class="chips-nav__btn active" data-gcmode="boarding">登机牌</button>
-          <button class="chips-nav__btn" data-gcmode="ticket">门票</button>
-        </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
+          <div class="chips-nav" id="gcChipsNav">
+            <button class="chips-nav__btn active" data-gcmode="boarding">登机牌</button>
+            <button class="chips-nav__btn" data-gcmode="ticket">门票</button>
+          </div>
           <!-- ===== 卡片外观 ===== -->
           <div class="control-group">
             <div class="control-group__label"><span>卡片背景色</span></div>

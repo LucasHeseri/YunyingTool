@@ -7,7 +7,11 @@
   if (!window.APP) throw new Error('common.js must load before test.js');
 
   var M = APP.test = {};
-  var SCALE = 2; // render at 2x for retina
+
+  function getScale() {
+    var el = document.querySelector('input[name="testScale"]:checked');
+    return el ? parseInt(el.value, 10) : 2;
+  }
 
   // ========================================================================
   // Default card data
@@ -22,7 +26,7 @@
   // Render card to canvas
   // ========================================================================
   M.process = function () {
-    var s = SCALE;
+    var s = getScale();
     var W = 328, H = 116;
     var c = document.createElement('canvas');
     c.width = W * s; c.height = H * s;
@@ -120,7 +124,7 @@
     cv.style.width  = Math.round(W * s * ds) + 'px';
     cv.style.height = Math.round(H * s * ds) + 'px';
     APP.dom.downloadBtn.disabled = false;
-    APP.dom.previewInfo.textContent = '328×116 卡片模板';
+    APP.dom.previewInfo.textContent = '328×116 @' + s + 'x';
   };
 
   // ========================================================================
@@ -131,6 +135,12 @@
     ids.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function () {
+        if (APP.state.currentTab === 'test') M.process();
+      });
+    });
+    // Scale radios
+    document.querySelectorAll('input[name="testScale"]').forEach(function(r) {
+      r.addEventListener('change', function () {
         if (APP.state.currentTab === 'test') M.process();
       });
     });
