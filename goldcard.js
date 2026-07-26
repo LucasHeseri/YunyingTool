@@ -214,7 +214,7 @@
       // 2 lines → shrink 4px per level, max 2 levels (24→20→16)
       var TY = 244;
       var titleLines = (v('gcTicketTitleTA') || '').split('\n').slice(0, 2);
-      var titleFs = titleLines.length > 1 ? Math.max(16, 24 - (titleLines.length - 1) * 8) : 24;
+      var titleFs = titleLines.length > 1 ? 20 : 24;
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '700 ' + titleFs + 'px "HarmonyOS Sans SC",sans-serif';
       ctx.textAlign = 'center';
