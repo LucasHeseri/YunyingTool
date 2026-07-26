@@ -107,10 +107,12 @@
       var tc = [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
-      // === Draw all ticket layers first ===
+      // === Draw ticket layers ===
+      // Base fill
       ctx.fillStyle = '#F1F3F5';
       ctx.fillRect(0, 0, W, H);
 
+      // Poster image
       if (M.posterImg) {
         var pz = (M.posterZoom || 100) / 100;
         var ph = 238 * pz;
@@ -122,30 +124,40 @@
         ctx.drawImage(ticketMidImg, 0, 0, W, 238);
       }
 
-      // Top: solid portion first (no blur), then transition zone (blur 12px)
+      // Helper: backdrop blur — copy region, blur, draw back
+      function backdropBlur(x, y, w, h, blurPx) {
+        var tc = document.createElement('canvas');
+        tc.width = w * S; tc.height = h * S;
+        var tctx = tc.getContext('2d');
+        tctx.drawImage(c, x * S, y * S, w * S, h * S, 0, 0, w * S, h * S);
+        tctx.filter = 'blur(' + blurPx + 'px)';
+        tctx.drawImage(tc, 0, 0);
+        tctx.filter = 'none';
+        ctx.drawImage(tc, 0, 0, w * S, h * S, x, y, w, h);
+      }
+
+      // Top mask: backdrop-blur the poster underneath, then draw gradient
+      backdropBlur(0, 28, W, 27, 12);
       ctx.fillStyle = rgba(1);
       ctx.fillRect(0, 0, W, 28);
-      ctx.filter = 'blur(12px)';
       var topGrad = ctx.createLinearGradient(0, 28, 0, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
       topGrad.addColorStop(1, rgba(0));
       ctx.fillStyle = topGrad;
-      ctx.fillRect(0, 20, W, 40);
-      ctx.filter = 'none';
+      ctx.fillRect(0, 28, W, 27);
 
-      // Bottom: solid portion first (no blur), then transition zone (blur 12px)
+      // Bottom mask: backdrop-blur the poster underneath, then draw gradient
+      backdropBlur(0, H - 264, W, 34, 12);
       ctx.fillStyle = rgba(0.9);
       ctx.fillRect(0, H - 264 + 34, W, 264 - 34);
-      ctx.filter = 'blur(12px)';
       var btmGrad = ctx.createLinearGradient(0, H - 264, 0, H - 230);
       btmGrad.addColorStop(0, rgba(0));
       btmGrad.addColorStop(1, rgba(0.9));
       ctx.fillStyle = btmGrad;
-      ctx.fillRect(0, H - 280, W, 50);
-      ctx.filter = 'none';
+      ctx.fillRect(0, H - 264, W, 34);
 
-      // Clip to card shape with notch (SVG template via destination-in)
+      // Clip to card shape with notch
       ctx.globalCompositeOperation = 'destination-in';
       ctx.drawImage(templateImg, 0, 0, W, H);
       ctx.globalCompositeOperation = 'source-over';
