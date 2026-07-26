@@ -96,17 +96,89 @@
 
     var bg = M.bgColor || '#B97600';
 
-    // Draw SVG to establish card shape, then fill with bg color
-    ctx.drawImage(templateImg, 0, 0, W, H);
-    ctx.globalCompositeOperation = 'source-in';
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalCompositeOperation = 'source-over';
+    if (M.mode === 'ticket') {
+      // === 门票 template: 三层结构 ===
+      // Shared ticket color — #000111 = rgb(0,1,17)
+      var tc = [0, 1, 17];
+      function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
+
+      // Draw card body: fill rounded rect with #000111, masked by SVG shape
+      ctx.drawImage(templateImg, 0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-in';
+      ctx.fillStyle = 'rgb(' + tc.join(',') + ')';
+      ctx.fillRect(0, 0, W, H);
+
+      // Layer 1: Top gradient blur mask (55px, diagonal fade to transparent)
+      var topGrad = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
+      topGrad.addColorStop(0, rgba(1));
+      topGrad.addColorStop(0.47, rgba(0.66));
+      topGrad.addColorStop(1, rgba(0));
+      ctx.fillStyle = topGrad;
+      ctx.fillRect(0, 0, W, 55);
+
+      // Layer 2: Bottom gradient blur mask (280px, diagonal fade to transparent)
+      var btmGrad = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
+      btmGrad.addColorStop(0, rgba(0.9));
+      btmGrad.addColorStop(0.33, rgba(0.3));
+      btmGrad.addColorStop(1, rgba(0));
+      ctx.fillStyle = btmGrad;
+      ctx.fillRect(0, H - 280, W, 280);
+
+      ctx.globalCompositeOperation = 'source-over';
+    } else {
+      // === 登机牌: fill SVG shape with selected bg color ===
+      ctx.drawImage(templateImg, 0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-in';
+      ctx.fillStyle = bg;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-over';
+    }
 
     ctx.textBaseline = 'middle';
 
-    // Avatar — white circle placeholder at (24,24), 32×32, radius 16
-    ctx.fillStyle = '#FFFFFF';
+    if (M.mode === 'ticket') {
+      // === 门票 content (Pixso frame 1052_27917, centered in middle area) ===
+      // Title — 24px Bold, white, centered
+      ctx.fillStyle = 'rgba(255,255,255,1)';
+      ctx.font = '700 24px "HarmonyOS Sans SC",sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(v('gcTitle'), 164, 86);
+      ctx.textAlign = 'start';
+
+      // Row 1: 座位 (left, x=16) / 时间 (right, x=312)
+      var ty1 = 130;
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
+      ctx.fillText(v('gcPassengerLabel'), 16, ty1);
+      ctx.textAlign = 'right';
+      ctx.fillText(v('gcSeatLabel'), 312, ty1);
+      ctx.textAlign = 'start';
+      ctx.fillStyle = 'rgba(255,255,255,1)';
+      ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
+      drawML(ctx, v('gcPassenger'), 16, ty1 + 22, 20);
+      ctx.textAlign = 'center';
+      drawML(ctx, v('gcSeat'), 164, ty1 + 22, 20);
+      ctx.textAlign = 'start';
+
+      // Row 2: 地点 (left, x=16) / 票价 (right, x=312)
+      var ty2 = 194;
+      ctx.fillStyle = 'rgba(255,255,255,0.6)';
+      ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
+      ctx.fillText(v('gcCabinClassLabel'), 16, ty2);
+      ctx.textAlign = 'right';
+      ctx.fillText(v('gcSeqLabel'), 312, ty2);
+      ctx.textAlign = 'start';
+      ctx.fillStyle = 'rgba(255,255,255,1)';
+      ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
+      drawML(ctx, v('gcCabinClass'), 16, ty2 + 22, 20);
+      ctx.textAlign = 'right';
+      drawML(ctx, v('gcSeq'), 312, ty2 + 22, 20);
+      ctx.textAlign = 'start';
+
+    } else {
+      // === 登机牌 content ===
+      // Avatar — white circle placeholder at (24,24), 32×32, radius 16
+      ctx.fillStyle = '#FFFFFF';
     ctx.beginPath();
     ctx.arc(40, 40, 16, 0, Math.PI * 2);
     ctx.fill();
@@ -211,6 +283,7 @@
     ctx.textAlign = 'right';
     drawML(ctx, v('gcSeq'), 312, PY + 80, 20);
     ctx.textAlign = 'start';
+    } // end boarding content
 
     // QR code — centered at bottom (88×88, y=354)
     if (qrImg) {
@@ -373,5 +446,18 @@
 
     // Capture initial defaults for boarding mode
     M.saveFields();
+
+    // Set ticket mode defaults (different field mappings)
+    M.fields.ticket = {
+      gcTitle: '标题标题',
+      gcGateLabel: '', gcGate: '',
+      gcDepAirport: '', gcArrAirport: '', gcFlightNo: '',
+      gcDepTime: '', gcArrTime: '', gcDateL: '', gcDateR: '',
+      gcPassengerLabel: '座位', gcPassenger: '1号厅4排5号',
+      gcSeatLabel: '时间', gcSeat: '2025/11/29 19:30',
+      gcCabinClassLabel: '地点', gcCabinClass: '深圳坂小华电影城',
+      gcSeqLabel: '票价', gcSeq: '35.00元',
+      gcBoardTimeLabel: '', gcBoardTime: ''
+    };
   };
 })();
