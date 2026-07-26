@@ -48,11 +48,17 @@
     ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcTitle'), n('gcTitleX'), n('gcTitleY'));
 
-    // Top Right
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    // Gate info (top-right: 登机口 label + value, right-aligned, fixed gap)
+    var gateX = n('gcGateX'), gateY = n('gcGateY'), gateVal = v('gcGate');
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillText(v('gcTopRight'), n('gcTopRightX'), n('gcTopRightY'));
+    // Draw value first at right edge
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.fillText(gateVal, gateX, gateY);
+    // Draw "登机口" label to the left with fixed 4px gap
+    var valW = ctx.measureText(gateVal).width;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText('登机口', gateX - valW - 4, gateY);
     ctx.textAlign = 'start';
 
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
@@ -142,7 +148,7 @@
   };
 
   M.bindEvents = function () {
-    var ids = ['gcTitle','gcTitleX','gcTitleY','gcTopRight','gcTopRightX','gcTopRightY',
+    var ids = ['gcTitle','gcTitleX','gcTitleY','gcGate','gcGateX','gcGateY',
       'gcDepAirport','gcArrAirport','gcDepTime','gcArrTime','gcDateL','gcFlightNo','gcDateR',
       'gcPassenger','gcSeat','gcBoardTime','gcCabinClass','gcSeq'];
     ids.forEach(function (id) {
