@@ -223,10 +223,7 @@
         { color: '#0A59F7', label: '蓝' },
         { color: '#E84026', label: '红' },
         { color: '#ED6F21', label: '橙' },
-        { color: '#64BB5C', label: '绿' },
-        { color: '#1A1A1A', label: '黑' },
-        { color: '#FFFFFF', label: '白' },
-        { color: '#F1F3F5', label: '灰' }
+        { color: '#64BB5C', label: '绿' }
       ];
       picker.innerHTML = '';
       picker.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
