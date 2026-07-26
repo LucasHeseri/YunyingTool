@@ -163,8 +163,8 @@
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
       drawML(ctx, v('gcPassenger'), 16, ty1 + 22, 20);
-      ctx.textAlign = 'center';
-      drawML(ctx, v('gcSeat'), 164, ty1 + 22, 20);
+      ctx.textAlign = 'right';
+      drawML(ctx, v('gcSeat'), 312, ty1 + 22, 20);
       ctx.textAlign = 'start';
 
       // Row 2: 地点 (left) / 票价 (right)
