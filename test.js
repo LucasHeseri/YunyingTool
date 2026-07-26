@@ -42,17 +42,17 @@
       vals[k] = el ? el.value : defaults[k];
     });
 
-    // Icon (16×16) — uploaded image or default placeholder
+    // Icon — 16×16 circle, uploaded image or default placeholder
     if (APP.state.uploadedImage) {
       ctx.save();
-      ctx.beginPath(); ctx.roundRect(16, 16, 16, 16, 3); ctx.clip();
+      ctx.beginPath(); ctx.arc(24, 24, 8, 0, Math.PI * 2); ctx.clip();
       ctx.drawImage(APP.state.uploadedImage, 16, 16, 16, 16);
       ctx.restore();
     } else {
       ctx.fillStyle = '#E8F5FF';
-      ctx.beginPath(); ctx.roundRect(16, 16, 16, 16, 3); ctx.fill();
-      ctx.beginPath(); ctx.arc(24, 24, 6, 0, Math.PI * 2); ctx.fillStyle = '#018FF9'; ctx.fill();
-      ctx.fillStyle = '#fff'; ctx.font = 'bold 7px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.beginPath(); ctx.arc(24, 24, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#018FF9'; ctx.font = '400 10px "HarmonyOS Sans SC",sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText('¥', 24, 24); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
     }
 
@@ -77,7 +77,7 @@
 
     // Right description — medium weight
     ctx.fillStyle = '#000000'; ctx.font = '500 14px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(vals.desc, 111, 65);
+    ctx.fillText(vals.desc, 101, 65);
 
     // Tag per Figma: returns width for proper gap calculation
     function drawTag(x, y, text) {
@@ -96,7 +96,7 @@
     }
 
     // Tags grouped from left, 4px gap
-    var tagX = 111, GAP = 4;
+    var tagX = 101, GAP = 4;
     if (vals.tag1) { tagX += drawTag(tagX, 79, vals.tag1) + GAP; }
     if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
 
