@@ -206,13 +206,18 @@
 
     if (M.mode === 'ticket') {
       // === 门票 content (y=224) ===
-      // Title — 24px Bold, white, centered
-      var TY = 224;
+      // Title — 24px Bold, bottom-aligned, extends upward (max 2 lines)
+      var TY = 244;
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '700 24px "HarmonyOS Sans SC",sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(v('gcTicketTitle'), 164, TY);
+      ctx.textBaseline = 'bottom';
+      var titleLines = (v('gcTicketTitle') || '').split('\n').slice(0, 2);
+      for (var ti = titleLines.length - 1; ti >= 0; ti--) {
+        ctx.fillText(titleLines[ti], 164, TY - (titleLines.length - 1 - ti) * 30);
+      }
       ctx.textAlign = 'start';
+      ctx.textBaseline = 'middle';
 
       // Row 1: 座位 (left) / 时间 (right)
       var ty1 = TY + 34; // 16px gap below title
