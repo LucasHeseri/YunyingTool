@@ -226,20 +226,18 @@
       // Helper: find font size that fits all cols with ≥2px gap
       function fitFontSize(txts) {
         var fs = 16;
-        while (fs >= 10) {
+        while (fs >= 14) {
           ctx.font = '400 ' + fs + 'px "HarmonyOS Sans SC",sans-serif';
           var ws = txts.map(function(t) { return ctx.measureText(t || '').width; });
           var leftW = ws[0];
           var ctrHW = ws[1] ? ws[1] / 2 : 0;
           var rightW = ws[2] || 0;
-          // gap between left and center: 164 - (16 + leftW) - ctrHW
-          // gap between center and right: (312 - rightW) - (164 + ctrHW)
           var gap1 = 164 - 16 - leftW - ctrHW;
           var gap2 = 312 - rightW - 164 - ctrHW;
           if (gap1 >= 2 && gap2 >= 2) return fs;
           fs -= 2;
         }
-        return 10;
+        return 14;
       }
 
       // Row 1: left / center(third) / right
