@@ -168,7 +168,7 @@
       ctx.textAlign = 'start';
 
       // Row 2: 地点 (left) / 票价 (right)
-      var ty2 = ty1 + 24; // 14px value offset + 10px gap
+      var ty2 = ty1 + 38; // row height (~28px) + 10px gap
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcCabinClassLabel'), 16, ty2);
