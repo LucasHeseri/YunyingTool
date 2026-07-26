@@ -23,6 +23,8 @@
     'gcTitle','gcGateLabel','gcGate',
     'gcDepAirport','gcArrAirport','gcFlightNo',
     'gcDepTime','gcArrTime','gcDateL','gcDateR','gcTicketTitleTA',
+    'gcTicketPassengerLabel','gcTicketPassenger','gcTicketSeatLabel','gcTicketSeat',
+    'gcTicketCabinLabel','gcTicketCabin','gcTicketPriceLabel','gcTicketPrice',
     'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
     'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'
   ];
@@ -222,30 +224,30 @@
       var ty1 = TY + 34; // 16px gap below title
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-      ctx.fillText(v('gcPassengerLabel'), 16, ty1);
+      ctx.fillText(v('gcTicketPassengerLabel'), 16, ty1);
       ctx.textAlign = 'right';
-      ctx.fillText(v('gcSeatLabel'), 312, ty1);
+      ctx.fillText(v('gcTicketSeatLabel'), 312, ty1);
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-      drawML(ctx, v('gcPassenger'), 16, ty1 + 18, 20);
+      drawML(ctx, v('gcTicketPassenger'), 16, ty1 + 18, 20);
       ctx.textAlign = 'right';
-      drawML(ctx, v('gcSeat'), 312, ty1 + 18, 20);
+      drawML(ctx, v('gcTicketSeat'), 312, ty1 + 18, 20);
       ctx.textAlign = 'start';
 
       // Row 2: 地点 (left) / 票价 (right)
       var ty2 = ty1 + 42; // row (~32px) + 10px gap
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-      ctx.fillText(v('gcCabinClassLabel'), 16, ty2);
+      ctx.fillText(v('gcTicketCabinLabel'), 16, ty2);
       ctx.textAlign = 'right';
-      ctx.fillText(v('gcSeqLabel'), 312, ty2);
+      ctx.fillText(v('gcTicketPriceLabel'), 312, ty2);
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-      drawML(ctx, v('gcCabinClass'), 16, ty2 + 18, 20);
+      drawML(ctx, v('gcTicketCabin'), 16, ty2 + 18, 20);
       ctx.textAlign = 'right';
-      drawML(ctx, v('gcSeq'), 312, ty2 + 18, 20);
+      drawML(ctx, v('gcTicketPrice'), 312, ty2 + 18, 20);
       ctx.textAlign = 'start';
 
     } else {
@@ -389,6 +391,8 @@
     var ids = [
       'gcTitle','gcGateLabel','gcGate',
       'gcDepAirport','gcArrAirport','gcFlightNo','gcTicketTitleTA',
+      'gcTicketPassengerLabel','gcTicketPassenger','gcTicketSeatLabel','gcTicketSeat',
+      'gcTicketCabinLabel','gcTicketCabin','gcTicketPriceLabel','gcTicketPrice',
       'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
       'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
     ids.forEach(function (id) {
@@ -555,10 +559,14 @@
       gcDepAirport: '', gcArrAirport: '', gcFlightNo: '',
       gcDepTime: '', gcArrTime: '', gcDateL: '', gcDateR: '',
       gcTicketTitleTA: '标题标题',
-      gcPassengerLabel: '座位', gcPassenger: '1号厅4排5号',
-      gcSeatLabel: '时间', gcSeat: '2025/11/29 19:30',
-      gcCabinClassLabel: '地点', gcCabinClass: '深圳坂小华电影城',
-      gcSeqLabel: '票价', gcSeq: '35.00元',
+      gcTicketPassengerLabel: '座位', gcTicketPassenger: '1号厅4排5号',
+      gcTicketSeatLabel: '时间', gcTicketSeat: '2025/11/29 19:30',
+      gcTicketCabinLabel: '地点', gcTicketCabin: '深圳坂小华电影城',
+      gcTicketPriceLabel: '票价', gcTicketPrice: '35.00元',
+      gcPassengerLabel: '', gcPassenger: '',
+      gcSeatLabel: '', gcSeat: '',
+      gcCabinClassLabel: '', gcCabinClass: '',
+      gcSeqLabel: '', gcSeq: '',
       gcBoardTimeLabel: '', gcBoardTime: ''
     };
   };
