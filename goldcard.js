@@ -111,10 +111,11 @@
       ctx.fillStyle = '#F1F3F5';
       APP.drawRoundRect(ctx, 0, 0, W, H, 24);
       ctx.fill();
-      // Poster image (uploaded or default placeholder)
+      // Poster image: fit by height, center horizontally
       if (M.posterImg) {
         var pz = (M.posterZoom || 100) / 100;
-        var pw = W * pz, ph = 238 * pz;
+        var ph = 238 * pz;
+        var pw = ph * (M.posterImg.naturalWidth / M.posterImg.naturalHeight);
         var px = (W - pw) / 2 + (M.posterHOff || 0);
         var py = (238 - ph) / 2 + (M.posterVOff || 0);
         ctx.drawImage(M.posterImg, px, py, pw, ph);
@@ -127,13 +128,15 @@
       APP.drawRoundRect(ctx, 0, 0, W, H, 24);
       ctx.clip();
 
-      // Top gradient (solid top 28px, then vertical fade y=28→55)
+      // Top gradient (solid top 28px, vertical fade + blur)
+      ctx.filter = 'blur(4px)';
       var topGrad = ctx.createLinearGradient(0, 28, 0, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
       topGrad.addColorStop(1, rgba(0));
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, W, 55);
+      ctx.filter = 'none';
 
       // Bottom gradient (concentrated fade at top ~34px, then solid + blur)
       ctx.filter = 'blur(6px)';
