@@ -92,6 +92,15 @@ body {
 .chips-nav__btn:hover { border-color: var(--brand); color: var(--brand); }
 .chips-nav__btn.active { background: var(--brand); border-color: var(--brand); color: #fff; }
 
+.logo-btn {
+  padding: 6px 12px; border: 1px solid var(--border); border-radius: 8px;
+  background: var(--bg-card); cursor: pointer; font-size: 13px;
+  font-family: inherit; white-space: nowrap; color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+.logo-btn:hover { border-color: var(--brand); color: var(--brand); background: var(--brand-light); }
+.logo-btn:active { background: rgba(10,89,247,0.1); transform: scale(0.98); }
+
 .upload-zone {
   border: 2px dashed var(--border-upload); border-radius: var(--radius);
   background: var(--bg-upload); padding: 32px 20px; text-align: center;
@@ -342,7 +351,7 @@ body {
             <div class="control-group__label"><span>商户logo</span></div>
             <div style="display:flex;align-items:center;gap:8px;">
               <input type="file" id="testLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
-              <button id="testLogoBtn" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">选择logo</button>
+              <button id="testLogoBtn" class="logo-btn">选择logo</button>
               <span id="testLogoName" style="font-size:11px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">未选择</span>
             </div>
           </div>
@@ -440,7 +449,7 @@ body {
             <div class="control-group__label"><span>商户logo</span></div>
             <div style="display:flex;align-items:center;gap:8px;">
               <input type="file" id="gcAvatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
-              <button id="gcAvatarBtn" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">选择logo</button>
+              <button id="gcAvatarBtn" class="logo-btn">选择logo</button>
               <span id="gcAvatarName" style="font-size:11px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span>
               <input type="range" id="gcAvatarScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);">
               <span id="gcAvatarScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span>
