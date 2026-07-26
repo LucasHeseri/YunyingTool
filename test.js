@@ -61,14 +61,16 @@
       ctx.stroke();
     }
 
-    // Brand | Product name — dynamic left-aligned with 6px gap
+    // Brand | Product name — vertically centered with logo (y=24)
     ctx.fillStyle = '#000000'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(vals.brand, 36, 27);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(vals.brand, 36, 24);
     var brandW = ctx.measureText(vals.brand).width;
     var dividerX = 36 + brandW + 6;
     ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(dividerX, 19, 1, 10);
     ctx.fillStyle = '#000000';
-    ctx.fillText(vals.product, dividerX + 6, 27);
+    ctx.fillText(vals.product, dividerX + 6, 24);
+    ctx.textBaseline = 'alphabetic';
 
     // Right description — original position
     ctx.fillStyle = '#000000'; ctx.font = '500 14px "HarmonyOS Sans SC",sans-serif';
