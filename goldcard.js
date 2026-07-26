@@ -243,14 +243,14 @@
     // Row 3: Date (left) / Flight No (center) / Date (right) — 12px
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcDateL'), 16, FY + 64);
+    ctx.fillText(v('gcDateL'), 16, FY + 68);
     ctx.fillStyle = 'rgba(255,255,255,1)';
     ctx.textAlign = 'center';
-    ctx.fillText(v('gcFlightNo'), 164, FY + 64);
+    ctx.fillText(v('gcFlightNo'), 164, FY + 68);
     ctx.textAlign = 'start';
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.textAlign = 'right';
-    ctx.fillText(v('gcDateR'), 312, FY + 64);
+    ctx.fillText(v('gcDateR'), 312, FY + 68);
     ctx.textAlign = 'start';
 
     // Airplane + dots icon at y=99, centered (74×25, Pixso frame 821_5608)
