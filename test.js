@@ -105,7 +105,7 @@
     if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
 
     // CTA button — solid fill, regular weight white text
-    var btnW = 72, btnH = 28, btnX = 244, btnY = 58, btnR = 14;
+    var btnW = 72, btnH = 28, btnX = 244, btnY = 44, btnR = 14; // vertically centered (116/2 - 28/2)
     ctx.fillStyle = '#F34D4F'; ctx.beginPath(); ctx.roundRect(btnX, btnY, btnW, btnH, btnR); ctx.fill();
     ctx.fillStyle = '#ffffff'; ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
