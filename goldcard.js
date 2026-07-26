@@ -8,6 +8,7 @@
   var M = APP.goldcard = {};
   var W = 328, H = 472, S = 2;
   var templateImg = null, airplaneImg = null, qrImg = null, avatarImg = null, ready = false;
+  M.mode = 'boarding';    // 'boarding' | 'ticket'
   M.bgColor = '#B97600';  // card background color
   M.avatarScale = 0;      // -20 ~ +20 %
 
@@ -196,10 +197,23 @@
     cv.style.width  = Math.round(W * S * ds) + 'px';
     cv.style.height = Math.round(H * S * ds) + 'px';
     APP.dom.downloadBtn.disabled = false;
-    APP.dom.previewInfo.textContent = '328×472 登机牌';
+    APP.dom.previewInfo.textContent = '328×472 ' + (M.mode === 'ticket' ? '门票' : '登机牌');
   };
 
   M.bindEvents = function () {
+    // Chips: 登机牌 / 门票
+    var chipsNav = document.getElementById('gcChipsNav');
+    if (chipsNav) {
+      chipsNav.addEventListener('click', function (e) {
+        var btn = e.target.closest('.chips-nav__btn');
+        if (!btn) return;
+        chipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        M.mode = btn.dataset.gcmode || 'boarding';
+        if (APP.state.currentTab === 'goldcard') M.process();
+      });
+    }
+
     var ids = [
       'gcTitle','gcGateLabel','gcGate',
       'gcDepAirport','gcArrAirport','gcFlightNo',

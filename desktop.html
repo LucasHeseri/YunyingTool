@@ -218,7 +218,7 @@ body {
     <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
     <button class="tab-nav__btn" data-tab="crop">裁切卡券</button>
     <button class="tab-nav__btn" data-tab="test">借贷模板</button>
-    <button class="tab-nav__btn" data-tab="goldcard">登机牌</button>
+    <button class="tab-nav__btn" data-tab="goldcard">票券</button>
   </nav>
   <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
@@ -372,6 +372,10 @@ body {
         </div>
       </div>
       <div id="ctrlGoldcard" style="display:none;">
+        <div class="chips-nav" id="gcChipsNav" style="margin-bottom:4px;">
+          <button class="chips-nav__btn active" data-gcmode="boarding">登机牌</button>
+          <button class="chips-nav__btn" data-gcmode="ticket">门票</button>
+        </div>
         <div style="display:flex;flex-direction:column;gap:24px;">
           <!-- ===== 卡片外观 ===== -->
           <div class="control-group">
