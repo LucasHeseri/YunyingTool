@@ -65,8 +65,8 @@
     ctx.fillStyle = '#000000';
     ctx.fillText(vals.product, dividerX + 6, 27);
 
-    // Main amount
-    ctx.fillStyle = '#F34D4F'; ctx.font = 'bold 20px "HarmonyOS Sans SC",sans-serif';
+    // Main amount — medium weight
+    ctx.fillStyle = '#F34D4F'; ctx.font = '500 20px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.amount, 10, 67);
 
     // Amount label — aligned with tag row (tag y=79, h=14, center=86)
@@ -75,8 +75,8 @@
     ctx.fillText(vals.amountLabel, 11, 86);
     ctx.textBaseline = 'alphabetic';
 
-    // Right description
-    ctx.fillStyle = '#000000'; ctx.font = '14px "HarmonyOS Sans SC",sans-serif';
+    // Right description — medium weight
+    ctx.fillStyle = '#000000'; ctx.font = '500 14px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.desc, 111, 65);
 
     // Tag per Figma: returns width for proper gap calculation
@@ -100,11 +100,10 @@
     if (vals.tag1) { tagX += drawTag(tagX, 79, vals.tag1) + GAP; }
     if (vals.tag2) { drawTag(tagX, 79, vals.tag2); }
 
-    // CTA button — per Figma: red outer, white inner 1px inset, white centered text
+    // CTA button — solid fill, regular weight white text
     var btnW = 72, btnH = 28, btnX = 244, btnY = 58, btnR = 14;
     ctx.fillStyle = '#F34D4F'; ctx.beginPath(); ctx.roundRect(btnX, btnY, btnW, btnH, btnR); ctx.fill();
-    ctx.fillStyle = 'rgba(255,255,255,0.2)'; ctx.beginPath(); ctx.roundRect(btnX+1, btnY+1, btnW-2, btnH-2, btnR-1); ctx.fill();
-    ctx.fillStyle = '#ffffff'; ctx.font = '14px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillStyle = '#ffffff'; ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText(vals.btnText, btnX + btnW / 2, btnY + btnH / 2 + 1);
     ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
