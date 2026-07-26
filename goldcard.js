@@ -71,10 +71,15 @@
       var tc = [0, 1, 17];
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
-      // Draw all layers first (full canvas)
+      // Fill card shape using SVG as clip mask
+      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
       ctx.fillStyle = 'rgb(' + tc.join(',') + ')';
-      ctx.fillRect(0, 0, W, H);
+      ctx.fill();
 
+      // Layer 2: top gradient fade (55px)
+      ctx.save();
+      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
+      ctx.clip();
       var topDark = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
       topDark.addColorStop(0, rgba(1));
       topDark.addColorStop(0.47, rgba(0.66));
@@ -82,17 +87,14 @@
       ctx.fillStyle = topDark;
       ctx.fillRect(0, 0, W, 55);
 
+      // Layer 3: bottom gradient (280px)
       var btmDark = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
       btmDark.addColorStop(0, rgba(0.9));
       btmDark.addColorStop(0.33, rgba(0.3));
       btmDark.addColorStop(1, rgba(0));
       ctx.fillStyle = btmDark;
       ctx.fillRect(0, H - 280, W, 280);
-
-      // Clip to card shape using destination-in with SVG mask
-      ctx.globalCompositeOperation = 'destination-in';
-      ctx.drawImage(templateImg, 0, 0, W, H);
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.restore();
     } else {
       // === 登机牌: fill SVG shape with selected bg color ===
       ctx.drawImage(templateImg, 0, 0, W, H);
