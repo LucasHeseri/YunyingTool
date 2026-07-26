@@ -86,7 +86,7 @@
     // Tag per Figma: returns width for proper gap calculation
     function drawTag(x, y, text) {
       var padH = 4, tagH = 14, tagR = 4;
-      ctx.font = '10px "HarmonyOS Sans SC",sans-serif';
+      ctx.font = '400 9px "HarmonyOS Sans SC",sans-serif';
       var textW = ctx.measureText(text).width;
       var tw = textW + padH * 2;
       // 10% opacity orange bg, no border
