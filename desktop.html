@@ -393,29 +393,26 @@ body {
             </div>
           </div>
           <div class="control-group">
-            <div class="control-group__label"><span>左上方标题</span></div>
-            <input type="text" id="gcTitle" value="中国国际航空公司" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-          </div>
-          <div class="control-group">
-            <div class="control-group__label"><span>登机口 标签 / 值</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcGateLabel" value="登机口" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcGate" value="08" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div class="control-group__label"><span>左上方标题 / 登机口</span></div>
+            <div style="display:flex;gap:8px;">
+              <input type="text" id="gcTitle" value="中国国际航空公司" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcGateLabel" value="登机口" style="width:60px;padding:6px 4px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
+              <input type="text" id="gcGate" value="08" style="width:48px;padding:6px 4px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
             </div>
           </div>
           <!-- Flight info (Pixso: y=72, 296px wide) -->
           <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">航班信息（y:72~130, 296px宽）</div>
           <div class="control-group">
-            <div class="control-group__label"><span>出发机场 / 到达机场</span></div>
+            <div class="control-group__label"><span>出发机场 / 到达机场 / 航班号</span></div>
             <div style="display:flex;gap:6px;">
               <input type="text" id="gcDepAirport" value="北京首都机场T3" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
               <input type="text" id="gcArrAirport" value="深圳宝安机场T3" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcFlightNo" value="CA888" style="width:80px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
             </div>
           </div>
           <input type="hidden" id="gcDepTime" value="20:15">
           <input type="hidden" id="gcArrTime" value="23:40">
           <input type="hidden" id="gcDateL" value="20XX/0X/XX">
-          <input type="hidden" id="gcFlightNo" value="CA888">
           <input type="hidden" id="gcDateR" value="20XX/0X/XX">
           <div class="control-group">
             <div class="control-group__label"><span>第一行信息（20px）</span></div>

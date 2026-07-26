@@ -194,7 +194,7 @@
   M.bindEvents = function () {
     var ids = [
       'gcTitle','gcGateLabel','gcGate',
-      'gcDepAirport','gcArrAirport',
+      'gcDepAirport','gcArrAirport','gcFlightNo',
       'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
       'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
     ids.forEach(function (id) {
