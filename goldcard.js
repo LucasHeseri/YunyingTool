@@ -150,12 +150,12 @@
       // Bottom mask: starts at y=208 (H-264), 100% at y=472, fade zone y=208-242
       var btmStart = H - 264; // y=208
       var btmFadeEnd = btmStart + 34; // y=242
-      ctx.fillStyle = rgba(0.9);
+      ctx.fillStyle = rgba(1);
       ctx.fillRect(0, btmFadeEnd, W, H - btmFadeEnd);
       backdropBlur(0, btmStart - 6, W, 46, 12);
       var btmGrad = ctx.createLinearGradient(0, btmStart, 0, btmFadeEnd);
       btmGrad.addColorStop(0, rgba(0));
-      btmGrad.addColorStop(1, rgba(0.9));
+      btmGrad.addColorStop(1, rgba(1));
       ctx.fillStyle = btmGrad;
       ctx.fillRect(0, btmStart, W, 34);
 
