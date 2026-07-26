@@ -164,7 +164,7 @@
             var img = new Image();
             img.onload = function () { APP.state.uploadedImage = img; M.process(); };
             img.src = e.target.result;
-            if (logoName) logoName.textContent = file.name;
+            if (logoName) { logoName.textContent = file.name; logoName.style.color = 'var(--text-primary)'; logoName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file);
           logoInput.value = '';

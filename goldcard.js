@@ -110,8 +110,8 @@
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
       // === Draw ticket layers ===
-      // Base fill
-      ctx.fillStyle = '#F1F3F5';
+      // Base fill: card bg color fills poster area underneath uploaded image
+      ctx.fillStyle = bg;
       ctx.fillRect(0, 0, W, H);
 
       // Poster image
@@ -506,7 +506,7 @@
           var reader = new FileReader();
           reader.onload = function (e) {
             M.setAvatar(e.target.result);
-            if (avatarName) avatarName.textContent = file.name;
+            if (avatarName) { avatarName.textContent = file.name; avatarName.style.color = 'var(--text-primary)'; avatarName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file);
           avatarInput.value = '';
@@ -530,7 +530,7 @@
             var img = new Image();
             img.onload = function () { M.posterImg = img; M.process(); };
             img.src = e.target.result;
-            if (posterName) posterName.textContent = file.name;
+            if (posterName) { posterName.textContent = file.name; posterName.style.color = 'var(--text-primary)'; posterName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file);
           posterInput.value = '';
