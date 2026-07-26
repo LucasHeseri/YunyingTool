@@ -240,13 +240,16 @@
         return 14;
       }
 
+      // Determine shared font size across all rows
+      var hasThird1 = !!(v('gcTicketR1C3Label') || v('gcTicketR1C3'));
+      var hasThird2 = !!(v('gcTicketR2C3Label') || v('gcTicketR2C3'));
+      var allTxts = [];
+      if (hasThird1) allTxts.push(v('gcTicketPassenger'), v('gcTicketR1C3'), v('gcTicketSeat'));
+      if (hasThird2) allTxts.push(v('gcTicketCabin'), v('gcTicketR2C3'), v('gcTicketPrice'));
+      var sharedFs = allTxts.length ? fitFontSize(allTxts) : 16;
+
       // Row 1: left / center(third) / right
       var ty1 = TY + 34;
-      var hasThird1 = !!(v('gcTicketR1C3Label') || v('gcTicketR1C3'));
-      var txts1 = hasThird1
-        ? [v('gcTicketPassenger'), v('gcTicketR1C3'), v('gcTicketSeat')]
-        : [v('gcTicketPassenger'), null, v('gcTicketSeat')];
-      var fs1 = fitFontSize(txts1);
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcTicketPassengerLabel'), 16, ty1);
@@ -254,8 +257,8 @@
       ctx.fillText(v('gcTicketSeatLabel'), 312, ty1);
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
-      ctx.font = '400 ' + fs1 + 'px "HarmonyOS Sans SC",sans-serif';
-      var r1lh = fs1 * 1.25;
+      ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
+      var r1lh = sharedFs * 1.25;
       drawML(ctx, v('gcTicketPassenger'), 16, ty1 + 18, r1lh);
       ctx.textAlign = 'right';
       drawML(ctx, v('gcTicketSeat'), 312, ty1 + 18, r1lh);
@@ -265,18 +268,13 @@
         ctx.textAlign = 'center';
         ctx.fillText(v('gcTicketR1C3Label'), 164, ty1);
         ctx.fillStyle = 'rgba(255,255,255,1)';
-        ctx.font = '400 ' + fs1 + 'px "HarmonyOS Sans SC",sans-serif';
+        ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
         drawML(ctx, v('gcTicketR1C3'), 164, ty1 + 18, r1lh);
       }
       ctx.textAlign = 'start';
 
       // Row 2: left / center(third) / right
       var ty2 = ty1 + 42;
-      var hasThird2 = !!(v('gcTicketR2C3Label') || v('gcTicketR2C3'));
-      var txts2 = hasThird2
-        ? [v('gcTicketCabin'), v('gcTicketR2C3'), v('gcTicketPrice')]
-        : [v('gcTicketCabin'), null, v('gcTicketPrice')];
-      var fs2 = fitFontSize(txts2);
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcTicketCabinLabel'), 16, ty2);
@@ -284,8 +282,8 @@
       ctx.fillText(v('gcTicketPriceLabel'), 312, ty2);
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
-      ctx.font = '400 ' + fs2 + 'px "HarmonyOS Sans SC",sans-serif';
-      var r2lh = fs2 * 1.25;
+      ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
+      var r2lh = sharedFs * 1.25;
       drawML(ctx, v('gcTicketCabin'), 16, ty2 + 18, r2lh);
       ctx.textAlign = 'right';
       drawML(ctx, v('gcTicketPrice'), 312, ty2 + 18, r2lh);
@@ -295,7 +293,7 @@
         ctx.textAlign = 'center';
         ctx.fillText(v('gcTicketR2C3Label'), 164, ty2);
         ctx.fillStyle = 'rgba(255,255,255,1)';
-        ctx.font = '400 ' + fs2 + 'px "HarmonyOS Sans SC",sans-serif';
+        ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
         drawML(ctx, v('gcTicketR2C3'), 164, ty2 + 18, r2lh);
       }
       ctx.textAlign = 'start';

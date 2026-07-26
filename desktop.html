@@ -352,7 +352,7 @@ body {
             <div style="display:flex;align-items:center;gap:8px;">
               <input type="file" id="testLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
               <button id="testLogoBtn" class="logo-btn">选择logo</button>
-              <span id="testLogoName" style="font-size:11px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">未选择</span>
+              <span id="testLogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">未选择</span>
             </div>
           </div>
           <!-- 品牌名 + 产品名 -->
@@ -431,7 +431,7 @@ body {
           <div class="control-group">
             <div class="control-group__label"><span>卡片背景色</span></div>
             <div id="gcColorPicker" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-            <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px;">取色工具参考：<a href="https://photokit.com/colors/eyedropper/?lang=zh" target="_blank" style="color:var(--brand);text-decoration:none;">photokit.com</a></div>
+            <div style="font-size:11px;margin-top:2px;">取色工具参考：<a href="https://photokit.com/colors/eyedropper/?lang=zh" target="_blank" style="color:var(--brand);text-decoration:none;">photokit.com</a></div>
           </div>
 
           <!-- ===== 顶部区域 ===== -->
@@ -450,7 +450,7 @@ body {
             <div style="display:flex;align-items:center;gap:8px;">
               <input type="file" id="gcAvatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
               <button id="gcAvatarBtn" class="logo-btn">选择logo</button>
-              <span id="gcAvatarName" style="font-size:11px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span>
+              <span id="gcAvatarName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span>
               <input type="range" id="gcAvatarScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);">
               <span id="gcAvatarScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span>
             </div>
@@ -462,14 +462,14 @@ body {
             <div style="display:flex;align-items:center;gap:8px;">
               <input type="file" id="gcPosterInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
               <button id="gcPosterBtn" class="logo-btn">选择图片</button>
-              <span id="gcPosterName" style="font-size:11px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60px;">未选择</span>
-              <span style="font-size:11px;color:var(--text-tertiary);white-space:nowrap;">缩放</span>
+              <span id="gcPosterName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60px;">未选择</span>
+              <span style="font-size:11px;white-space:nowrap;">缩放</span>
               <input type="range" id="gcPosterZoom" min="80" max="120" value="100" step="1" style="flex:1;min-width:50px;accent-color:var(--brand);">
               <span id="gcPosterZoomVal" style="font-size:11px;color:var(--text-secondary);min-width:28px;text-align:right;">100%</span>
-              <span style="font-size:11px;color:var(--text-tertiary);white-space:nowrap;">横移</span>
+              <span style="font-size:11px;white-space:nowrap;">横移</span>
               <input type="range" id="gcPosterHOff" min="-50" max="50" value="0" step="1" style="flex:1;min-width:40px;accent-color:var(--brand);">
               <span id="gcPosterHOffVal" style="font-size:11px;color:var(--text-secondary);min-width:18px;text-align:right;">0</span>
-              <span style="font-size:11px;color:var(--text-tertiary);white-space:nowrap;">竖移</span>
+              <span style="font-size:11px;white-space:nowrap;">竖移</span>
               <input type="range" id="gcPosterVOff" min="-50" max="50" value="0" step="1" style="flex:1;min-width:40px;accent-color:var(--brand);">
               <span id="gcPosterVOffVal" style="font-size:11px;color:var(--text-secondary);min-width:18px;text-align:right;">0</span>
             </div>
@@ -500,11 +500,11 @@ body {
                 <div style="flex:1;display:flex;gap:6px;">
                   <div style="width:64px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
                     <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">标签</span>
-                    <input type="text" id="gcTicketR1C3Label" placeholder="填写第三组" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;color:var(--text-tertiary);">
+                    <input type="text" id="gcTicketR1C3Label" placeholder="填写第三组" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;">
                   </div>
                   <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0;">
                     <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">内容</span>
-                    <input type="text" id="gcTicketR1C3" placeholder="填写第三组" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;color:var(--text-tertiary);">
+                    <input type="text" id="gcTicketR1C3" placeholder="填写第三组" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
                   </div>
                 </div>
                 <div style="flex:1;display:flex;gap:6px;">
@@ -537,11 +537,11 @@ body {
                 <div style="flex:1;display:flex;gap:6px;">
                   <div style="width:64px;display:flex;flex-direction:column;gap:4px;flex-shrink:0;">
                     <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">标签</span>
-                    <input type="text" id="gcTicketR2C3Label" placeholder="填写第三组" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;color:var(--text-tertiary);">
+                    <input type="text" id="gcTicketR2C3Label" placeholder="填写第三组" style="width:100%;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;">
                   </div>
                   <div style="flex:1;display:flex;flex-direction:column;gap:4px;min-width:0;">
                     <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">内容</span>
-                    <input type="text" id="gcTicketR2C3" placeholder="填写第三组" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;color:var(--text-tertiary);">
+                    <input type="text" id="gcTicketR2C3" placeholder="填写第三组" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
                   </div>
                 </div>
                 <div style="flex:1;display:flex;gap:6px;">
