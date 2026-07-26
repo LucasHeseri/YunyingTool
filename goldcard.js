@@ -51,9 +51,13 @@
 
     // Cover SVG text/graphics in top area (y:0~68) with card gold color
     ctx.fillStyle = '#B97600';
-    ctx.fillRect(24, 0, 280, 68);
+    ctx.fillRect(0, 0, 328, 68);
 
-    // Avatar — 32×32 circle at (24, 24), center (40, 40), radius 16
+    // Avatar — white circle placeholder at (24,24), 32×32, radius 16
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(40, 40, 16, 0, Math.PI * 2);
+    ctx.fill();
     if (avatarImg) {
       ctx.save();
       ctx.beginPath();
@@ -64,9 +68,9 @@
       ctx.restore();
     }
 
-    // Title (top-left, e.g. airline name)
+    // Title (top-left, e.g. airline name) — 16px
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
+    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcTitle'), n('gcTitleX'), n('gcTitleY'));
 
     // Gate info (top-right: 登机口 label + value, right-aligned, fixed gap)
