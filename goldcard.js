@@ -223,10 +223,32 @@
       ctx.textAlign = 'start';
       ctx.textBaseline = 'middle';
 
-      // Row 1: left / center(third) / right — 3 cols → scale font down
+      // Helper: find font size that fits all cols with ≥2px gap
+      function fitFontSize(txts) {
+        var fs = 16;
+        while (fs >= 10) {
+          ctx.font = '400 ' + fs + 'px "HarmonyOS Sans SC",sans-serif';
+          var ws = txts.map(function(t) { return ctx.measureText(t || '').width; });
+          var leftW = ws[0];
+          var ctrHW = ws[1] ? ws[1] / 2 : 0;
+          var rightW = ws[2] || 0;
+          // gap between left and center: 164 - (16 + leftW) - ctrHW
+          // gap between center and right: (312 - rightW) - (164 + ctrHW)
+          var gap1 = 164 - 16 - leftW - ctrHW;
+          var gap2 = 312 - rightW - 164 - ctrHW;
+          if (gap1 >= 2 && gap2 >= 2) return fs;
+          fs -= 2;
+        }
+        return 10;
+      }
+
+      // Row 1: left / center(third) / right
       var ty1 = TY + 34;
       var hasThird1 = !!(v('gcTicketR1C3Label') || v('gcTicketR1C3'));
-      var fs1 = hasThird1 ? 14 : 16;
+      var txts1 = hasThird1
+        ? [v('gcTicketPassenger'), v('gcTicketR1C3'), v('gcTicketSeat')]
+        : [v('gcTicketPassenger'), null, v('gcTicketSeat')];
+      var fs1 = fitFontSize(txts1);
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcTicketPassengerLabel'), 16, ty1);
@@ -253,7 +275,10 @@
       // Row 2: left / center(third) / right
       var ty2 = ty1 + 42;
       var hasThird2 = !!(v('gcTicketR2C3Label') || v('gcTicketR2C3'));
-      var fs2 = hasThird2 ? 14 : 16;
+      var txts2 = hasThird2
+        ? [v('gcTicketCabin'), v('gcTicketR2C3'), v('gcTicketPrice')]
+        : [v('gcTicketCabin'), null, v('gcTicketPrice')];
+      var fs2 = fitFontSize(txts2);
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcTicketCabinLabel'), 16, ty2);
