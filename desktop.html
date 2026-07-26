@@ -397,8 +397,11 @@ body {
             <input type="text" id="gcTitle" value="中国国际航空公司" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
           </div>
           <div class="control-group">
-            <div class="control-group__label"><span>登机口</span></div>
-            <input type="text" id="gcGate" value="08" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div class="control-group__label"><span>登机口 标签 / 值</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcGateLabel" value="登机口" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcGate" value="08" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            </div>
           </div>
           <!-- Flight info (Pixso: y=72, 296px wide) -->
           <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">航班信息（y:72~130, 296px宽）</div>
@@ -412,16 +415,16 @@ body {
           <div class="control-group">
             <div class="control-group__label"><span>出发时间 / 到达时间</span></div>
             <div style="display:flex;gap:6px;">
-              <input type="text" id="gcDepTime" value="20:15" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcArrTime" value="23:40" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcDepTime" value="20:15" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
+              <input type="text" id="gcArrTime" value="23:40" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
             </div>
           </div>
           <div class="control-group">
             <div class="control-group__label"><span>日期 / 航班号 / 日期</span></div>
             <div style="display:flex;gap:6px;">
-              <input type="text" id="gcDateL" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcFlightNo" value="CA888" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcDateR" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcDateL" value="20XX/0X/XX" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
+              <input type="text" id="gcFlightNo" value="CA888" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
+              <input type="text" id="gcDateR" value="20XX/0X/XX" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
             </div>
           </div>
           <!-- Passenger info (Pixso frame 1048_19: y=174, 296×88) -->

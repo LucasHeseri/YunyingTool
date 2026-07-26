@@ -97,7 +97,7 @@
     ctx.fillText(gateVal, gateX, gateY);
     var valW = ctx.measureText(gateVal).width;
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.fillText('登机口', gateX - valW - 4, gateY);
+    ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
     ctx.textAlign = 'start';
 
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
@@ -193,8 +193,8 @@
 
   M.bindEvents = function () {
     var ids = [
-      'gcTitle','gcGate',
-      'gcDepAirport','gcArrAirport','gcDepTime','gcArrTime','gcDateL','gcFlightNo','gcDateR',
+      'gcTitle','gcGateLabel','gcGate',
+      'gcDepAirport','gcArrAirport',
       'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
       'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
     ids.forEach(function (id) {
