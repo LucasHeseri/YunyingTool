@@ -216,6 +216,7 @@
       ctx.textBaseline = 'bottom';
       var titleLines = (v('gcTicketTitleTA') || '').split('\n').slice(0, 2);
       for (var ti = titleLines.length - 1; ti >= 0; ti--) {
+        ctx.fillText(titleLines[ti], 164, TY - (titleLines.length - 1 - ti) * 30);
       }
       ctx.textAlign = 'start';
       ctx.textBaseline = 'middle';
