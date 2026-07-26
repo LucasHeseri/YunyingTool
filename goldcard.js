@@ -107,11 +107,14 @@
       var tc = [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
-      // Card body: rounded rect base
-      ctx.fillStyle = '#F1F3F5';
+      // Card body + poster image, clipped to card shape
+      ctx.save();
       APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-      ctx.fill();
-      // Poster image: fit by height, center horizontally
+      ctx.clip();
+
+      ctx.fillStyle = '#F1F3F5';
+      ctx.fillRect(0, 0, W, H);
+
       if (M.posterImg) {
         var pz = (M.posterZoom || 100) / 100;
         var ph = 238 * pz;
@@ -123,13 +126,8 @@
         ctx.drawImage(ticketMidImg, 0, 0, W, 238);
       }
 
-      // Clip to card shape for gradient overlays
-      ctx.save();
-      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-      ctx.clip();
-
-      // Top gradient (solid top 28px, vertical fade + blur)
-      ctx.filter = 'blur(4px)';
+      // Top gradient (blur 12px)
+      ctx.filter = 'blur(12px)';
       var topGrad = ctx.createLinearGradient(0, 28, 0, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
@@ -138,8 +136,8 @@
       ctx.fillRect(0, 0, W, 55);
       ctx.filter = 'none';
 
-      // Bottom gradient (concentrated fade at top ~34px, then solid + blur)
-      ctx.filter = 'blur(6px)';
+      // Bottom gradient (blur 12px)
+      ctx.filter = 'blur(12px)';
       var btmGrad = ctx.createLinearGradient(0, H - 264, 0, H - 230);
       btmGrad.addColorStop(0, rgba(0));
       btmGrad.addColorStop(1, rgba(0.9));
