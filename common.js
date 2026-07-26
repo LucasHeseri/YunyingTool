@@ -101,6 +101,7 @@
         else if (s.currentTab === 'compress') { if (APP.compress) APP.compress.process(); }
         else if (s.currentTab === 'circle') { if (APP.logo) APP.logo.process(); }
         else if (s.currentTab === 'crop') { if (APP.crop) APP.crop.process(); }
+        else if (s.currentTab === 'test') { if (APP.test) APP.test.process(); }
       };
       img.onerror = function () { APP.showError('图片加载失败，请重试'); };
       img.src = e.target.result;
@@ -183,8 +184,15 @@
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
-    // Hide upload zone for test tab, restore for others
     APP.dom.uploadZone.parentNode.style.display = (tab === 'goldcard') ? 'none' : '';
+    // Test tab: change upload zone to vertical layout with title
+    var uploadText = APP.dom.uploadZone.querySelector('.upload-zone__text');
+    if (uploadText) {
+      uploadText.innerHTML = (tab === 'test') ? '<strong>替换logo</strong>' : '点击<strong>上传图片</strong>';
+    }
+    var uploadTitle = document.getElementById('uploadTitle');
+    if (uploadTitle) uploadTitle.style.display = (tab === 'test') ? '' : 'none';
+    APP.dom.uploadZone.style.flexDirection = (tab === 'test') ? 'column' : '';
     APP.dom.previewCard.style.background = (tab === 'test') ? '#F1F3F5' : '';
     // Only logo tab shows 去背景
     APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';
