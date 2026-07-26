@@ -211,14 +211,16 @@
     if (M.mode === 'ticket') {
       // === 门票 content (y=224) ===
       // Title — 24px Bold, bottom-aligned, extends upward (max 2 lines)
+      // 2 lines → shrink 4px per level, max 2 levels (24→20→16)
       var TY = 244;
+      var titleLines = (v('gcTicketTitleTA') || '').split('\n').slice(0, 2);
+      var titleFs = titleLines.length > 1 ? Math.max(16, 24 - (titleLines.length - 1) * 8) : 24;
       ctx.fillStyle = 'rgba(255,255,255,1)';
-      ctx.font = '700 24px "HarmonyOS Sans SC",sans-serif';
+      ctx.font = '700 ' + titleFs + 'px "HarmonyOS Sans SC",sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      var titleLines = (v('gcTicketTitleTA') || '').split('\n').slice(0, 2);
       for (var ti = titleLines.length - 1; ti >= 0; ti--) {
-        ctx.fillText(titleLines[ti], 164, TY - (titleLines.length - 1 - ti) * 30);
+        ctx.fillText(titleLines[ti], 164, TY - (titleLines.length - 1 - ti) * (titleFs * 1.25));
       }
       ctx.textAlign = 'start';
       ctx.textBaseline = 'middle';
@@ -240,13 +242,12 @@
         return 14;
       }
 
-      // Determine shared font size across all rows
+      // Determine shared font size: measure each row, take minimum
       var hasThird1 = !!(v('gcTicketR1C3Label') || v('gcTicketR1C3'));
       var hasThird2 = !!(v('gcTicketR2C3Label') || v('gcTicketR2C3'));
-      var allTxts = [];
-      if (hasThird1) allTxts.push(v('gcTicketPassenger'), v('gcTicketR1C3'), v('gcTicketSeat'));
-      if (hasThird2) allTxts.push(v('gcTicketCabin'), v('gcTicketR2C3'), v('gcTicketPrice'));
-      var sharedFs = allTxts.length ? fitFontSize(allTxts) : 16;
+      var sharedFs = 16;
+      if (hasThird1) sharedFs = Math.min(sharedFs, fitFontSize([v('gcTicketPassenger'), v('gcTicketR1C3'), v('gcTicketSeat')]));
+      if (hasThird2) sharedFs = Math.min(sharedFs, fitFontSize([v('gcTicketCabin'), v('gcTicketR2C3'), v('gcTicketPrice')]));
 
       // Row 1: left / center(third) / right
       var ty1 = TY + 34;
