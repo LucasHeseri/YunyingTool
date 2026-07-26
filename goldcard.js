@@ -375,13 +375,12 @@
         M.loadFields();
         // Toggle mode-specific control sections
         var showTicket = M.mode === 'ticket';
-        ['gcPosterGroup'].forEach(function(id) {
-          var el = document.getElementById(id); if (el) el.style.display = showTicket ? '' : 'none';
-        });
+        var pg = document.getElementById('gcPosterGroup');
+        if (pg) pg.style.display = showTicket ? '' : 'none';
         var tc = document.getElementById('gcTicketContent');
         if (tc) tc.style.display = showTicket ? 'flex' : 'none';
         ['gcBoardingInfo','gcPassengerGroup'].forEach(function(id) {
-          var el = document.getElementById(id); if (el) el.style.display = showTicket ? 'none' : '';
+          var el = document.getElementById(id); if (el) el.style.display = showTicket ? 'none' : 'flex';
         });
         if (APP.state.currentTab === 'goldcard') M.process();
       });
