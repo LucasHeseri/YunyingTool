@@ -12,6 +12,37 @@
   M.bgColor = '#B97600';  // card background color
   M.avatarScale = 0;      // -20 ~ +20 %
 
+  // === Per-mode field data (独立存储) ===
+  var FIELD_IDS = [
+    'gcTitle','gcGateLabel','gcGate',
+    'gcDepAirport','gcArrAirport','gcFlightNo',
+    'gcDepTime','gcArrTime','gcDateL','gcDateR',
+    'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
+    'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'
+  ];
+  M.fields = {
+    boarding: {},
+    ticket: {}
+  };
+
+  // Save current input values into mode's data store
+  M.saveFields = function () {
+    var data = M.fields[M.mode] || {};
+    FIELD_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+  };
+
+  // Load mode's data into input elements
+  M.loadFields = function () {
+    var data = M.fields[M.mode] || {};
+    FIELD_IDS.forEach(function (id) {
+      var el = document.getElementById(id);
+      if (el && data[id] !== undefined) el.value = data[id];
+    });
+  };
+
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
     var loaded = 0, total = 3;
@@ -209,7 +240,9 @@
         if (!btn) return;
         chipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
         btn.classList.add('active');
+        M.saveFields();
         M.mode = btn.dataset.gcmode || 'boarding';
+        M.loadFields();
         if (APP.state.currentTab === 'goldcard') M.process();
       });
     }
@@ -337,5 +370,8 @@
         }
       });
     }
+
+    // Capture initial defaults for boarding mode
+    M.saveFields();
   };
 })();
