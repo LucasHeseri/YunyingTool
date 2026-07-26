@@ -54,26 +54,20 @@
     var ctx = c.getContext('2d');
     ctx.scale(S, S);
 
-    // Fill entire card background with selected color (rounded rect)
     var bg = M.bgColor || '#B97600';
-    ctx.fillStyle = bg;
-    APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-    ctx.fill();
-
     ctx.drawImage(templateImg, 0, 0, W, H);
 
-    // Recolor card body with selected color using color blend
+    // Recolor card body (gold → selected color) via color blend
     ctx.globalCompositeOperation = 'color';
     ctx.fillStyle = bg;
     ctx.fillRect(0, 0, W, H);
     ctx.globalCompositeOperation = 'source-over';
 
-    ctx.textBaseline = 'middle';
-
-    // Cover text/graphics in title and gate areas with card bg color
+    // Cover old QR / bottom graphic so new QR replaces it cleanly
     ctx.fillStyle = bg;
-    ctx.fillRect(56, 14, 200, 44);   // title text area
-    ctx.fillRect(240, 14, 64, 44);   // gate text area (x:240-304, stays clear of right corner)
+    ctx.fillRect(80, 344, 168, 110);
+
+    ctx.textBaseline = 'middle';
 
     // Avatar — white circle placeholder at (24,24), 32×32, radius 16
     ctx.fillStyle = '#FFFFFF';
@@ -182,9 +176,9 @@
     ctx.fillText(v('gcSeq'), 312, PY + 80);
     ctx.textAlign = 'start';
 
-    // QR code at bottom-right (88×88, placed at y=360)
+    // QR code — centered at bottom (88×88, y=354)
     if (qrImg) {
-      ctx.drawImage(qrImg, 224, 364, 88, 88);
+      ctx.drawImage(qrImg, 120, 354, 88, 88);
     }
 
     APP.state.processedDataUrl = c.toDataURL('image/png');
