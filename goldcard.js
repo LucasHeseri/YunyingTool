@@ -98,43 +98,38 @@
     var bg = M.bgColor || '#B97600';
 
     if (M.mode === 'ticket') {
-      // === 门票: SVG 卡身形狀 + 可换色渐变遮罩 ===
+      // === 门票: 卡身形狀 + 可换色渐变遮罩 ===
+      // All #000111 replaced with selected bg color parameter
       var hex = bg.replace('#', '');
       var tc = [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
-      ctx.save();
-      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-      ctx.clip();
+      // Use SVG template for card shape mask (with notch)
+      ctx.drawImage(templateImg, 0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-in';
 
-      // Layer 1: #F1F3F5 placeholder
+      // Layer 1: #F1F3F5 placeholder background
       ctx.fillStyle = '#F1F3F5';
       ctx.fillRect(0, 0, W, H);
       if (ticketMidImg) ctx.drawImage(ticketMidImg, 0, 0, W, 238);
 
-      // Layer 2: Top SVG mask (provides card notch shape)
-      if (ticketTopImg) ctx.drawImage(ticketTopImg, 0, 0, W, 55);
-
-      // Layer 3: Top gradient color overlay (selected bg color)
+      // Layer 2: Top gradient mask (55px) — using selected color
       var topGrad = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
-      topGrad.addColorStop(0, rgba(0.8));
-      topGrad.addColorStop(0.47, rgba(0.4));
+      topGrad.addColorStop(0, rgba(1));
+      topGrad.addColorStop(0.47, rgba(0.66));
       topGrad.addColorStop(1, rgba(0));
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, W, 55);
 
-      // Layer 4: Bottom SVG mask (provides card notch shape)
-      if (ticketBtmImg) ctx.drawImage(ticketBtmImg, 0, H - 264, W, 264);
-
-      // Layer 5: Bottom gradient color overlay (selected bg color)
+      // Layer 3: Bottom gradient mask (280px) — using selected color
       var btmGrad = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
-      btmGrad.addColorStop(0, rgba(0.8));
-      btmGrad.addColorStop(0.33, rgba(0.25));
+      btmGrad.addColorStop(0, rgba(0.9));
+      btmGrad.addColorStop(0.33, rgba(0.3));
       btmGrad.addColorStop(1, rgba(0));
       ctx.fillStyle = btmGrad;
       ctx.fillRect(0, H - 280, W, 280);
 
-      ctx.restore();
+      ctx.globalCompositeOperation = 'source-over';
     } else {
       // === 登机牌: fill SVG shape with selected bg color ===
       ctx.drawImage(templateImg, 0, 0, W, H);
