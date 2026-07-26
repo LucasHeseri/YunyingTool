@@ -69,9 +69,11 @@
     ctx.fillStyle = '#F34D4F'; ctx.font = 'bold 20px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.amount, 10, 67);
 
-    // Amount label
+    // Amount label — aligned with tag row (tag y=79, h=14, center=86)
     ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(vals.amountLabel, 11, 93);
+    ctx.textBaseline = 'middle';
+    ctx.fillText(vals.amountLabel, 11, 86);
+    ctx.textBaseline = 'alphabetic';
 
     // Right description
     ctx.fillStyle = '#000000'; ctx.font = '14px "HarmonyOS Sans SC",sans-serif';
