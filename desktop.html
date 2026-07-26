@@ -403,11 +403,19 @@ body {
           <!-- Flight info (Pixso: y=72, 296px wide) -->
           <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">航班信息（y:72~130, 296px宽）</div>
           <div class="control-group">
-            <div class="control-group__label"><span>出发机场 / 到达机场 / 航班号</span></div>
             <div style="display:flex;gap:6px;">
-              <input type="text" id="gcDepAirport" value="北京首都机场T3" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcArrAirport" value="深圳宝安机场T3" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcFlightNo" value="CA888" style="width:80px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                <span style="font-size:11px;color:var(--text-secondary);">出发机场</span>
+                <input type="text" id="gcDepAirport" value="北京首都机场T3" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:3px;">
+                <span style="font-size:11px;color:var(--text-secondary);">到达机场</span>
+                <input type="text" id="gcArrAirport" value="深圳宝安机场T3" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="display:flex;flex-direction:column;gap:3px;width:80px;">
+                <span style="font-size:11px;color:var(--text-secondary);">航班号</span>
+                <input type="text" id="gcFlightNo" value="CA888" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
             </div>
           </div>
           <input type="hidden" id="gcDepTime" value="20:15">
