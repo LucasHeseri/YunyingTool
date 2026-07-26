@@ -69,21 +69,19 @@
     ctx.fillStyle = '#000000';
     ctx.fillText(vals.product, dividerX + 6, 27);
 
-    // Main amount + description — bottom-aligned
+    // Right description — original position
+    ctx.fillStyle = '#000000'; ctx.font = '500 14px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(vals.desc, 101, 65);
+
+    // Main amount — bottom-aligned with description
     ctx.fillStyle = '#F34D4F'; ctx.font = '500 20px "HarmonyOS Sans SC",sans-serif';
     ctx.textBaseline = 'bottom';
-    ctx.fillText(vals.amount, 10, 92);
-
-    // Right description — medium weight
-    ctx.fillStyle = '#000000'; ctx.font = '500 14px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(vals.desc, 101, 92);
+    ctx.fillText(vals.amount, 10, 68);
     ctx.textBaseline = 'alphabetic';
 
     // Amount label
     ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(vals.amountLabel, 11, 86);
-    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(vals.amountLabel, 11, 93);
 
     // Tag per Figma: returns width for proper gap calculation
     function drawTag(x, y, text) {
