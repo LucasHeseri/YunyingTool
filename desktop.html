@@ -373,6 +373,31 @@ body {
       </div>
       <div id="ctrlGoldcard" style="display:none;">
         <div style="display:flex;flex-direction:column;gap:14px;">
+          <!-- Top area: avatar + title + gate -->
+          <div class="control-group">
+            <div class="control-group__label"><span>头像 (32×32 圆形)</span></div>
+            <div style="display:flex;align-items:center;gap:10px;">
+              <input type="file" id="gcAvatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+              <button id="gcAvatarBtn" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);cursor:pointer;font-size:13px;font-family:inherit;">选择图片</button>
+              <span id="gcAvatarName" style="font-size:12px;color:var(--text-tertiary);">未选择</span>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>左上方标题</span></div>
+            <input type="text" id="gcTitle" value="中国国际航空公司" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcTitleX" value="56" placeholder="X" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+              <input type="number" id="gcTitleY" value="34" placeholder="Y" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>登机口</span></div>
+            <input type="text" id="gcGate" value="08" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            <div style="display:flex;gap:6px;">
+              <input type="number" id="gcGateX" value="312" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
+              <input type="number" id="gcGateY" value="34" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
+            </div>
+          </div>
           <!-- Flight info (Pixso: y=72, 296px wide) -->
           <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">航班信息（y:72~130, 296px宽）</div>
           <div class="control-group">

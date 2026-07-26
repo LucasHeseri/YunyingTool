@@ -7,7 +7,7 @@
 
   var M = APP.goldcard = {};
   var W = 328, H = 472, S = 2;
-  var templateImg = null, airplaneImg = null, ready = false;
+  var templateImg = null, airplaneImg = null, avatarImg = null, ready = false;
 
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
@@ -31,6 +31,12 @@
   };
   M.isReady = function () { return ready; };
 
+  M.setAvatar = function (dataUrl) {
+    var img = new Image();
+    img.onload = function () { avatarImg = img; M.process(); };
+    img.src = dataUrl;
+  };
+
   function v(id) { var e = document.getElementById(id); return e ? e.value : ''; }
   function n(id) { var e = document.getElementById(id); return e ? parseInt(e.value, 10) || 0 : 0; }
 
@@ -42,6 +48,33 @@
     ctx.scale(S, S);
     ctx.drawImage(templateImg, 0, 0, W, H);
     ctx.textBaseline = 'middle';
+
+    // Avatar — 32×32 circle at (24, 24), center (40, 40), radius 16
+    if (avatarImg) {
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(40, 40, 16, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(avatarImg, 24, 24, 32, 32);
+      ctx.restore();
+    }
+
+    // Title (top-left, e.g. airline name)
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcTitle'), n('gcTitleX'), n('gcTitleY'));
+
+    // Gate info (top-right: 登机口 label + value, right-aligned, fixed gap)
+    var gateX = n('gcGateX'), gateY = n('gcGateY'), gateVal = v('gcGate');
+    ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.fillText(gateVal, gateX, gateY);
+    var valW = ctx.measureText(gateVal).width;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText('登机口', gateX - valW - 4, gateY);
+    ctx.textAlign = 'start';
 
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
     var FY = 72;
@@ -131,6 +164,7 @@
 
   M.bindEvents = function () {
     var ids = [
+      'gcTitle','gcTitleX','gcTitleY','gcGate','gcGateX','gcGateY',
       'gcDepAirport','gcArrAirport','gcDepTime','gcArrTime','gcDateL','gcFlightNo','gcDateR',
       'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
       'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
@@ -140,5 +174,27 @@
         if (APP.state.currentTab === 'goldcard') M.process();
       });
     });
+
+    // Avatar upload
+    var avatarInput = document.getElementById('gcAvatarInput');
+    var avatarBtn = document.getElementById('gcAvatarBtn');
+    var avatarName = document.getElementById('gcAvatarName');
+    if (avatarBtn && avatarInput) {
+      avatarBtn.addEventListener('click', function () { avatarInput.click(); });
+      avatarInput.addEventListener('change', function () {
+        if (avatarInput.files && avatarInput.files[0]) {
+          var file = avatarInput.files[0];
+          if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { APP.showToast('仅支持 PNG / JPG / WebP'); return; }
+          if (file.size > 512 * 1024) { APP.showToast('头像不超过 512KB'); return; }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            M.setAvatar(e.target.result);
+            if (avatarName) avatarName.textContent = file.name;
+          };
+          reader.readAsDataURL(file);
+          avatarInput.value = '';
+        }
+      });
+    }
   };
 })();
