@@ -52,7 +52,7 @@
     // Cover SVG text/graphics in title and gate areas only (preserve card corners)
     ctx.fillStyle = '#B97600';
     ctx.fillRect(56, 14, 200, 44);   // title text area
-    ctx.fillRect(254, 14, 74, 44);   // gate text area
+    ctx.fillRect(240, 14, 64, 44);   // gate text area (x:240-304, stays clear of right corner)
 
     // Avatar — white circle placeholder at (24,24), 32×32, radius 16
     ctx.fillStyle = '#FFFFFF';
@@ -76,7 +76,7 @@
 
     // Gate info (top-right: 登机口 label + value, right-aligned)
     var gateX = n('gcGateX'), gateY = n('gcGateY'), gateVal = v('gcGate');
-    ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
+    ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.fillText(gateVal, gateX, gateY);
