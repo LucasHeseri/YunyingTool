@@ -215,7 +215,7 @@
       });
     }
 
-    // Card background color picker — HarmonyOS colors + custom
+    // Card background color picker — HarmonyOS colors + custom in one row
     var picker = document.getElementById('gcColorPicker');
     if (picker) {
       var colors = [
@@ -229,61 +229,72 @@
         { color: '#F1F3F5', label: '灰' }
       ];
       picker.innerHTML = '';
-      // Color dots
-      var dotsContainer = document.createElement('div');
-      dotsContainer.style.cssText = 'display:flex;gap:6px;flex-wrap:wrap;width:100%;';
-      colors.forEach(function (c) {
-        var dot = document.createElement('span');
-        var isWhite = c.color === '#FFFFFF';
-        dot.style.cssText = 'width:24px;height:24px;border-radius:50%;cursor:pointer;background:' + c.color +
-          ';border:2px solid ' + (isWhite ? 'var(--border)' : 'transparent') +
-          ';box-shadow:' + (isWhite ? 'none' : '0 1px 3px rgba(0,0,0,0.15)') +
-          (M.bgColor === c.color ? ';outline:2px solid var(--brand);outline-offset:2px' : '');
-        dot.title = c.label;
-        dot.addEventListener('click', function () {
-          M.bgColor = c.color;
-          highlightDot(dot);
-          if (APP.state.currentTab === 'goldcard') M.process();
-        });
-        dotsContainer.appendChild(dot);
-      });
-      picker.appendChild(dotsContainer);
+      picker.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
 
-      function highlightDot(active) {
-        dotsContainer.querySelectorAll('span').forEach(function (d) { d.style.outline = ''; });
-        if (active) { active.style.outline = '2px solid var(--brand)'; active.style.outlineOffset = '2px'; }
-      }
-
-      // Custom color picker + hex input
-      var customRow = document.createElement('div');
-      customRow.style.cssText = 'display:flex;gap:6px;align-items:center;margin-top:6px;';
       var nativePicker = document.createElement('input');
       nativePicker.type = 'color';
       nativePicker.value = M.bgColor;
-      nativePicker.style.cssText = 'width:28px;height:28px;border:none;cursor:pointer;padding:0;border-radius:4px;';
+      nativePicker.style.cssText = 'width:0;height:0;padding:0;border:none;position:absolute;opacity:0;pointer-events:none;';
+      picker.appendChild(nativePicker);
+
+      var allDots = [];
+
+      function highlightDot(active) {
+        allDots.forEach(function (d) { d.style.outline = ''; });
+        if (active) { active.style.outline = '2px solid var(--brand)'; active.style.outlineOffset = '2px'; }
+      }
+
+      function setColor(color) {
+        M.bgColor = color;
+        nativePicker.value = color;
+        hexInput.value = color;
+        if (APP.state.currentTab === 'goldcard') M.process();
+      }
+
+      // Preset color dots
+      colors.forEach(function (c) {
+        var dot = document.createElement('span');
+        var isWhite = c.color === '#FFFFFF';
+        dot.style.cssText = 'width:24px;height:24px;border-radius:50%;cursor:pointer;flex-shrink:0;background:' + c.color +
+          ';border:2px solid ' + (isWhite ? 'var(--border)' : 'transparent') +
+          ';box-shadow:' + (isWhite ? 'none' : '0 1px 3px rgba(0,0,0,0.15)') +
+          (M.bgColor === c.color && !colors.some(function(x){return false}) ? ';outline:2px solid var(--brand);outline-offset:2px' : '');
+        dot.title = c.label;
+        dot.addEventListener('click', function () {
+          setColor(c.color);
+          highlightDot(dot);
+        });
+        allDots.push(dot);
+        picker.appendChild(dot);
+      });
+
+      // Custom color circle (opens native picker)
+      var customDot = document.createElement('span');
+      customDot.style.cssText = 'width:24px;height:24px;border-radius:50%;cursor:pointer;flex-shrink:0;' +
+        'background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);' +
+        'border:2px solid var(--border);';
+      customDot.title = '自定义颜色';
+      customDot.addEventListener('click', function () { nativePicker.click(); });
+      allDots.push(customDot);
+      picker.appendChild(customDot);
+
+      // Hex input in same row
       var hexInput = document.createElement('input');
       hexInput.type = 'text';
       hexInput.value = M.bgColor;
       hexInput.placeholder = '#000000';
-      hexInput.style.cssText = 'flex:1;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:monospace;';
+      hexInput.style.cssText = 'width:70px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:monospace;flex-shrink:0;';
 
-      function setCustomColor(color) {
-        M.bgColor = color;
-        nativePicker.value = color;
-        hexInput.value = color;
+      nativePicker.addEventListener('input', function () {
+        setColor(nativePicker.value);
         highlightDot(null);
-        if (APP.state.currentTab === 'goldcard') M.process();
-      }
-
-      nativePicker.addEventListener('input', function () { setCustomColor(nativePicker.value); });
+      });
       hexInput.addEventListener('change', function () {
         var val = hexInput.value.trim();
-        if (/^#[0-9a-fA-F]{6}$/.test(val)) setCustomColor(val);
+        if (/^#[0-9a-fA-F]{6}$/.test(val)) { setColor(val); highlightDot(null); }
       });
 
-      customRow.appendChild(nativePicker);
-      customRow.appendChild(hexInput);
-      picker.appendChild(customRow);
+      picker.appendChild(hexInput);
     }
 
     // Avatar upload
