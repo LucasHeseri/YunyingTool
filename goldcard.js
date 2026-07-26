@@ -147,15 +147,15 @@
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 28, W, 27);
 
-      // Bottom mask: backdrop-blur the poster underneath, then draw gradient
-      backdropBlur(0, H - 264, W, 34, 12);
-      ctx.fillStyle = rgba(0.9);
-      ctx.fillRect(0, H - 264 + 34, W, 264 - 34);
-      var btmGrad = ctx.createLinearGradient(0, H - 264, 0, H - 230);
+      // Bottom mask: 100% at y=472, fade upward 34px, blur poster underneath
+      var btmFadeH = 34;
+      var btmFadeY = H - btmFadeH; // y=438
+      backdropBlur(0, btmFadeY - 6, W, btmFadeH + 12, 12);
+      var btmGrad = ctx.createLinearGradient(0, btmFadeY, 0, H);
       btmGrad.addColorStop(0, rgba(0));
       btmGrad.addColorStop(1, rgba(0.9));
       ctx.fillStyle = btmGrad;
-      ctx.fillRect(0, H - 264, W, 34);
+      ctx.fillRect(0, btmFadeY, W, btmFadeH);
 
       // Clip to card shape with notch
       ctx.globalCompositeOperation = 'destination-in';
