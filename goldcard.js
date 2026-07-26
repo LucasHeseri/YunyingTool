@@ -142,6 +142,25 @@
     ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
     ctx.textAlign = 'start';
 
+    // Shared avatar — white circle placeholder at (24,24), 32×32, radius 16
+    ctx.fillStyle = '#FFFFFF';
+    ctx.beginPath();
+    ctx.arc(40, 40, 16, 0, Math.PI * 2);
+    ctx.fill();
+    if (avatarImg) {
+      var as = 1 + (M.avatarScale || 0) / 100;
+      var dSize = 32 * as;
+      var dX = 24 + (32 - dSize) / 2;
+      var dY = 24 + (32 - dSize) / 2;
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(40, 40, 16, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.clip();
+      ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
+      ctx.restore();
+    }
+
     if (M.mode === 'ticket') {
       // === 门票 content (y=224) ===
       // Title — 24px Bold, white, centered
@@ -153,7 +172,7 @@
       ctx.textAlign = 'start';
 
       // Row 1: 座位 (left) / 时间 (right)
-      var ty1 = TY + 48;
+      var ty1 = TY + 44; // 4px closer to title
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcPassengerLabel'), 16, ty1);
@@ -162,13 +181,13 @@
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-      drawML(ctx, v('gcPassenger'), 16, ty1 + 14, 20);
+      drawML(ctx, v('gcPassenger'), 16, ty1 + 16, 20);
       ctx.textAlign = 'right';
-      drawML(ctx, v('gcSeat'), 312, ty1 + 14, 20);
+      drawML(ctx, v('gcSeat'), 312, ty1 + 16, 20);
       ctx.textAlign = 'start';
 
       // Row 2: 地点 (left) / 票价 (right)
-      var ty2 = ty1 + 38; // row height (~28px) + 10px gap
+      var ty2 = ty1 + 40; // row (~30px) + 10px gap
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcCabinClassLabel'), 16, ty2);
@@ -177,9 +196,9 @@
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-      drawML(ctx, v('gcCabinClass'), 16, ty2 + 14, 20);
+      drawML(ctx, v('gcCabinClass'), 16, ty2 + 16, 20);
       ctx.textAlign = 'right';
-      drawML(ctx, v('gcSeq'), 312, ty2 + 14, 20);
+      drawML(ctx, v('gcSeq'), 312, ty2 + 16, 20);
       ctx.textAlign = 'start';
 
     } else {
@@ -278,7 +297,7 @@
 
     // QR code — centered at bottom (88×88, y=354)
     if (qrImg) {
-      ctx.drawImage(qrImg, 120, 354, 88, 88);
+      ctx.drawImage(qrImg, 120, 364, 88, 88);
     }
 
     APP.state.processedDataUrl = c.toDataURL('image/png');
