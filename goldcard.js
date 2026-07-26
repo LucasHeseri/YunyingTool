@@ -97,18 +97,21 @@
     var bg = M.bgColor || '#B97600';
 
     if (M.mode === 'ticket') {
-      // === 门票 template: 三层结构 ===
-      // Shared ticket color — #000111 = rgb(0,1,17)
+      // === 门票 template: card body + top/bottom gradient masks ===
       var tc = [0, 1, 17];
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
-      // Draw card body: fill rounded rect with #000111, masked by SVG shape
-      ctx.drawImage(templateImg, 0, 0, W, H);
-      ctx.globalCompositeOperation = 'source-in';
+      // Card body: rounded rect filled with #000111
       ctx.fillStyle = 'rgb(' + tc.join(',') + ')';
-      ctx.fillRect(0, 0, W, H);
+      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
+      ctx.fill();
 
-      // Layer 1: Top gradient blur mask (55px, diagonal fade to transparent)
+      // Clip to card shape for gradient overlays
+      ctx.save();
+      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
+      ctx.clip();
+
+      // Top gradient (55px, diagonal fade to transparent)
       var topGrad = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
@@ -116,7 +119,7 @@
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, W, 55);
 
-      // Layer 2: Bottom gradient blur mask (280px, diagonal fade to transparent)
+      // Bottom gradient (280px, diagonal fade to transparent)
       var btmGrad = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
       btmGrad.addColorStop(0, rgba(0.9));
       btmGrad.addColorStop(0.33, rgba(0.3));
@@ -124,7 +127,7 @@
       ctx.fillStyle = btmGrad;
       ctx.fillRect(0, H - 280, W, 280);
 
-      ctx.globalCompositeOperation = 'source-over';
+      ctx.restore();
     } else {
       // === 登机牌: fill SVG shape with selected bg color ===
       ctx.drawImage(templateImg, 0, 0, W, H);
