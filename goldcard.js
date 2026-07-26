@@ -56,20 +56,13 @@
 
     var bg = M.bgColor || '#B97600';
 
-    // Render template with color blend on offscreen canvas (isolates bg color)
-    var tc = document.createElement('canvas');
-    tc.width = W * S; tc.height = H * S;
-    var tctx = tc.getContext('2d');
-    tctx.scale(S, S);
-    tctx.drawImage(templateImg, 0, 0, W, H);
-    tctx.globalCompositeOperation = 'color';
-    tctx.fillStyle = bg;
-    tctx.fillRect(0, 0, W, H);
-    // Cover old QR / bottom graphic so new QR replaces it cleanly
-    tctx.fillStyle = bg;
-    tctx.fillRect(80, 344, 168, 110);
-    // Draw composed template onto main canvas
-    ctx.drawImage(tc, 0, 0, W * S, H * S, 0, 0, W, H);
+    // Fill card body with selected color
+    ctx.fillStyle = bg;
+    APP.drawRoundRect(ctx, 0, 0, W, H, 24);
+    ctx.fill();
+
+    // Draw template (border / structure) on top
+    ctx.drawImage(templateImg, 0, 0, W, H);
 
     ctx.textBaseline = 'middle';
 
