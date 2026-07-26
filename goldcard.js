@@ -48,11 +48,17 @@
     c.width = W * S; c.height = H * S;
     var ctx = c.getContext('2d');
     ctx.scale(S, S);
+
+    // Fill entire card background with selected color (rounded rect)
+    var bg = M.bgColor || '#B97600';
+    ctx.fillStyle = bg;
+    APP.drawRoundRect(ctx, 0, 0, W, H, 24);
+    ctx.fill();
+
     ctx.drawImage(templateImg, 0, 0, W, H);
     ctx.textBaseline = 'middle';
 
-    // Cover SVG text/graphics in title and gate areas with card bg color
-    var bg = M.bgColor || '#B97600';
+    // Cover text/graphics in title and gate areas with card bg color
     ctx.fillStyle = bg;
     ctx.fillRect(56, 14, 200, 44);   // title text area
     ctx.fillRect(240, 14, 64, 44);   // gate text area (x:240-304, stays clear of right corner)
