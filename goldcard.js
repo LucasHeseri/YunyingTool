@@ -43,24 +43,6 @@
     ctx.drawImage(templateImg, 0, 0, W, H);
     ctx.textBaseline = 'middle';
 
-    // Title (top area)
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.font = '400 13px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcTitle'), n('gcTitleX'), n('gcTitleY'));
-
-    // Gate info (top-right: 登机口 label + value, right-aligned, fixed gap)
-    var gateX = n('gcGateX'), gateY = n('gcGateY'), gateVal = v('gcGate');
-    ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-    ctx.textAlign = 'right';
-    // Draw value first at right edge
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.fillText(gateVal, gateX, gateY);
-    // Draw "登机口" label to the left with fixed 4px gap
-    var valW = ctx.measureText(gateVal).width;
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.fillText('登机口', gateX - valW - 4, gateY);
-    ctx.textAlign = 'start';
-
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
     var FY = 72;
     // Row 1: Departure airport (left) / Arrival airport (right) — 12px, 60% white
@@ -97,14 +79,14 @@
       ctx.drawImage(airplaneImg, 127, 99, 74, 25);
     }
 
-    // === Passenger info at y=170 (Pixso frame 1048_19, 296×88) ===
+    // === Passenger info at y=174 (Pixso frame 1048_19, 296×88) ===
     var PY = 174;
-    // Row 1: 乘机人 (left, 20px Medium) / 座位号 (right, 20px Medium)
+    // Row 1: label + value (left, 20px) / label + value (right, 20px)
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText('乘机人', 16, PY + 8);
+    ctx.fillText(v('gcPassengerLabel'), 16, PY + 8);
     ctx.textAlign = 'right';
-    ctx.fillText('座位号', 312, PY + 8);
+    ctx.fillText(v('gcSeatLabel'), 312, PY + 8);
     ctx.textAlign = 'start';
     // Values — 20px Medium, 90% white
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
@@ -114,14 +96,14 @@
     ctx.fillText(v('gcSeat'), 312, PY + 32);
     ctx.textAlign = 'start';
 
-    // Row 2: 登机时间 (left) / 舱位等级 (center) / 登记序号 (right) — 16px Medium
+    // Row 2: label+value (left) / label+value (center) / label+value (right) — 16px
     ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText('登机时间', 16, PY + 60);
+    ctx.fillText(v('gcBoardTimeLabel'), 16, PY + 60);
     ctx.textAlign = 'center';
-    ctx.fillText('舱位等级', 164, PY + 60);
+    ctx.fillText(v('gcCabinClassLabel'), 164, PY + 60);
     ctx.textAlign = 'right';
-    ctx.fillText('登记序号', 312, PY + 60);
+    ctx.fillText(v('gcSeqLabel'), 312, PY + 60);
     ctx.textAlign = 'start';
     // Values — 16px Medium, 90% white
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
@@ -148,9 +130,10 @@
   };
 
   M.bindEvents = function () {
-    var ids = ['gcTitle','gcTitleX','gcTitleY','gcGate','gcGateX','gcGateY',
+    var ids = [
       'gcDepAirport','gcArrAirport','gcDepTime','gcArrTime','gcDateL','gcFlightNo','gcDateR',
-      'gcPassenger','gcSeat','gcBoardTime','gcCabinClass','gcSeq'];
+      'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
+      'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
     ids.forEach(function (id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function () {

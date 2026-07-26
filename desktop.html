@@ -373,24 +373,6 @@ body {
       </div>
       <div id="ctrlGoldcard" style="display:none;">
         <div style="display:flex;flex-direction:column;gap:14px;">
-          <!-- Title -->
-          <div class="control-group">
-            <div class="control-group__label"><span>标题</span></div>
-            <input type="text" id="gcTitle" value="中国国际航空公司" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            <div style="display:flex;gap:6px;">
-              <input type="number" id="gcTitleX" value="72" placeholder="X" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
-              <input type="number" id="gcTitleY" value="40" placeholder="Y" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
-            </div>
-          </div>
-          <!-- Gate info (top-right, 登机口 label + value) -->
-          <div class="control-group">
-            <div class="control-group__label"><span>登机口</span></div>
-            <input type="text" id="gcGate" value="08" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            <div style="display:flex;gap:6px;">
-              <input type="number" id="gcGateX" value="312" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
-              <input type="number" id="gcGateY" value="40" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
-            </div>
-          </div>
           <!-- Flight info (Pixso: y=72, 296px wide) -->
           <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">航班信息（y:72~130, 296px宽）</div>
           <div class="control-group">
@@ -418,17 +400,22 @@ body {
           <!-- Passenger info (Pixso frame 1048_19: y=174, 296×88) -->
           <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">乘客信息（y:174~262, 296×88px）</div>
           <div class="control-group">
-            <div class="control-group__label"><span>乘机人 / 座位号（20px）</span></div>
-            <div style="display:flex;gap:6px;">
+            <div class="control-group__label"><span>乘机人 标签 / 值 / 座位号 标签 / 值（20px）</span></div>
+            <div style="display:flex;gap:4px;">
+              <input type="text" id="gcPassengerLabel" value="乘机人" style="width:60px;padding:6px 4px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
               <input type="text" id="gcPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcSeatLabel" value="座位号" style="width:54px;padding:6px 4px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
               <input type="text" id="gcSeat" value="38C" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
             </div>
           </div>
           <div class="control-group">
-            <div class="control-group__label"><span>登机时间 / 舱位等级 / 登记序号（16px）</span></div>
-            <div style="display:flex;gap:6px;">
+            <div class="control-group__label"><span>登机时间 / 舱位等级 / 登记序号 标签 &amp; 值（16px）</span></div>
+            <div style="display:flex;gap:4px;">
+              <input type="text" id="gcBoardTimeLabel" value="登机时间" style="width:60px;padding:5px 4px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;">
               <input type="text" id="gcBoardTime" value="08:08" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcCabinClassLabel" value="舱位等级" style="width:60px;padding:5px 4px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;">
               <input type="text" id="gcCabinClass" value="经济舱 (Y)" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcSeqLabel" value="登记序号" style="width:60px;padding:5px 4px;border:1px solid var(--border);border-radius:6px;font-size:11px;font-family:inherit;">
               <input type="text" id="gcSeq" value="064" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
             </div>
           </div>
