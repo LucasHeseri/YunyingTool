@@ -72,28 +72,28 @@
       ctx.save();
       ctx.globalCompositeOperation = 'source-in';
 
-      // Layer 1: light gray background (#F1F3F5) on top half
-      var topGrad = ctx.createLinearGradient(0, 0, W * 0.3, H * 0.3);
-      topGrad.addColorStop(0, '#F1F3F5');
-      topGrad.addColorStop(0.4, '#F1F3F5');
-      topGrad.addColorStop(1, '#E8EAED');
-      ctx.fillStyle = topGrad;
+      // Shared ticket color — #000111 = rgb(0,1,17)
+      var tc = [0, 1, 17];
+      function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
+
+      // Layer 1: card body fill
+      ctx.fillStyle = 'rgb(' + tc.join(',') + ')';
       ctx.fillRect(0, 0, W, H);
 
-      // Layer 2: dark navy gradient at top (55px, diagonal fade)
+      // Layer 2: top gradient fade (55px, diagonal)
       var topDark = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
-      topDark.addColorStop(0, 'rgba(0,1,17,1)');
-      topDark.addColorStop(0.47, 'rgba(0,1,17,0.66)');
-      topDark.addColorStop(1, 'rgba(0,1,17,0)');
+      topDark.addColorStop(0, rgba(1));
+      topDark.addColorStop(0.47, rgba(0.66));
+      topDark.addColorStop(1, rgba(0));
       ctx.fillStyle = topDark;
       ctx.fillRect(0, 0, W, 55);
 
-      // Layer 3: dark navy gradient at bottom (264px, Pixso backdrop-filter blur)
+      // Layer 3: bottom gradient (280px, Pixso backdrop-filter blur)
       ctx.filter = 'blur(6px)';
       var btmDark = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
-      btmDark.addColorStop(0, 'rgba(0,1,17,0.9)');
-      btmDark.addColorStop(0.33, 'rgba(0,1,17,0.3)');
-      btmDark.addColorStop(1, 'rgba(0,1,17,0)');
+      btmDark.addColorStop(0, rgba(0.9));
+      btmDark.addColorStop(0.33, rgba(0.3));
+      btmDark.addColorStop(1, rgba(0));
       ctx.fillStyle = btmDark;
       ctx.fillRect(0, H - 280, W, 280);
       ctx.filter = 'none';
