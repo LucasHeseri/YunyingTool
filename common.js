@@ -182,6 +182,7 @@
     APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
+    APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
     // Hide upload zone for test tab, restore for others
     APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
     APP.dom.previewCard.style.background = (tab === 'test') ? '#F1F3F5' : '';
