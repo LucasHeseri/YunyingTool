@@ -26,7 +26,7 @@
     compress:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
     circle:    { maxSize: 1 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 1MB' },
     crop:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
-    test:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
+    test:      { maxSize: 512 * 1024, limits: '上传 logo 图片，支持 PNG / JPG / WebP，大小不超过 512KB' },
     goldcard:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
   };
   var ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
@@ -184,7 +184,7 @@
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
     // Hide upload zone for test tab, restore for others
-    APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
+    APP.dom.uploadZone.parentNode.style.display = (tab === 'goldcard') ? 'none' : '';
     APP.dom.previewCard.style.background = (tab === 'test') ? '#F1F3F5' : '';
     // Only logo tab shows 去背景
     APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';

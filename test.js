@@ -53,11 +53,12 @@
       ctx.drawImage(APP.state.uploadedImage, 16, 16, 16, 16);
       ctx.restore();
     } else {
-      ctx.fillStyle = '#E8F5FF';
+      // Default white circle placeholder
+      ctx.fillStyle = '#FFFFFF';
       ctx.beginPath(); ctx.arc(24, 24, 8, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#018FF9'; ctx.font = '400 10px "HarmonyOS Sans SC",sans-serif';
-      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText('¥', 24, 24); ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
+      ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
     }
 
     // Brand | Product name — dynamic left-aligned with 6px gap
