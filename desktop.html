@@ -218,7 +218,7 @@ body {
     <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
     <button class="tab-nav__btn" data-tab="crop">裁切卡券</button>
     <button class="tab-nav__btn" data-tab="test">test</button>
-    <button class="tab-nav__btn" data-tab="goldcard">金色卡片</button>
+    <button class="tab-nav__btn" data-tab="goldcard">登机牌</button>
   </nav>
   <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
@@ -423,31 +423,31 @@ body {
 
           <!-- ===== 乘客信息 ===== -->
           <div style="display:flex;flex-direction:column;gap:10px;">
-            <div class="control-group__label"><span>乘客信息</span></div>
+            <div class="control-group__label"><span>乘客信息（可手动换行）</span></div>
             <!-- Row 1: 乘机人 + 座位号 -->
             <div style="display:flex;gap:16px;align-items:stretch;">
               <div style="display:flex;gap:6px;flex:3;min-width:0;align-items:stretch;">
                 <input type="text" id="gcPassengerLabel" value="乘机人" style="width:64px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;flex-shrink:0;text-align:center;">
-                <input type="text" id="gcPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
+                <textarea id="gcPassenger" rows="1" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;resize:none;overflow:hidden;">王小华</textarea>
               </div>
               <div style="display:flex;gap:6px;flex:2;min-width:0;align-items:stretch;">
                 <input type="text" id="gcSeatLabel" value="座位号" style="width:64px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;flex-shrink:0;text-align:center;">
-                <input type="text" id="gcSeat" value="38C" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
+                <textarea id="gcSeat" rows="1" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;resize:none;overflow:hidden;">38C</textarea>
               </div>
             </div>
             <!-- Row 2: 登机时间 + 舱位等级 + 登记序号 -->
             <div style="display:flex;gap:16px;align-items:stretch;">
               <div style="display:flex;gap:6px;flex:1;min-width:0;align-items:stretch;">
                 <input type="text" id="gcBoardTimeLabel" value="登机时间" style="width:64px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;flex-shrink:0;text-align:center;">
-                <input type="text" id="gcBoardTime" value="08:08" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
+                <textarea id="gcBoardTime" rows="1" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;resize:none;overflow:hidden;">08:08</textarea>
               </div>
               <div style="display:flex;gap:6px;flex:1;min-width:0;align-items:stretch;">
                 <input type="text" id="gcCabinClassLabel" value="舱位等级" style="width:64px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;flex-shrink:0;text-align:center;">
-                <input type="text" id="gcCabinClass" value="经济舱 (Y)" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
+                <textarea id="gcCabinClass" rows="1" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;resize:none;overflow:hidden;">经济舱 (Y)</textarea>
               </div>
               <div style="display:flex;gap:6px;flex:1;min-width:0;align-items:stretch;">
                 <input type="text" id="gcSeqLabel" value="登记序号" style="width:64px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;flex-shrink:0;text-align:center;">
-                <input type="text" id="gcSeq" value="064" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
+                <textarea id="gcSeq" rows="1" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;resize:none;overflow:hidden;">064</textarea>
               </div>
             </div>
           </div>

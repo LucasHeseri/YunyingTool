@@ -47,6 +47,14 @@
   function v(id) { var e = document.getElementById(id); return e ? e.value : ''; }
   function n(id) { var e = document.getElementById(id); return e ? parseInt(e.value, 10) || 0 : 0; }
 
+  // Draw multiline text: splits by \n, draws each line with lineHeight spacing
+  function drawML(ctx, text, x, y, lineHeight) {
+    var lines = (text || '').split('\n');
+    for (var i = 0; i < lines.length; i++) {
+      ctx.fillText(lines[i], x, y + i * lineHeight);
+    }
+  }
+
   M.process = function () {
     if (!templateImg) return;
     var c = document.createElement('canvas');
@@ -145,12 +153,12 @@
     ctx.textAlign = 'right';
     ctx.fillText(v('gcSeatLabel'), 312, PY + 8);
     ctx.textAlign = 'start';
-    // Values — 20px Medium, 90% white
+    // Values — 20px Medium, 90% white, multiline
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.font = '400 20px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcPassenger'), 16, PY + 32);
+    drawML(ctx, v('gcPassenger'), 16, PY + 32, 24);
     ctx.textAlign = 'right';
-    ctx.fillText(v('gcSeat'), 312, PY + 32);
+    drawML(ctx, v('gcSeat'), 312, PY + 32, 24);
     ctx.textAlign = 'start';
 
     // Row 2: label+value (left) / label+value (center) / label+value (right) — 16px
@@ -162,14 +170,14 @@
     ctx.textAlign = 'right';
     ctx.fillText(v('gcSeqLabel'), 312, PY + 60);
     ctx.textAlign = 'start';
-    // Values — 16px Medium, 90% white
+    // Values — 16px Medium, 90% white, multiline
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcBoardTime'), 16, PY + 80);
+    drawML(ctx, v('gcBoardTime'), 16, PY + 80, 20);
     ctx.textAlign = 'center';
-    ctx.fillText(v('gcCabinClass'), 164, PY + 80);
+    drawML(ctx, v('gcCabinClass'), 164, PY + 80, 20);
     ctx.textAlign = 'right';
-    ctx.fillText(v('gcSeq'), 312, PY + 80);
+    drawML(ctx, v('gcSeq'), 312, PY + 80, 20);
     ctx.textAlign = 'start';
 
     // QR code — centered at bottom (88×88, y=354)
@@ -188,7 +196,7 @@
     cv.style.width  = Math.round(W * S * ds) + 'px';
     cv.style.height = Math.round(H * S * ds) + 'px';
     APP.dom.downloadBtn.disabled = false;
-    APP.dom.previewInfo.textContent = '328×472 金色卡片';
+    APP.dom.previewInfo.textContent = '328×472 登机牌';
   };
 
   M.bindEvents = function () {
