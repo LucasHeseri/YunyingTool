@@ -22,7 +22,7 @@
   var FIELD_IDS = [
     'gcTitle','gcGateLabel','gcGate',
     'gcDepAirport','gcArrAirport','gcFlightNo',
-    'gcDepTime','gcArrTime','gcDateL','gcDateR','gcTicketTitle',
+    'gcDepTime','gcArrTime','gcDateL','gcDateR','gcTicketTitleTA',
     'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
     'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'
   ];
@@ -212,9 +212,8 @@
       ctx.font = '700 24px "HarmonyOS Sans SC",sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
-      var titleLines = (v('gcTicketTitle') || '').split('\n').slice(0, 2);
+      var titleLines = (v('gcTicketTitleTA') || '').split('\n').slice(0, 2);
       for (var ti = titleLines.length - 1; ti >= 0; ti--) {
-        ctx.fillText(titleLines[ti], 164, TY - (titleLines.length - 1 - ti) * 30);
       }
       ctx.textAlign = 'start';
       ctx.textBaseline = 'middle';
@@ -376,9 +375,11 @@
         M.loadFields();
         // Toggle mode-specific control sections
         var showTicket = M.mode === 'ticket';
-        ['gcPosterGroup','gcTicketContent'].forEach(function(id) {
+        ['gcPosterGroup'].forEach(function(id) {
           var el = document.getElementById(id); if (el) el.style.display = showTicket ? '' : 'none';
         });
+        var tc = document.getElementById('gcTicketContent');
+        if (tc) tc.style.display = showTicket ? 'flex' : 'none';
         ['gcBoardingInfo','gcPassengerGroup'].forEach(function(id) {
           var el = document.getElementById(id); if (el) el.style.display = showTicket ? 'none' : '';
         });
@@ -388,7 +389,7 @@
 
     var ids = [
       'gcTitle','gcGateLabel','gcGate',
-      'gcDepAirport','gcArrAirport','gcFlightNo','gcTicketTitle',
+      'gcDepAirport','gcArrAirport','gcFlightNo','gcTicketTitleTA',
       'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
       'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
     ids.forEach(function (id) {
@@ -554,7 +555,7 @@
       gcTitle: 'XX商户', gcGateLabel: '登机口', gcGate: '08',
       gcDepAirport: '', gcArrAirport: '', gcFlightNo: '',
       gcDepTime: '', gcArrTime: '', gcDateL: '', gcDateR: '',
-      gcTicketTitle: '标题标题',
+      gcTicketTitleTA: '标题标题',
       gcPassengerLabel: '座位', gcPassenger: '1号厅4排5号',
       gcSeatLabel: '时间', gcSeat: '2025/11/29 19:30',
       gcCabinClassLabel: '地点', gcCabinClass: '深圳坂小华电影城',
