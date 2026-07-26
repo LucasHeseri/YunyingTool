@@ -55,17 +55,21 @@
     ctx.scale(S, S);
 
     var bg = M.bgColor || '#B97600';
-    ctx.drawImage(templateImg, 0, 0, W, H);
 
-    // Recolor card body (gold → selected color) via color blend
-    ctx.globalCompositeOperation = 'color';
-    ctx.fillStyle = bg;
-    ctx.fillRect(0, 0, W, H);
-    ctx.globalCompositeOperation = 'source-over';
-
+    // Render template with color blend on offscreen canvas (isolates bg color)
+    var tc = document.createElement('canvas');
+    tc.width = W * S; tc.height = H * S;
+    var tctx = tc.getContext('2d');
+    tctx.scale(S, S);
+    tctx.drawImage(templateImg, 0, 0, W, H);
+    tctx.globalCompositeOperation = 'color';
+    tctx.fillStyle = bg;
+    tctx.fillRect(0, 0, W, H);
     // Cover old QR / bottom graphic so new QR replaces it cleanly
-    ctx.fillStyle = bg;
-    ctx.fillRect(80, 344, 168, 110);
+    tctx.fillStyle = bg;
+    tctx.fillRect(80, 344, 168, 110);
+    // Draw composed template onto main canvas
+    ctx.drawImage(tc, 0, 0, W * S, H * S, 0, 0, W, H);
 
     ctx.textBaseline = 'middle';
 
@@ -91,10 +95,10 @@
     // Title (top-left, 32px from top, 8px gap from avatar) — 16px
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcTitle'), n('gcTitleX'), n('gcTitleY'));
+    ctx.fillText(v('gcTitle'), 64, 40);
 
-    // Gate info (top-right: 登机口 label + value, right-aligned)
-    var gateX = n('gcGateX'), gateY = n('gcGateY'), gateVal = v('gcGate');
+    // Gate info (top-right: 登机口 label + value, right-aligned, fixed position)
+    var gateX = 312, gateY = 40, gateVal = v('gcGate');
     ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
@@ -197,7 +201,7 @@
 
   M.bindEvents = function () {
     var ids = [
-      'gcTitle','gcTitleX','gcTitleY','gcGate','gcGateX','gcGateY',
+      'gcTitle','gcGate',
       'gcDepAirport','gcArrAirport','gcDepTime','gcArrTime','gcDateL','gcFlightNo','gcDateR',
       'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
       'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
