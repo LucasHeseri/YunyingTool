@@ -136,16 +136,14 @@
         ctx.drawImage(tc, 0, 0, w * S, h * S, x, y, w, h);
       }
 
-      // Top mask: backdrop-blur the poster underneath, then draw gradient
-      backdropBlur(0, 28, W, 27, 12);
-      ctx.fillStyle = rgba(1);
-      ctx.fillRect(0, 0, W, 28);
+      // Top mask: single seamless gradient y=0→55, fade y=28→55
+      backdropBlur(0, 0, W, 55, 12);
       var topGrad = ctx.createLinearGradient(0, 28, 0, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
       topGrad.addColorStop(1, rgba(0));
       ctx.fillStyle = topGrad;
-      ctx.fillRect(0, 28, W, 27);
+      ctx.fillRect(0, 0, W, 55);
 
       // Bottom mask: single seamless gradient y=208→472, fade concentrated y=208→242
       var btmStart = H - 264; // y=208
