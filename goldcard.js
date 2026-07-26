@@ -100,7 +100,7 @@
 
     // Gate info (top-right: 登机口 label + value, right-aligned, fixed position)
     var gateX = 312, gateY = 40, gateVal = v('gcGate');
-    ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
+    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
     ctx.fillStyle = 'rgba(255,255,255,0.9)';
     ctx.fillText(gateVal, gateX, gateY);
