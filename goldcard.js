@@ -136,8 +136,8 @@
         ctx.drawImage(tc, 0, 0, w * S, h * S, x, y, w, h);
       }
 
-      // Top mask: single seamless gradient y=0→55, fade y=28→55
-      backdropBlur(0, 0, W, 55, 12);
+      // Top mask: solid 100% y=0→28, fade y=28→55, blur only transition zone
+      backdropBlur(0, 20, W, 40, 12);
       var topGrad = ctx.createLinearGradient(0, 28, 0, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
@@ -145,10 +145,10 @@
       ctx.fillStyle = topGrad;
       ctx.fillRect(0, 0, W, 55);
 
-      // Bottom mask: single seamless gradient y=208→472, fade concentrated y=208→242
+      // Bottom mask: fade y=208→242, solid 100% y=242→472, blur only transition zone
       var btmStart = H - 264; // y=208
       var btmFadeEnd = btmStart + 34; // y=242
-      backdropBlur(0, btmStart, W, H - btmStart, 12);
+      backdropBlur(0, btmStart - 8, W, 50, 12);
       var btmGrad = ctx.createLinearGradient(0, btmStart, 0, btmFadeEnd);
       btmGrad.addColorStop(0, rgba(0));
       btmGrad.addColorStop(1, rgba(1));
@@ -369,8 +369,14 @@
         M.saveFields();
         M.mode = btn.dataset.gcmode || 'boarding';
         M.loadFields();
-        var pg = document.getElementById('gcPosterGroup');
-        if (pg) pg.style.display = (M.mode === 'ticket') ? '' : 'none';
+        // Toggle mode-specific control sections
+        var showTicket = M.mode === 'ticket';
+        ['gcPosterGroup','gcTicketContent'].forEach(function(id) {
+          var el = document.getElementById(id); if (el) el.style.display = showTicket ? '' : 'none';
+        });
+        ['gcBoardingInfo','gcPassengerGroup'].forEach(function(id) {
+          var el = document.getElementById(id); if (el) el.style.display = showTicket ? 'none' : '';
+        });
         if (APP.state.currentTab === 'goldcard') M.process();
       });
     }
