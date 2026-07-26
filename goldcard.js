@@ -56,13 +56,12 @@
 
     var bg = M.bgColor || '#B97600';
 
-    // Fill card body with selected color
-    ctx.fillStyle = bg;
-    APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-    ctx.fill();
-
-    // Draw template (border / structure) on top
+    // Draw SVG to establish card shape, then fill only the SVG area with bg color
     ctx.drawImage(templateImg, 0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-in';
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
 
     ctx.textBaseline = 'middle';
 
