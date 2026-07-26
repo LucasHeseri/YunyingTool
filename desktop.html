@@ -346,62 +346,67 @@ body {
               <span id="testLogoName" style="font-size:11px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">未选择</span>
             </div>
           </div>
-          <!-- ===== 品牌信息 ===== -->
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div class="control-group__label"><span>品牌信息</span></div>
-            <div class="control-group">
-              <div class="control-group__label"><span>品牌名</span></div>
-              <input type="text" id="testBrand" value="苏宁" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            </div>
-            <div class="control-group">
-              <div class="control-group__label"><span>产品名</span></div>
-              <input type="text" id="testProduct" value="任性贷" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            </div>
-          </div>
-          <!-- ===== 金额信息 ===== -->
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div class="control-group__label"><span>金额信息</span></div>
-            <div class="control-group">
-              <div class="control-group__label"><span>金额</span></div>
-              <input type="text" id="testAmount" value="3,00,000" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            </div>
-            <div class="control-group">
-              <div class="control-group__label"><span>金额说明</span></div>
-              <input type="text" id="testAmountLabel" value="最高额度 (元)" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          <!-- 品牌名 + 产品名 -->
+          <div class="control-group">
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">品牌名</span>
+                <input type="text" id="testBrand" value="苏宁" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">产品名</span>
+                <input type="text" id="testProduct" value="任性贷" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
             </div>
           </div>
-          <!-- ===== 描述与标签 ===== -->
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div class="control-group__label"><span>描述与标签</span></div>
-            <div class="control-group">
-              <div class="control-group__label"><span>描述文案</span></div>
-              <input type="text" id="testDesc" value="最长可借 48 期" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            </div>
-            <div class="control-group">
-              <div class="control-group__label"><span>标签 1</span></div>
-              <input type="text" id="testTag1" value="标签第一" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            </div>
-            <div class="control-group">
-              <div class="control-group__label"><span>标签 2</span></div>
-              <input type="text" id="testTag2" value="最快当天放款" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          <!-- 金额 + 金额说明 -->
+          <div class="control-group">
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">金额</span>
+                <input type="text" id="testAmount" value="3,00,000" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">金额说明</span>
+                <input type="text" id="testAmountLabel" value="最高额度 (元)" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
             </div>
           </div>
-          <!-- ===== 按钮 ===== -->
-          <div style="display:flex;flex-direction:column;gap:10px;">
-            <div class="control-group__label"><span>按钮</span></div>
-            <div class="control-group">
-              <div class="control-group__label"><span>按钮文案</span></div>
-              <input type="text" id="testBtnText" value="去申请" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          <!-- 描述文案 -->
+          <div class="control-group">
+            <div class="control-group__label"><span>描述文案</span></div>
+            <input type="text" id="testDesc" value="最长可借 48 期" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <!-- 标签 1 + 标签 2 -->
+          <div class="control-group">
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">标签 1</span>
+                <input type="text" id="testTag1" value="标签第一" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">标签 2</span>
+                <input type="text" id="testTag2" value="最快当天放款" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
             </div>
-            <div class="control-group">
-              <div class="control-group__label"><span>导出尺寸</span></div>
-              <div style="display:flex;gap:16px;">
-                <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
-                  <input type="radio" name="testScale" value="3"> 三倍图
-                </label>
-                <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
-                  <input type="radio" name="testScale" value="2" checked> 二倍图
-                </label>
+          </div>
+          <!-- 按钮文案 + 导出尺寸 -->
+          <div class="control-group">
+            <div style="display:flex;gap:16px;align-items:flex-end;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;width:100%;">按钮文案</span>
+                <input type="text" id="testBtnText" value="去申请" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">导出尺寸</span>
+                <div style="display:flex;gap:16px;padding:6px 0;">
+                  <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+                    <input type="radio" name="testScale" value="3"> 三倍图
+                  </label>
+                  <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+                    <input type="radio" name="testScale" value="2" checked> 二倍图
+                  </label>
+                </div>
               </div>
             </div>
           </div>
