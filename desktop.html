@@ -391,8 +391,32 @@ body {
               <input type="number" id="gcTopRightY" value="40" style="width:60px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;">
             </div>
           </div>
-          <!-- Middle info (Pixso frame 1048_19: y=72, 296×88) -->
-          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">中部信息（y:72~160, 296×88px）</div>
+          <!-- Flight info (Pixso: y=72, 296px wide) -->
+          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">航班信息（y:72~130, 296px宽）</div>
+          <div class="control-group">
+            <div class="control-group__label"><span>出发机场 / 到达机场</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcDepAirport" value="北京首都机场T3" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcArrAirport" value="深圳宝安机场T3" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>出发时间 / 到达时间</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcDepTime" value="20:15" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcArrTime" value="23:40" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>日期 / 航班号 / 日期</span></div>
+            <div style="display:flex;gap:6px;">
+              <input type="text" id="gcDateL" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcFlightNo" value="CA888" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              <input type="text" id="gcDateR" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            </div>
+          </div>
+          <!-- Passenger info (Pixso frame 1048_19: y=174, 296×88) -->
+          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">乘客信息（y:174~262, 296×88px）</div>
           <div class="control-group">
             <div class="control-group__label"><span>乘机人 / 座位号（20px）</span></div>
             <div style="display:flex;gap:6px;">
@@ -406,58 +430,6 @@ body {
               <input type="text" id="gcBoardTime" value="08:08" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
               <input type="text" id="gcCabinClass" value="经济舱 (Y)" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
               <input type="text" id="gcSeq" value="064" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-            </div>
-          </div>
-          <!-- Data fields A-E -->
-          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">数据区（y:195~280）</div>
-          <!-- Field A -->
-          <div class="control-group">
-            <div class="control-group__label"><span>字段A 标签 / 值</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcLabelA" value="Label A" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcValueA" value="1,234" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="number" id="gcAX" value="24" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
-              <input type="number" id="gcAY" value="195" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
-            </div>
-          </div>
-          <!-- Field B -->
-          <div class="control-group">
-            <div class="control-group__label"><span>字段B 标签 / 值</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcLabelB" value="Label B" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcValueB" value="5,678" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="number" id="gcBX" value="176" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
-              <input type="number" id="gcBY" value="195" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
-            </div>
-          </div>
-          <!-- Field C -->
-          <div class="control-group">
-            <div class="control-group__label"><span>字段C 标签 / 值</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcLabelC" value="Label C" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcValueC" value="9,012" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="number" id="gcCX" value="24" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
-              <input type="number" id="gcCY" value="245" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
-            </div>
-          </div>
-          <!-- Field D -->
-          <div class="control-group">
-            <div class="control-group__label"><span>字段D 标签 / 值</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcLabelD" value="Label D" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcValueD" value="3,456" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="number" id="gcDX" value="125" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
-              <input type="number" id="gcDY" value="245" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
-            </div>
-          </div>
-          <!-- Field E -->
-          <div class="control-group">
-            <div class="control-group__label"><span>字段E 标签 / 值</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcLabelE" value="Label E" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="text" id="gcValueE" value="7,890" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              <input type="number" id="gcEX" value="226" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="X">
-              <input type="number" id="gcEY" value="245" style="width:48px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:11px;font-family:inherit;" title="Y">
             </div>
           </div>
         </div>
@@ -504,6 +476,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
 <script src="./crop.js"></script>
 <script src="./test.js"></script>
 <script src="./goldcard-template.js"></script>
+<script src="./airplane-icon.js"></script>
 <script src="./goldcard.js"></script>
 <script>
 (function () {
