@@ -128,9 +128,9 @@
     ctx.textBaseline = 'middle';
 
     if (M.mode === 'ticket') {
-      // === 门票 content (y=180) ===
+      // === 门票 content (y=224) ===
       // Title — 24px Bold, white, centered
-      var TY = 180;
+      var TY = 224;
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '700 24px "HarmonyOS Sans SC",sans-serif';
       ctx.textAlign = 'center';
@@ -153,7 +153,7 @@
       ctx.textAlign = 'start';
 
       // Row 2: 地点 (left) / 票价 (right)
-      var ty2 = ty1 + 64;
+      var ty2 = ty1 + 32; // 22px value + 10px gap
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcCabinClassLabel'), 16, ty2);
