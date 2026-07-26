@@ -8,6 +8,8 @@
   var M = APP.goldcard = {};
   var W = 328, H = 472, S = 2;
   var templateImg = null, airplaneImg = null, avatarImg = null, ready = false;
+  M.bgColor = '#B97600';  // card background color
+  M.avatarScale = 0;      // -20 ~ +20 %
 
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
@@ -49,8 +51,9 @@
     ctx.drawImage(templateImg, 0, 0, W, H);
     ctx.textBaseline = 'middle';
 
-    // Cover SVG text/graphics in title and gate areas only (preserve card corners)
-    ctx.fillStyle = '#B97600';
+    // Cover SVG text/graphics in title and gate areas with card bg color
+    var bg = M.bgColor || '#B97600';
+    ctx.fillStyle = bg;
     ctx.fillRect(56, 14, 200, 44);   // title text area
     ctx.fillRect(240, 14, 64, 44);   // gate text area (x:240-304, stays clear of right corner)
 
@@ -60,12 +63,16 @@
     ctx.arc(40, 40, 16, 0, Math.PI * 2);
     ctx.fill();
     if (avatarImg) {
+      var as = 1 + (M.avatarScale || 0) / 100;  // 0.8 ~ 1.2
+      var dSize = 32 * as;
+      var dX = 24 + (32 - dSize) / 2;
+      var dY = 24 + (32 - dSize) / 2;
       ctx.save();
       ctx.beginPath();
       ctx.arc(40, 40, 16, 0, Math.PI * 2);
       ctx.closePath();
       ctx.clip();
-      ctx.drawImage(avatarImg, 24, 24, 32, 32);
+      ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
       ctx.restore();
     }
 
@@ -183,6 +190,49 @@
         if (APP.state.currentTab === 'goldcard') M.process();
       });
     });
+
+    // Avatar scale slider
+    var scaleSlider = document.getElementById('gcAvatarScale');
+    var scaleVal = document.getElementById('gcAvatarScaleVal');
+    if (scaleSlider) {
+      scaleSlider.addEventListener('input', function () {
+        M.avatarScale = parseInt(scaleSlider.value, 10) || 0;
+        if (scaleVal) scaleVal.textContent = M.avatarScale + '%';
+        if (APP.state.currentTab === 'goldcard') M.process();
+      });
+    }
+
+    // Card background color picker — HarmonyOS colors
+    var picker = document.getElementById('gcColorPicker');
+    if (picker) {
+      var colors = [
+        { color: '#B97600', label: '金' },
+        { color: '#0A59F7', label: '蓝' },
+        { color: '#E84026', label: '红' },
+        { color: '#ED6F21', label: '橙' },
+        { color: '#64BB5C', label: '绿' },
+        { color: '#1A1A1A', label: '黑' },
+        { color: '#FFFFFF', label: '白' },
+        { color: '#F1F3F5', label: '灰' }
+      ];
+      picker.innerHTML = '';
+      colors.forEach(function (c) {
+        var dot = document.createElement('span');
+        var isWhite = c.color === '#FFFFFF';
+        dot.style.cssText = 'width:24px;height:24px;border-radius:50%;cursor:pointer;background:' + c.color +
+          ';border:2px solid ' + (isWhite ? 'var(--border)' : 'transparent') +
+          ';box-shadow:' + (isWhite ? 'none' : '0 1px 3px rgba(0,0,0,0.15)') +
+          (M.bgColor === c.color ? ';outline:2px solid var(--brand);outline-offset:2px' : '');
+        dot.title = c.label;
+        dot.addEventListener('click', function () {
+          M.bgColor = c.color;
+          picker.querySelectorAll('span').forEach(function (d) { d.style.outline = ''; });
+          dot.style.outline = '2px solid var(--brand)'; dot.style.outlineOffset = '2px';
+          if (APP.state.currentTab === 'goldcard') M.process();
+        });
+        picker.appendChild(dot);
+      });
+    }
 
     // Avatar upload
     var avatarInput = document.getElementById('gcAvatarInput');
