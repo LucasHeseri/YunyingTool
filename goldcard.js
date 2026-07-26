@@ -127,17 +127,25 @@
 
     ctx.textBaseline = 'middle';
 
-    if (M.mode === 'ticket') {
-      // === 门票 content (Pixso frame 1052_27917, centered in middle area) ===
-      // Title — 24px Bold, white, centered
-      ctx.fillStyle = 'rgba(255,255,255,1)';
-      ctx.font = '700 24px "HarmonyOS Sans SC",sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(v('gcTitle'), 164, 86);
-      ctx.textAlign = 'start';
+    // Shared top area: title + gate (same position for both modes)
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcTitle'), 64, 40);
 
-      // Row 1: 座位 (left, x=16) / 时间 (right, x=312)
-      var ty1 = 130;
+    var gateX = 312, gateY = 40, gateVal = v('gcGate');
+    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.fillText(gateVal, gateX, gateY);
+    var valW = ctx.measureText(gateVal).width;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
+    ctx.textAlign = 'start';
+
+    if (M.mode === 'ticket') {
+      // === 门票 content ===
+      // Row 1: 座位 (left) / 时间 (right) — y=180 from top
+      var ty1 = 180;
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcPassengerLabel'), 16, ty1);
@@ -151,8 +159,8 @@
       drawML(ctx, v('gcSeat'), 164, ty1 + 22, 20);
       ctx.textAlign = 'start';
 
-      // Row 2: 地点 (left, x=16) / 票价 (right, x=312)
-      var ty2 = 194;
+      // Row 2: 地点 (left) / 票价 (right)
+      var ty2 = ty1 + 64;
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcCabinClassLabel'), 16, ty2);
@@ -186,22 +194,6 @@
       ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
       ctx.restore();
     }
-
-    // Title (top-left, 32px from top, 8px gap from avatar) — 16px
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcTitle'), 64, 40);
-
-    // Gate info (top-right: 登机口 label + value, right-aligned, fixed position)
-    var gateX = 312, gateY = 40, gateVal = v('gcGate');
-    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.fillText(gateVal, gateX, gateY);
-    var valW = ctx.measureText(gateVal).width;
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
-    ctx.textAlign = 'start';
 
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
     var FY = 72;
