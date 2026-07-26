@@ -7,13 +7,13 @@
 
   var M = APP.goldcard = {};
   var W = 328, H = 472, S = 2;
-  var templateImg = null, airplaneImg = null, avatarImg = null, ready = false;
+  var templateImg = null, airplaneImg = null, qrImg = null, avatarImg = null, ready = false;
   M.bgColor = '#B97600';  // card background color
   M.avatarScale = 0;      // -20 ~ +20 %
 
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
-    var loaded = 0, total = 2;
+    var loaded = 0, total = 3;
     function checkDone() {
       if (loaded >= total) {
         ready = true;
@@ -30,6 +30,11 @@
     aimg.onload = function () { airplaneImg = aimg; loaded++; checkDone(); };
     aimg.onerror = function () { loaded++; checkDone(); };
     aimg.src = typeof AIRPLANE_ICON !== 'undefined' ? AIRPLANE_ICON : '';
+
+    var qimg = new Image();
+    qimg.onload = function () { qrImg = qimg; loaded++; checkDone(); };
+    qimg.onerror = function () { loaded++; checkDone(); };
+    qimg.src = typeof QRCODE_IMAGE !== 'undefined' ? QRCODE_IMAGE : '';
   };
   M.isReady = function () { return ready; };
 
@@ -56,6 +61,13 @@
     ctx.fill();
 
     ctx.drawImage(templateImg, 0, 0, W, H);
+
+    // Recolor card body with selected color using color blend
+    ctx.globalCompositeOperation = 'color';
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+    ctx.globalCompositeOperation = 'source-over';
+
     ctx.textBaseline = 'middle';
 
     // Cover text/graphics in title and gate areas with card bg color
@@ -169,6 +181,11 @@
     ctx.textAlign = 'right';
     ctx.fillText(v('gcSeq'), 312, PY + 80);
     ctx.textAlign = 'start';
+
+    // QR code at bottom-right (88×88, placed at y=360)
+    if (qrImg) {
+      ctx.drawImage(qrImg, 224, 364, 88, 88);
+    }
 
     APP.state.processedDataUrl = c.toDataURL('image/png');
 
