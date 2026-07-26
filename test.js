@@ -31,7 +31,7 @@
 
     // Background
     ctx.fillStyle = '#ffffff';
-    ctx.beginPath(); ctx.roundRect(0, 0, W, H, 8); ctx.fill();
+    ctx.beginPath(); ctx.roundRect(0, 0, W, H, 20); ctx.fill();
 
     // Read field values
     var vals = {};
