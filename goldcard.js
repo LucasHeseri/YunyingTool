@@ -172,7 +172,7 @@
       ctx.textAlign = 'start';
 
       // Row 1: 座位 (left) / 时间 (right)
-      var ty1 = TY + 44; // 4px closer to title
+      var ty1 = TY + 34; // 16px gap below title
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcPassengerLabel'), 16, ty1);
@@ -234,7 +234,7 @@
 
     // Row 2: Departure time (left) / Arrival time (right) — 36px Bold, white, 96px gap
     ctx.fillStyle = 'rgba(255,255,255,1)';
-    ctx.font = '400 36px "HarmonyOS Sans SC",sans-serif';
+    ctx.font = '700 36px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcDepTime'), 16, FY + 42);
     ctx.textAlign = 'right';
     ctx.fillText(v('gcArrTime'), 312, FY + 42);
