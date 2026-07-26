@@ -184,15 +184,12 @@
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
-    APP.dom.uploadZone.parentNode.style.display = (tab === 'goldcard') ? 'none' : '';
-    // Test tab: change upload zone to vertical layout with title
-    var uploadText = APP.dom.uploadZone.querySelector('.upload-zone__text');
-    if (uploadText) {
-      uploadText.innerHTML = (tab === 'test') ? '<strong>替换logo</strong>' : '点击<strong>上传图片</strong>';
+    APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
+    // Restore upload zone text for non-test tabs
+    if (tab !== 'test') {
+      var uploadText = APP.dom.uploadZone.querySelector('.upload-zone__text');
+      if (uploadText) uploadText.innerHTML = '点击<strong>上传图片</strong>';
     }
-    var uploadTitle = document.getElementById('uploadTitle');
-    if (uploadTitle) uploadTitle.style.display = (tab === 'test') ? '' : 'none';
-    APP.dom.uploadZone.style.flexDirection = (tab === 'test') ? 'column' : '';
     APP.dom.previewCard.style.background = (tab === 'test') ? '#F1F3F5' : '';
     // Only logo tab shows 去背景
     APP.dom.removeBgSection.style.display = (tab === 'circle') ? '' : 'none';

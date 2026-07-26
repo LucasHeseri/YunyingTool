@@ -229,7 +229,6 @@ body {
 
     <div class="panel-card">
       <div class="upload-zone" id="uploadZone" role="button" tabindex="0">
-        <span class="upload-zone__title" id="uploadTitle" style="display:none;font-size:13px;color:var(--text-primary);font-weight:500;margin-bottom:6px;">商户logo</span>
         <svg class="upload-zone__icon" viewBox="0 0 44 44" fill="none">
           <rect x="2" y="2" width="40" height="40" rx="8" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/>
           <line x1="22" y1="14" x2="22" y2="30" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -337,6 +336,15 @@ body {
         </div>
       </div>
       <div id="ctrlTest" style="display:none;">
+        <!-- Logo upload (inline, like ticket) -->
+        <div class="control-group">
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:13px;color:var(--text-primary);white-space:nowrap;font-weight:500;">商户logo</span>
+            <input type="file" id="testLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+            <button id="testLogoBtn" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);cursor:pointer;font-size:12px;font-family:inherit;white-space:nowrap;">选择logo</button>
+            <span id="testLogoName" style="font-size:11px;color:var(--text-tertiary);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">未选择</span>
+          </div>
+        </div>
         <div class="control-group">
           <div class="control-group__label"><span>品牌名</span></div>
           <input type="text" id="testBrand" value="苏宁" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">

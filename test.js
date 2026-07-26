@@ -145,5 +145,29 @@
         if (APP.state.currentTab === 'test') M.process();
       });
     });
+    // Logo upload
+    var logoInput = document.getElementById('testLogoInput');
+    var logoBtn = document.getElementById('testLogoBtn');
+    var logoName = document.getElementById('testLogoName');
+    if (logoBtn && logoInput) {
+      logoBtn.addEventListener('click', function () { logoInput.click(); });
+      logoInput.addEventListener('change', function () {
+        if (logoInput.files && logoInput.files[0]) {
+          var file = logoInput.files[0];
+          if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { APP.showToast('仅支持 PNG / JPG / WebP'); return; }
+          if (file.size > 512 * 1024) { APP.showToast('logo 不超过 512KB'); return; }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            APP.state.originalUploadDataUrl = e.target.result;
+            var img = new Image();
+            img.onload = function () { APP.state.uploadedImage = img; M.process(); };
+            img.src = e.target.result;
+            if (logoName) logoName.textContent = file.name;
+          };
+          reader.readAsDataURL(file);
+          logoInput.value = '';
+        }
+      });
+    }
   };
 })();
