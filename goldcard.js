@@ -7,7 +7,9 @@
 
   var M = APP.goldcard = {};
   var W = 328, H = 472, S = 2;
-  var templateImg = null, airplaneImg = null, qrImg = null, avatarImg = null, ready = false;
+  var templateImg = null, airplaneImg = null, qrImg = null, avatarImg = null;
+  var ticketTopImg = null, ticketBtmImg = null, ticketMidImg = null;
+  var ready = false;
   M.mode = 'boarding';    // 'boarding' | 'ticket'
   M.bgColor = '#B97600';  // card background color
   M.avatarScale = 0;      // -20 ~ +20 %
@@ -45,7 +47,7 @@
 
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
-    var loaded = 0, total = 3;
+    var total = 6, loaded = 0;
     function checkDone() {
       if (loaded >= total) {
         ready = true;
@@ -53,20 +55,19 @@
         if (cb) cb(true);
       }
     }
-    var timg = new Image();
-    timg.onload = function () { templateImg = timg; loaded++; checkDone(); };
-    timg.onerror = function () { loaded++; checkDone(); };
-    timg.src = GOLDCARD_TEMPLATE;
-
-    var aimg = new Image();
-    aimg.onload = function () { airplaneImg = aimg; loaded++; checkDone(); };
-    aimg.onerror = function () { loaded++; checkDone(); };
-    aimg.src = typeof AIRPLANE_ICON !== 'undefined' ? AIRPLANE_ICON : '';
-
-    var qimg = new Image();
-    qimg.onload = function () { qrImg = qimg; loaded++; checkDone(); };
-    qimg.onerror = function () { loaded++; checkDone(); };
-    qimg.src = typeof QRCODE_IMAGE !== 'undefined' ? QRCODE_IMAGE : '';
+    function loadImg(src) {
+      var img = new Image();
+      img.onload = function () { loaded++; checkDone(); };
+      img.onerror = function () { loaded++; checkDone(); };
+      img.src = src;
+      return img;
+    }
+    templateImg = loadImg(GOLDCARD_TEMPLATE);
+    airplaneImg = loadImg(typeof AIRPLANE_ICON !== 'undefined' ? AIRPLANE_ICON : '');
+    qrImg = loadImg(typeof QRCODE_IMAGE !== 'undefined' ? QRCODE_IMAGE : '');
+    ticketTopImg = loadImg(typeof TICKET_TOP !== 'undefined' ? TICKET_TOP : '');
+    ticketBtmImg = loadImg(typeof TICKET_BOTTOM !== 'undefined' ? TICKET_BOTTOM : '');
+    ticketMidImg = loadImg(typeof TICKET_MID !== 'undefined' ? TICKET_MID : '');
   };
   M.isReady = function () { return ready; };
 
@@ -97,35 +98,22 @@
     var bg = M.bgColor || '#B97600';
 
     if (M.mode === 'ticket') {
-      // === 门票 template: card body + top/bottom gradient masks ===
-      var tc = [0, 1, 17];
-      function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
-
-      // Card body: rounded rect filled with #000111
-      ctx.fillStyle = 'rgb(' + tc.join(',') + ')';
-      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-      ctx.fill();
-
-      // Clip to card shape for gradient overlays
+      // === 门票: 三层 SVG 叠加 ===
+      // Clip to card shape (rounded rect with 24px radius)
       ctx.save();
       APP.drawRoundRect(ctx, 0, 0, W, H, 24);
       ctx.clip();
 
-      // Top gradient (55px, diagonal fade to transparent)
-      var topGrad = ctx.createLinearGradient(W * 0.6, 0, W * 0.4, 55);
-      topGrad.addColorStop(0, rgba(1));
-      topGrad.addColorStop(0.47, rgba(0.66));
-      topGrad.addColorStop(1, rgba(0));
-      ctx.fillStyle = topGrad;
-      ctx.fillRect(0, 0, W, 55);
+      // Layer 1: #F1F3F5 placeholder (middle image area, 238px)
+      ctx.fillStyle = '#F1F3F5';
+      ctx.fillRect(0, 0, W, H);
+      if (ticketMidImg) ctx.drawImage(ticketMidImg, 0, 0, W, 238);
 
-      // Bottom gradient (280px, diagonal fade to transparent)
-      var btmGrad = ctx.createLinearGradient(W * 0.4, H, W * 0.6, H - 264);
-      btmGrad.addColorStop(0, rgba(0.9));
-      btmGrad.addColorStop(0.33, rgba(0.3));
-      btmGrad.addColorStop(1, rgba(0));
-      ctx.fillStyle = btmGrad;
-      ctx.fillRect(0, H - 280, W, 280);
+      // Layer 2: Top gradient mask (55px, placed at top)
+      if (ticketTopImg) ctx.drawImage(ticketTopImg, 0, 0, W, 55);
+
+      // Layer 3: Bottom gradient mask (264px, placed at bottom)
+      if (ticketBtmImg) ctx.drawImage(ticketBtmImg, 0, H - 264, W, 264);
 
       ctx.restore();
     } else {
