@@ -69,14 +69,13 @@
     ctx.fillStyle = '#000000';
     ctx.fillText(vals.product, dividerX + 6, 27);
 
-    // Main amount — medium weight
+    // Main amount + label — bottom-aligned
     ctx.fillStyle = '#F34D4F'; ctx.font = '500 20px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(vals.amount, 10, 67);
+    ctx.textBaseline = 'bottom';
+    ctx.fillText(vals.amount, 10, 95);
 
-    // Amount label — aligned with tag row (tag y=79, h=14, center=86)
     ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(vals.amountLabel, 11, 86);
+    ctx.fillText(vals.amountLabel, 11, 95);
     ctx.textBaseline = 'alphabetic';
 
     // Right description — medium weight
