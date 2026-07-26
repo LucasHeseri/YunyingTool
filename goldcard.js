@@ -107,11 +107,7 @@
       var tc = [parseInt(hex.substring(0,2),16), parseInt(hex.substring(2,4),16), parseInt(hex.substring(4,6),16)];
       function rgba(a) { return 'rgba(' + tc.join(',') + ',' + a + ')'; }
 
-      // Card body + poster image, clipped to card shape
-      ctx.save();
-      APP.drawRoundRect(ctx, 0, 0, W, H, 24);
-      ctx.clip();
-
+      // === Draw all ticket layers first ===
       ctx.fillStyle = '#F1F3F5';
       ctx.fillRect(0, 0, W, H);
 
@@ -126,26 +122,33 @@
         ctx.drawImage(ticketMidImg, 0, 0, W, 238);
       }
 
-      // Top gradient (blur 12px)
+      // Top: solid portion first (no blur), then transition zone (blur 12px)
+      ctx.fillStyle = rgba(1);
+      ctx.fillRect(0, 0, W, 28);
       ctx.filter = 'blur(12px)';
       var topGrad = ctx.createLinearGradient(0, 28, 0, 55);
       topGrad.addColorStop(0, rgba(1));
       topGrad.addColorStop(0.47, rgba(0.66));
       topGrad.addColorStop(1, rgba(0));
       ctx.fillStyle = topGrad;
-      ctx.fillRect(0, 0, W, 55);
+      ctx.fillRect(0, 20, W, 40);
       ctx.filter = 'none';
 
-      // Bottom gradient (blur 12px)
+      // Bottom: solid portion first (no blur), then transition zone (blur 12px)
+      ctx.fillStyle = rgba(0.9);
+      ctx.fillRect(0, H - 264 + 34, W, 264 - 34);
       ctx.filter = 'blur(12px)';
       var btmGrad = ctx.createLinearGradient(0, H - 264, 0, H - 230);
       btmGrad.addColorStop(0, rgba(0));
       btmGrad.addColorStop(1, rgba(0.9));
       ctx.fillStyle = btmGrad;
-      ctx.fillRect(0, H - 280, W, 280);
+      ctx.fillRect(0, H - 280, W, 50);
       ctx.filter = 'none';
 
-      ctx.restore();
+      // Clip to card shape with notch (SVG template via destination-in)
+      ctx.globalCompositeOperation = 'destination-in';
+      ctx.drawImage(templateImg, 0, 0, W, H);
+      ctx.globalCompositeOperation = 'source-over';
     } else {
       // === 登机牌: fill SVG shape with selected bg color ===
       ctx.drawImage(templateImg, 0, 0, W, H);
