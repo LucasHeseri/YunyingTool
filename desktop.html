@@ -412,23 +412,11 @@ body {
               <input type="text" id="gcArrAirport" value="深圳宝安机场T3" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
             </div>
           </div>
-          <div class="control-group">
-            <div class="control-group__label"><span>出发时间 / 到达时间</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcDepTime" value="20:15" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
-              <input type="text" id="gcArrTime" value="23:40" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
-            </div>
-          </div>
-          <div class="control-group">
-            <div class="control-group__label"><span>日期 / 航班号 / 日期</span></div>
-            <div style="display:flex;gap:6px;">
-              <input type="text" id="gcDateL" value="20XX/0X/XX" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
-              <input type="text" id="gcFlightNo" value="CA888" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
-              <input type="text" id="gcDateR" value="20XX/0X/XX" readonly style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;background:#f5f5f5;color:var(--text-secondary);">
-            </div>
-          </div>
-          <!-- Passenger info (Pixso frame 1048_19: y=174, 296×88) -->
-          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:-6px;margin-top:4px;">乘客信息（y:174~262, 296×88px）</div>
+          <input type="hidden" id="gcDepTime" value="20:15">
+          <input type="hidden" id="gcArrTime" value="23:40">
+          <input type="hidden" id="gcDateL" value="20XX/0X/XX">
+          <input type="hidden" id="gcFlightNo" value="CA888">
+          <input type="hidden" id="gcDateR" value="20XX/0X/XX">
           <div class="control-group">
             <div class="control-group__label"><span>第一行信息（20px）</span></div>
             <div style="display:flex;gap:4px;">
