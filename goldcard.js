@@ -250,7 +250,7 @@
       if (hasThird2) sharedFs = Math.min(sharedFs, fitFontSize([v('gcTicketCabin'), v('gcTicketR2C3'), v('gcTicketPrice')]));
 
       // Row 1: left / center(third) / right
-      var ty1 = TY + 34;
+      var ty1 = TY + 24;
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcTicketPassengerLabel'), 16, ty1);
