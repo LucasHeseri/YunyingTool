@@ -212,7 +212,7 @@
       // === 门票 content (y=224) ===
       // Title — 24px Bold, bottom-aligned, extends upward (max 2 lines)
       // 2 lines → shrink 4px per level, max 2 levels (24→20→16)
-      var TY = 244;
+      var TY = 250;
       var titleLines = (v('gcTicketTitleTA') || '').split('\n').slice(0, 2);
       var titleFs = titleLines.length > 1 ? 20 : 24;
       ctx.fillStyle = 'rgba(255,255,255,1)';
