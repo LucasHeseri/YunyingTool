@@ -162,13 +162,13 @@
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-      drawML(ctx, v('gcPassenger'), 16, ty1 + 22, 20);
+      drawML(ctx, v('gcPassenger'), 16, ty1 + 14, 20);
       ctx.textAlign = 'right';
-      drawML(ctx, v('gcSeat'), 312, ty1 + 22, 20);
+      drawML(ctx, v('gcSeat'), 312, ty1 + 14, 20);
       ctx.textAlign = 'start';
 
       // Row 2: 地点 (left) / 票价 (right)
-      var ty2 = ty1 + 32; // 22px value + 10px gap
+      var ty2 = ty1 + 24; // 14px value offset + 10px gap
       ctx.fillStyle = 'rgba(255,255,255,0.6)';
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcCabinClassLabel'), 16, ty2);
@@ -177,9 +177,9 @@
       ctx.textAlign = 'start';
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-      drawML(ctx, v('gcCabinClass'), 16, ty2 + 22, 20);
+      drawML(ctx, v('gcCabinClass'), 16, ty2 + 14, 20);
       ctx.textAlign = 'right';
-      drawML(ctx, v('gcSeq'), 312, ty2 + 22, 20);
+      drawML(ctx, v('gcSeq'), 312, ty2 + 14, 20);
       ctx.textAlign = 'start';
 
     } else {
