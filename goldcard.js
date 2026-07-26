@@ -18,7 +18,7 @@
   var FIELD_IDS = [
     'gcTitle','gcGateLabel','gcGate',
     'gcDepAirport','gcArrAirport','gcFlightNo',
-    'gcDepTime','gcArrTime','gcDateL','gcDateR',
+    'gcDepTime','gcArrTime','gcDateL','gcDateR','gcTicketTitle',
     'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
     'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'
   ];
@@ -127,6 +127,21 @@
 
     ctx.textBaseline = 'middle';
 
+    // === Shared top info: 标题 + 登机口 (y=40) ===
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
+    ctx.fillText(v('gcTitle'), 64, 40);
+
+    var gateX = 312, gateY = 40, gateVal = v('gcGate');
+    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillStyle = 'rgba(255,255,255,0.9)';
+    ctx.fillText(gateVal, gateX, gateY);
+    var valW = ctx.measureText(gateVal).width;
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+    ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
+    ctx.textAlign = 'start';
+
     if (M.mode === 'ticket') {
       // === 门票 content (y=224) ===
       // Title — 24px Bold, white, centered
@@ -134,7 +149,7 @@
       ctx.fillStyle = 'rgba(255,255,255,1)';
       ctx.font = '700 24px "HarmonyOS Sans SC",sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(v('gcTitle'), 164, TY);
+      ctx.fillText(v('gcTicketTitle'), 164, TY);
       ctx.textAlign = 'start';
 
       // Row 1: 座位 (left) / 时间 (right)
@@ -187,21 +202,6 @@
       ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
       ctx.restore();
     }
-
-    // Title + Gate (top area, boarding only)
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcTitle'), 64, 40);
-
-    var gateX = 312, gateY = 40, gateVal = v('gcGate');
-    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillStyle = 'rgba(255,255,255,0.9)';
-    ctx.fillText(gateVal, gateX, gateY);
-    var valW = ctx.measureText(gateVal).width;
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
-    ctx.textAlign = 'start';
 
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
     var FY = 72;
@@ -313,7 +313,7 @@
 
     var ids = [
       'gcTitle','gcGateLabel','gcGate',
-      'gcDepAirport','gcArrAirport','gcFlightNo',
+      'gcDepAirport','gcArrAirport','gcFlightNo','gcTicketTitle',
       'gcPassengerLabel','gcPassenger','gcSeatLabel','gcSeat',
       'gcBoardTimeLabel','gcBoardTime','gcCabinClassLabel','gcCabinClass','gcSeqLabel','gcSeq'];
     ids.forEach(function (id) {
@@ -440,10 +440,10 @@
 
     // Set ticket mode defaults (different field mappings)
     M.fields.ticket = {
-      gcTitle: '标题标题',
-      gcGateLabel: '', gcGate: '',
+      gcTitle: 'XX商户', gcGateLabel: '登机口', gcGate: '08',
       gcDepAirport: '', gcArrAirport: '', gcFlightNo: '',
       gcDepTime: '', gcArrTime: '', gcDateL: '', gcDateR: '',
+      gcTicketTitle: '标题标题',
       gcPassengerLabel: '座位', gcPassenger: '1号厅4排5号',
       gcSeatLabel: '时间', gcSeat: '2025/11/29 19:30',
       gcCabinClassLabel: '地点', gcCabinClass: '深圳坂小华电影城',
