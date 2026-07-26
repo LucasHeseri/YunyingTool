@@ -49,6 +49,10 @@
     ctx.drawImage(templateImg, 0, 0, W, H);
     ctx.textBaseline = 'middle';
 
+    // Cover SVG text/graphics in top area (y:0~68) with card gold color
+    ctx.fillStyle = '#B97600';
+    ctx.fillRect(24, 0, 280, 68);
+
     // Avatar — 32×32 circle at (24, 24), center (40, 40), radius 16
     if (avatarImg) {
       ctx.save();
