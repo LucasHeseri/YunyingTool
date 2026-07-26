@@ -13,6 +13,10 @@
   M.mode = 'boarding';    // 'boarding' | 'ticket'
   M.bgColor = '#B97600';  // card background color
   M.avatarScale = 0;      // -20 ~ +20 %
+  M.posterImg = null;      // poster image for ticket
+  M.posterZoom = 100;      // 80~120%
+  M.posterHOff = 0;        // -50~50
+  M.posterVOff = 0;        // -50~50
 
   // === Per-mode field data (独立存储) ===
   var FIELD_IDS = [
@@ -107,7 +111,16 @@
       ctx.fillStyle = '#F1F3F5';
       APP.drawRoundRect(ctx, 0, 0, W, H, 24);
       ctx.fill();
-      if (ticketMidImg) ctx.drawImage(ticketMidImg, 0, 0, W, 238);
+      // Poster image (uploaded or default placeholder)
+      if (M.posterImg) {
+        var pz = (M.posterZoom || 100) / 100;
+        var pw = W * pz, ph = 238 * pz;
+        var px = (W - pw) / 2 + (M.posterHOff || 0);
+        var py = (238 - ph) / 2 + (M.posterVOff || 0);
+        ctx.drawImage(M.posterImg, px, py, pw, ph);
+      } else if (ticketMidImg) {
+        ctx.drawImage(ticketMidImg, 0, 0, W, 238);
+      }
 
       // Clip to card shape for gradient overlays
       ctx.save();
@@ -342,6 +355,8 @@
         M.saveFields();
         M.mode = btn.dataset.gcmode || 'boarding';
         M.loadFields();
+        var pg = document.getElementById('gcPosterGroup');
+        if (pg) pg.style.display = (M.mode === 'ticket') ? '' : 'none';
         if (APP.state.currentTab === 'goldcard') M.process();
       });
     }
@@ -469,6 +484,42 @@
         }
       });
     }
+
+    // Poster image upload + zoom/offset (ticket mode)
+    var posterInput = document.getElementById('gcPosterInput');
+    var posterBtn = document.getElementById('gcPosterBtn');
+    var posterName = document.getElementById('gcPosterName');
+    if (posterBtn && posterInput) {
+      posterBtn.addEventListener('click', function () { posterInput.click(); });
+      posterInput.addEventListener('change', function () {
+        if (posterInput.files && posterInput.files[0]) {
+          var file = posterInput.files[0];
+          if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { APP.showToast('仅支持 PNG / JPG / WebP'); return; }
+          if (file.size > 2 * 1024 * 1024) { APP.showToast('图片不超过 2MB'); return; }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () { M.posterImg = img; M.process(); };
+            img.src = e.target.result;
+            if (posterName) posterName.textContent = file.name;
+          };
+          reader.readAsDataURL(file);
+          posterInput.value = '';
+        }
+      });
+    }
+    ['gcPosterZoom','gcPosterHOff','gcPosterVOff'].forEach(function(id) {
+      var el = document.getElementById(id);
+      var valEl = document.getElementById(id + 'Val');
+      if (el) {
+        el.addEventListener('input', function () {
+          if (id === 'gcPosterZoom') { M.posterZoom = parseInt(el.value, 10); if (valEl) valEl.textContent = el.value + '%'; }
+          else if (id === 'gcPosterHOff') { M.posterHOff = parseInt(el.value, 10); if (valEl) valEl.textContent = el.value; }
+          else if (id === 'gcPosterVOff') { M.posterVOff = parseInt(el.value, 10); if (valEl) valEl.textContent = el.value; }
+          if (APP.state.currentTab === 'goldcard') M.process();
+        });
+      }
+    });
 
     // Capture initial defaults for boarding mode
     M.saveFields();
