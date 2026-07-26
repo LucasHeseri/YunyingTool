@@ -378,26 +378,24 @@ body {
             <div class="control-group__label"><span>卡片背景色</span></div>
             <div id="gcColorPicker" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
           </div>
-          <!-- Top area: avatar + title + gate -->
-          <div class="control-group">
-            <div class="control-group__label"><span>头像 (32×32 圆形)</span></div>
-            <div style="display:flex;align-items:center;gap:10px;">
-              <input type="file" id="gcAvatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
-              <button id="gcAvatarBtn" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);cursor:pointer;font-size:13px;font-family:inherit;">选择logo</button>
-              <span id="gcAvatarName" style="font-size:12px;color:var(--text-tertiary);">未选择</span>
-            </div>
-            <div style="display:flex;align-items:center;gap:6px;margin-top:6px;">
-              <span style="font-size:11px;color:var(--text-tertiary);">缩放</span>
-              <input type="range" id="gcAvatarScale" min="-20" max="20" value="0" step="1" style="flex:1;">
-              <span id="gcAvatarScaleVal" style="font-size:11px;color:var(--text-tertiary);width:36px;text-align:right;">0%</span>
-            </div>
-          </div>
           <div class="control-group">
             <div class="control-group__label"><span>顶部信息</span></div>
             <div style="display:flex;gap:8px;">
               <input type="text" id="gcTitle" value="中国国际航空公司" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
               <input type="text" id="gcGateLabel" value="登机口" style="width:60px;padding:6px 4px;border:1px solid var(--border);border-radius:6px;font-size:12px;font-family:inherit;">
               <input type="text" id="gcGate" value="08" style="width:48px;padding:6px 4px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+            </div>
+          </div>
+          <!-- Avatar: upload + scale in one row -->
+          <div class="control-group">
+            <div class="control-group__label"><span>头像 (32×32 圆形)</span></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="file" id="gcAvatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+              <button id="gcAvatarBtn" style="padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:var(--bg-card);cursor:pointer;font-size:13px;font-family:inherit;white-space:nowrap;">选择logo</button>
+              <span id="gcAvatarName" style="font-size:11px;color:var(--text-tertiary);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">未选择</span>
+              <span style="font-size:11px;color:var(--text-tertiary);white-space:nowrap;">缩放</span>
+              <input type="range" id="gcAvatarScale" min="-20" max="20" value="0" step="1" style="width:60px;">
+              <span id="gcAvatarScaleVal" style="font-size:11px;color:var(--text-tertiary);width:30px;text-align:right;">0%</span>
             </div>
           </div>
           <div class="control-group">
