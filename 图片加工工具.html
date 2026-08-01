@@ -430,6 +430,14 @@ body {
         <!-- ===== 页签二：模板2（328×108 借贷卡片） ===== -->
         <div id="testTab2" style="display:none;flex-direction:column;gap:16px;">
           <div class="control-group">
+            <div class="control-group__label"><span>商户logo</span></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="file" id="test2LogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+              <button id="test2LogoBtn" class="logo-btn">选择logo</button>
+              <span id="test2LogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">未选择</span>
+            </div>
+          </div>
+          <div class="control-group">
             <div class="control-group__label"><span>品牌名 / 产品名</span></div>
             <div style="display:flex;gap:16px;">
               <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
@@ -1785,14 +1793,19 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx2.fillStyle = '#ffffff';
       ctx2.beginPath(); ctx2.roundRect(0, 0, W2, H2, 16); ctx2.fill();
 
-      // Brand icon
-      var bg = ctx2.createLinearGradient(0, 0, 0, 16);
-      bg.addColorStop(0, '#4A90E2'); bg.addColorStop(0.45, '#4A90E2');
-      bg.addColorStop(0.55, '#F5A623'); bg.addColorStop(1, '#F5A623');
-      ctx2.fillStyle = bg; ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.fill();
-      ctx2.fillStyle = '#fff'; ctx2.font = '500 9px sans-serif';
-      ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle'; ctx2.fillText('易', 20, 24);
-      ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
+      // Brand icon — uploaded image or gradient default
+      if (APP.state.uploadedImage) {
+        ctx2.save(); ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.clip();
+        ctx2.drawImage(APP.state.uploadedImage, 12, 16, 16, 16); ctx2.restore();
+      } else {
+        var bg = ctx2.createLinearGradient(0, 0, 0, 16);
+        bg.addColorStop(0, '#4A90E2'); bg.addColorStop(0.45, '#4A90E2');
+        bg.addColorStop(0.55, '#F5A623'); bg.addColorStop(1, '#F5A623');
+        ctx2.fillStyle = bg; ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.fill();
+        ctx2.fillStyle = '#fff'; ctx2.font = '500 9px sans-serif';
+        ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle'; ctx2.fillText('易', 20, 24);
+        ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
+      }
 
       // Brand names + divider (adaptive, same as tab1 logic)
       ctx2.fillStyle = '#000'; ctx2.font = '400 12px sans-serif';
@@ -2104,6 +2117,27 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         if (APP.state.currentTab === 'test' && M.testChip === 'tab2') M.process();
       });
     });
+    // Tab2 logo upload
+    var t2logoInput = document.getElementById('test2LogoInput');
+    var t2logoBtn = document.getElementById('test2LogoBtn');
+    var t2logoName = document.getElementById('test2LogoName');
+    if (t2logoBtn && t2logoInput) {
+      t2logoBtn.addEventListener('click', function () { t2logoInput.click(); });
+      t2logoInput.addEventListener('change', function () {
+        if (t2logoInput.files && t2logoInput.files[0]) {
+          var file = t2logoInput.files[0];
+          if (file.size > 512 * 1024) { APP.showToast('logo 不超过 512KB'); return; }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () { APP.state.uploadedImage = img; if (M.testChip === 'tab2') M.process(); };
+            img.src = e.target.result;
+            if (t2logoName) { t2logoName.textContent = file.name; t2logoName.style.color = 'var(--text-primary)'; t2logoName.style.fontWeight = '700'; }
+          };
+          reader.readAsDataURL(file); t2logoInput.value = '';
+        }
+      });
+    }
     // Tab3 fields
     ['test3TopTag','test3Brand','test3Product','test3LabelL','test3ValueL','test3LabelR','test3ValueR','test3BtnText'].forEach(function(id) {
       var el = document.getElementById(id);
