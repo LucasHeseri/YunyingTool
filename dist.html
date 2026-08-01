@@ -1891,11 +1891,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       // White card body (top:34, 328x116, radius:16)
       ctx3.fillStyle = '#ffffff';
       ctx3.beginPath(); ctx3.roundRect(0, 34, W3, 116, 16); ctx3.fill();
-      // Subtle gradient overlay on card body
+      // Subtle gradient overlay — clipped to card body rounded rect
+      ctx3.save();
+      ctx3.beginPath(); ctx3.roundRect(0, 34, W3, 116, 16); ctx3.clip();
       var ovGrad = ctx3.createLinearGradient(0, 40, W3, 130);
       ovGrad.addColorStop(0, 'rgba(255,110,67,0)');
       ovGrad.addColorStop(1, 'rgba(255,109,67,0.2)');
       ctx3.fillStyle = ovGrad; ctx3.fillRect(0, 34, W3, 116);
+      ctx3.restore();
 
       // Banner (top:0, 328x59.6) — exact SVG path from uploaded HTML
       var bnrG = ctx3.createLinearGradient(570, -28, -134, 268);
