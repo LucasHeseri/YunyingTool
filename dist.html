@@ -427,7 +427,71 @@ body {
             </div>
           </div>
         </div>
-        <div id="testTab2" style="display:none;padding:40px 0;text-align:center;font-size:13px;color:var(--text-tertiary);">页签二 — 内容待添加</div>
+        <!-- ===== 页签二：模板2（328×108 借贷卡片） ===== -->
+        <div id="testTab2" style="display:none;flex-direction:column;gap:16px;">
+          <div class="control-group">
+            <div class="control-group__label"><span>品牌名 / 产品名</span></div>
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">品牌名</span>
+                <input type="text" id="test2Brand" value="苏宁" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">产品名</span>
+                <input type="text" id="test2Product" value="任性贷" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>优惠券标签</span></div>
+            <input type="text" id="test2Coupon" value="30天免息券" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>最高额度 / 年化利率最低 / 利率值</span></div>
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">左标签</span>
+                <input type="text" id="test2LabelL" value="最高额度" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">右标签</span>
+                <input type="text" id="test2LabelR" value="年化利率最低" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">利率值</span>
+                <input type="text" id="test2Rate" value="3.45%" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>金额 / 货币符号</span></div>
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">金额</span>
+                <input type="text" id="test2Amount" value="3,00,000" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="width:60px;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">符号</span>
+                <input type="text" id="test2Currency" value="￥" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;">
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>按钮文案</span></div>
+            <input type="text" id="test2BtnText" value="去借钱" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>导出尺寸</span></div>
+            <div style="display:flex;gap:16px;">
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+                <input type="radio" name="testScale" value="3"> 三倍图
+              </label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;">
+                <input type="radio" name="testScale" value="2" checked> 二倍图
+              </label>
+            </div>
+          </div>
+        </div>
         <div id="testTab3" style="display:none;padding:40px 0;text-align:center;font-size:13px;color:var(--text-tertiary);">页签三 — 内容待添加</div>
         <div id="testTab4" style="display:none;padding:40px 0;text-align:center;font-size:13px;color:var(--text-tertiary);">页签四 — 内容待添加</div>
       </div>
@@ -1626,6 +1690,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   if (!window.APP) throw new Error('common.js must load before test.js');
 
   var M = APP.test = {};
+  M.testChip = 'tab1';
 
   function getScale() {
     var el = document.querySelector('input[name="testScale"]:checked');
@@ -1646,6 +1711,83 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // ========================================================================
   M.process = function () {
     var s = getScale();
+
+    // === 页签2: 模板2 (328×108) ===
+    if (M.testChip === 'tab2') {
+      var W2 = 328, H2 = 108;
+      var c2 = document.createElement('canvas');
+      c2.width = W2 * s; c2.height = H2 * s;
+      var ctx2 = c2.getContext('2d');
+      ctx2.scale(s, s);
+      function gv2(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+
+      // Card bg
+      ctx2.fillStyle = '#ffffff';
+      ctx2.beginPath(); ctx2.roundRect(0, 0, W2, H2, 16); ctx2.fill();
+
+      // Brand icon
+      var bg = ctx2.createLinearGradient(0, 0, 0, 16);
+      bg.addColorStop(0, '#4A90E2'); bg.addColorStop(0.45, '#4A90E2');
+      bg.addColorStop(0.55, '#F5A623'); bg.addColorStop(1, '#F5A623');
+      ctx2.fillStyle = bg; ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.fill();
+      ctx2.fillStyle = '#fff'; ctx2.font = '500 9px sans-serif';
+      ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle'; ctx2.fillText('易', 20, 24);
+      ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
+
+      // Brand names
+      ctx2.fillStyle = '#000'; ctx2.font = '400 12px sans-serif';
+      ctx2.fillText(gv2('test2Brand'), 32, 28);
+      var bw2 = ctx2.measureText(gv2('test2Brand')).width;
+      ctx2.fillStyle = 'rgba(0,0,0,0.15)'; ctx2.fillRect(66, 20, 0.5, 10);
+      ctx2.fillText(gv2('test2Product'), 72, 28);
+
+      // Coupon tag
+      var cpn = gv2('test2Coupon');
+      if (cpn) {
+        ctx2.fillStyle = 'rgba(237,111,33,0.1)'; ctx2.fillRect(117, 17, 60, 14);
+        ctx2.fillStyle = '#ED6F21'; ctx2.font = '400 10px sans-serif';
+        ctx2.fillText(cpn, 121, 28);
+      }
+
+      // Labels row
+      ctx2.fillStyle = 'rgba(0,0,0,0.6)'; ctx2.font = '400 12px sans-serif';
+      ctx2.fillText(gv2('test2LabelL'), 12, 54);
+      ctx2.fillStyle = 'rgba(0,0,0,0.1)'; ctx2.fillRect(76, 44, 0.5, 12);
+      ctx2.fillText(gv2('test2LabelR'), 84, 54);
+
+      // Rate value
+      ctx2.fillStyle = '#F34D4F'; ctx2.font = '500 12px sans-serif';
+      ctx2.fillText(gv2('test2Rate'), 160, 54);
+
+      // Amount
+      ctx2.fillStyle = '#000'; ctx2.font = '500 16px sans-serif';
+      ctx2.fillText(gv2('test2Currency'), 12, 82);
+      ctx2.font = '500 20px sans-serif';
+      ctx2.fillText(gv2('test2Amount'), 30, 82);
+
+      // Button
+      var btnW2 = 72, btnH2 = 28;
+      ctx2.strokeStyle = '#F34D4F'; ctx2.lineWidth = 1;
+      ctx2.beginPath(); ctx2.roundRect(W2 - 12 - btnW2, H2/2 - btnH2/2, btnW2, btnH2, 20); ctx2.stroke();
+      ctx2.fillStyle = '#F34D4F'; ctx2.font = '500 14px sans-serif';
+      ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle';
+      ctx2.fillText(gv2('test2BtnText'), W2 - 12 - btnW2/2, H2/2);
+      ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
+
+      APP.state.processedDataUrl = c2.toDataURL('image/png');
+      var cv2 = APP.dom.previewCanvas, pctx2 = APP.ctx;
+      cv2.width = W2 * s; cv2.height = H2 * s;
+      cv2.style.display = 'block';
+      pctx2.drawImage(c2, 0, 0);
+      var cw2 = APP.dom.previewCard.clientWidth - 32, ch2 = APP.dom.previewCard.clientHeight - 16;
+      var ds2 = Math.min(cw2 / (W2 * s), ch2 / (H2 * s), 1);
+      cv2.style.width  = Math.round(W2 * s * ds2) + 'px';
+      cv2.style.height = Math.round(H2 * s * ds2) + 'px';
+      APP.dom.downloadBtn.disabled = false;
+      APP.dom.previewInfo.textContent = '328×108 @' + s + 'x';
+      return;
+    }
+
     var W = 328, H = 116;
     var c = document.createElement('canvas');
     c.width = W * s; c.height = H * s;
@@ -1765,10 +1907,16 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         btn.classList.add('active');
         M.testChip = btn.dataset.testtab || 'tab1';
         if (tabContent) tabContent.style.display = (M.testChip === 'tab1') ? 'flex' : 'none';
-        ['testTab2','testTab3','testTab4'].forEach(function(id) {
+        // Tab2: show as flex column, tabs 3-4: show as block
+        ['testTab2'].forEach(function(id) {
+          var el = document.getElementById(id);
+          if (el) el.style.display = (M.testChip === 'tab2') ? 'flex' : 'none';
+        });
+        ['testTab3','testTab4'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) el.style.display = (id === 'test' + M.testChip.charAt(0).toUpperCase() + M.testChip.slice(1)) ? '' : 'none';
         });
+        if (APP.state.currentTab === 'test') M.process();
       });
     }
 
@@ -1776,7 +1924,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     ids.forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function () {
-        if (APP.state.currentTab === 'test') M.process();
+        if (APP.state.currentTab === 'test' && M.testChip === 'tab1') M.process();
+      });
+    });
+    // Tab2 fields
+    ['test2Brand','test2Product','test2Coupon','test2LabelL','test2LabelR','test2Rate','test2Amount','test2Currency','test2BtnText'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', function () {
+        if (APP.state.currentTab === 'test' && M.testChip === 'tab2') M.process();
       });
     });
     // Scale radios
@@ -1800,7 +1955,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           reader.onload = function (e) {
             APP.state.originalUploadDataUrl = e.target.result;
             var img = new Image();
-            img.onload = function () { APP.state.uploadedImage = img; M.process(); };
+            img.onload = function () { APP.state.uploadedImage = img; if (M.testChip === 'tab1') M.process(); };
             img.src = e.target.result;
             if (logoName) { logoName.textContent = file.name; logoName.style.color = 'var(--text-primary)'; logoName.style.fontWeight = '700'; }
           };
