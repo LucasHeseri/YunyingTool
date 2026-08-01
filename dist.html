@@ -492,7 +492,65 @@ body {
             </div>
           </div>
         </div>
-        <div id="testTab3" style="display:none;padding:40px 0;text-align:center;font-size:13px;color:var(--text-tertiary);">页签三 — 内容待添加</div>
+        <!-- ===== 页签三：模板3（328×150 像素级复刻） ===== -->
+        <div id="testTab3" style="display:none;flex-direction:column;gap:16px;">
+          <div class="control-group">
+            <div class="control-group__label"><span>顶部标签</span></div>
+            <input type="text" id="test3TopTag" value="30天新客免息券" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>品牌名 / 产品名</span></div>
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">品牌名</span>
+                <input type="text" id="test3Brand" value="苏宁" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">产品名</span>
+                <input type="text" id="test3Product" value="任性贷" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>左标签 / 左数值 / 右标签 / 右数值</span></div>
+            <div style="display:flex;gap:16px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">左标签</span>
+                <input type="text" id="test3LabelL" value="最高额度 (元)" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">左数值</span>
+                <input type="text" id="test3ValueL" value="3,00,000" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+            </div>
+            <div style="display:flex;gap:16px;margin-top:4px;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">右标签</span>
+                <input type="text" id="test3LabelR" value="最低年化利率" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">右数值</span>
+                <input type="text" id="test3ValueR" value="3.45%" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+            </div>
+          </div>
+          <div class="control-group">
+            <div class="control-group__label"><span>按钮文案 / 导出尺寸</span></div>
+            <div style="display:flex;gap:16px;align-items:flex-end;">
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;width:100%;">按钮文案</span>
+                <input type="text" id="test3BtnText" value="去申请" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
+              </div>
+              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
+                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">导出尺寸</span>
+                <div style="display:flex;gap:16px;padding:6px 0;">
+                  <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="radio" name="testScale" value="3"> 三倍图</label>
+                  <label style="display:flex;align-items:center;gap:4px;font-size:13px;cursor:pointer;"><input type="radio" name="testScale" value="2" checked> 二倍图</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div id="testTab4" style="display:none;padding:40px 0;text-align:center;font-size:13px;color:var(--text-tertiary);">页签四 — 内容待添加</div>
       </div>
       <div id="ctrlGoldcard" style="display:none;">
@@ -1802,6 +1860,92 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       return;
     }
 
+    // === 页签3: 模板3 (328×150 像素级复刻) ===
+    if (M.testChip === 'tab3') {
+      var W3 = 328, H3 = 150;
+      var c3 = document.createElement('canvas');
+      c3.width = W3 * s; c3.height = H3 * s;
+      var ctx3 = c3.getContext('2d');
+      ctx3.scale(s, s);
+      function gv3(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+
+      // White card body + subtle gradient overlay
+      ctx3.fillStyle = '#ffffff';
+      ctx3.beginPath(); ctx3.roundRect(0, 34, W3, 116, 16); ctx3.fill();
+      var ovGrad = ctx3.createLinearGradient(0, 40, W3, 130);
+      ovGrad.addColorStop(0, 'rgba(255,110,67,0)');
+      ovGrad.addColorStop(1, 'rgba(255,109,67,0.2)');
+      ctx3.fillStyle = ovGrad; ctx3.fillRect(0, 34, W3, 116);
+
+      // Gradient banner
+      var bnrGrad = ctx3.createLinearGradient(570, -28, -134, 268);
+      bnrGrad.addColorStop(0, '#FFA23F'); bnrGrad.addColorStop(1, '#FF3C47');
+      ctx3.fillStyle = bnrGrad;
+      ctx3.beginPath(); ctx3.moveTo(26,0); ctx3.lineTo(302,0);
+      ctx3.arcTo(328,0,328,26,26); ctx3.lineTo(328,60); ctx3.lineTo(302,60);
+      ctx3.quadraticCurveTo(250,34,164,34); ctx3.quadraticCurveTo(78,34,26,60);
+      ctx3.lineTo(0,60); ctx3.lineTo(0,26); ctx3.arcTo(0,0,26,0,26); ctx3.closePath(); ctx3.fill();
+
+      // Coupon icon placeholder
+      ctx3.fillStyle = 'rgba(255,255,255,0.3)'; ctx3.fillRect(269, 0, 43, 43);
+
+      // Top tag
+      ctx3.fillStyle = '#fff'; ctx3.font = '400 14px sans-serif';
+      ctx3.fillText(gv3('test3TopTag'), 12, 22);
+
+      // Brand row (adaptive)
+      var bname3 = gv3('test3Brand'), pname3 = gv3('test3Product');
+      if (APP.state.uploadedImage) {
+        ctx3.save(); ctx3.beginPath(); ctx3.arc(20, 54, 8, 0, Math.PI*2); ctx3.clip();
+        ctx3.drawImage(APP.state.uploadedImage, 12, 46, 16, 16); ctx3.restore();
+      } else {
+        var bbg = ctx3.createLinearGradient(0, 0, 0, 16);
+        bbg.addColorStop(0, '#4A90E2'); bbg.addColorStop(1, '#F5A623');
+        ctx3.fillStyle = bbg; ctx3.beginPath(); ctx3.arc(20, 54, 8, 0, Math.PI*2); ctx3.fill();
+        ctx3.fillStyle = '#fff'; ctx3.font = '500 9px sans-serif';
+        ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle'; ctx3.fillText('易', 20, 54);
+        ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
+      }
+      ctx3.fillStyle = '#000'; ctx3.font = '400 12px sans-serif';
+      ctx3.fillText(bname3, 32, 56);
+      var bw3 = ctx3.measureText(bname3).width;
+      var divX3 = 32 + bw3 + 6;
+      ctx3.fillStyle = 'rgba(0,0,0,0.15)'; ctx3.fillRect(divX3, 50, 0.5, 10);
+      ctx3.fillText(pname3, divX3 + 6, 56);
+
+      // Info area: labels + vertical divider + values
+      ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
+      var lLbl3 = gv3('test3LabelL'), rLbl3 = gv3('test3LabelR');
+      ctx3.fillText(lLbl3, 12, 108);
+      ctx3.fillText(rLbl3, 98, 108);
+      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(90, 87, 0.25, 37);
+      // Values
+      ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
+      ctx3.fillText(gv3('test3ValueL'), 12, 90);
+      ctx3.fillStyle = '#000';
+      ctx3.fillText(gv3('test3ValueR'), 98, 90);
+
+      // Apply button
+      var btnX3 = 244, btnY3 = 88;
+      ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(btnX3, btnY3, 72, 28, 20); ctx3.fill();
+      ctx3.fillStyle = '#fff'; ctx3.font = '500 14px sans-serif';
+      ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle';
+      ctx3.fillText(gv3('test3BtnText'), btnX3 + 36, btnY3 + 14);
+      ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
+
+      APP.state.processedDataUrl = c3.toDataURL('image/png');
+      var cv3 = APP.dom.previewCanvas, pctx3 = APP.ctx;
+      cv3.width = W3 * s; cv3.height = H3 * s; cv3.style.display = 'block';
+      pctx3.drawImage(c3, 0, 0);
+      var cw3 = APP.dom.previewCard.clientWidth - 32, ch3 = APP.dom.previewCard.clientHeight - 16;
+      var ds3 = Math.min(cw3 / (W3 * s), ch3 / (H3 * s), 1);
+      cv3.style.width  = Math.round(W3 * s * ds3) + 'px';
+      cv3.style.height = Math.round(H3 * s * ds3) + 'px';
+      APP.dom.downloadBtn.disabled = false;
+      APP.dom.previewInfo.textContent = '328×150 @' + s + 'x';
+      return;
+    }
+
     var W = 328, H = 116;
     var c = document.createElement('canvas');
     c.width = W * s; c.height = H * s;
@@ -1921,12 +2065,12 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         btn.classList.add('active');
         M.testChip = btn.dataset.testtab || 'tab1';
         if (tabContent) tabContent.style.display = (M.testChip === 'tab1') ? 'flex' : 'none';
-        // Tab2: show as flex column, tabs 3-4: show as block
-        ['testTab2'].forEach(function(id) {
+        // Tab2+3: show as flex column, tab4: show as block
+        ['testTab2','testTab3'].forEach(function(id) {
           var el = document.getElementById(id);
-          if (el) el.style.display = (M.testChip === 'tab2') ? 'flex' : 'none';
+          if (el) el.style.display = (id === 'test' + M.testChip.charAt(0).toUpperCase() + M.testChip.slice(1)) ? 'flex' : 'none';
         });
-        ['testTab3','testTab4'].forEach(function(id) {
+        ['testTab4'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) el.style.display = (id === 'test' + M.testChip.charAt(0).toUpperCase() + M.testChip.slice(1)) ? '' : 'none';
         });
@@ -1946,6 +2090,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function () {
         if (APP.state.currentTab === 'test' && M.testChip === 'tab2') M.process();
+      });
+    });
+    // Tab3 fields
+    ['test3TopTag','test3Brand','test3Product','test3LabelL','test3ValueL','test3LabelR','test3ValueR','test3BtnText'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.addEventListener('input', function () {
+        if (APP.state.currentTab === 'test' && M.testChip === 'tab3') M.process();
       });
     });
     // Scale radios
