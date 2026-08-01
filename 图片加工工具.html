@@ -472,17 +472,8 @@ body {
             </div>
           </div>
           <div class="control-group">
-            <div class="control-group__label"><span>金额 / 货币符号</span></div>
-            <div style="display:flex;gap:16px;">
-              <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
-                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">金额</span>
-                <input type="text" id="test2Amount" value="3,00,000" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
-              </div>
-              <div style="width:60px;display:flex;flex-direction:column;gap:4px;">
-                <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">符号</span>
-                <input type="text" id="test2Currency" value="￥" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;">
-              </div>
-            </div>
+            <div class="control-group__label"><span>金额</span></div>
+            <input type="text" id="test2Amount" value="3,00,000" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
           </div>
           <div class="control-group">
             <div class="control-group__label"><span>按钮文案</span></div>
@@ -1793,18 +1784,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx2.fillStyle = '#ffffff';
       ctx2.beginPath(); ctx2.roundRect(0, 0, W2, H2, 16); ctx2.fill();
 
-      // Brand icon — uploaded image or gradient default
+      // Brand icon — uploaded image or #F1F3F5 circle default
       if (APP.state.uploadedImage) {
         ctx2.save(); ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.clip();
         ctx2.drawImage(APP.state.uploadedImage, 12, 16, 16, 16); ctx2.restore();
       } else {
-        var bg = ctx2.createLinearGradient(0, 0, 0, 16);
-        bg.addColorStop(0, '#4A90E2'); bg.addColorStop(0.45, '#4A90E2');
-        bg.addColorStop(0.55, '#F5A623'); bg.addColorStop(1, '#F5A623');
-        ctx2.fillStyle = bg; ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.fill();
-        ctx2.fillStyle = '#fff'; ctx2.font = '500 9px sans-serif';
-        ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle'; ctx2.fillText('易', 20, 24);
-        ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
+        ctx2.fillStyle = '#F1F3F5';
+        ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.fill();
       }
 
       // Brand names + divider (adaptive, same as tab1 logic)
@@ -1848,9 +1834,9 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx2.fillStyle = '#F34D4F'; ctx2.font = '500 12px sans-serif';
       ctx2.fillText(gv2('test2Rate'), rateX, 54);
 
-      // Amount
+      // Amount (with ¥ prefix)
       ctx2.fillStyle = '#000'; ctx2.font = '500 16px sans-serif';
-      ctx2.fillText(gv2('test2Currency'), 12, 82);
+      ctx2.fillText('￥', 12, 82);
       ctx2.font = '500 20px sans-serif';
       ctx2.fillText(gv2('test2Amount'), 30, 82);
 
