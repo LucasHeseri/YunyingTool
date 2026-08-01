@@ -1922,39 +1922,43 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.fillStyle = '#ffffff'; ctx3.font = '400 14px sans-serif';
       ctx3.fillText(gv3('test3TopTag'), 12, 22);
 
-      // Brand row (left:12, top:46, z:3)
-      var bname3 = gv3('test3Brand'), pname3 = gv3('test3Product');
-      var bbg3 = ctx3.createLinearGradient(0, 0, 0, 16);
-      bbg3.addColorStop(0, '#4A90E2'); bbg3.addColorStop(1, '#F5A623');
-      ctx3.fillStyle = bbg3; ctx3.beginPath(); ctx3.arc(20, 54, 8, 0, Math.PI*2); ctx3.fill();
-      ctx3.fillStyle = '#fff'; ctx3.font = '500 9px sans-serif';
-      ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle'; ctx3.fillText('易', 20, 54);
-      ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
+      // === Bottom info: same layout as tab1, shifted by banner offset ===
+      var OFF = 34; // banner height offset
+
+      // Brand icon + name (same layout as tab1 brand row)
+      if (APP.state.uploadedImage) {
+        ctx3.save(); ctx3.beginPath(); ctx3.arc(20, 24+OFF, 8, 0, Math.PI*2); ctx3.clip();
+        ctx3.drawImage(APP.state.uploadedImage, 12, 16+OFF, 16, 16); ctx3.restore();
+      } else {
+        ctx3.fillStyle = '#F1F3F5'; ctx3.beginPath(); ctx3.arc(20, 24+OFF, 8, 0, Math.PI*2); ctx3.fill();
+      }
       ctx3.fillStyle = '#000'; ctx3.font = '400 12px sans-serif';
-      ctx3.textBaseline = 'top'; ctx3.fillText(bname3, 32, 46);
+      var bname3 = gv3('test3Brand'), pname3 = gv3('test3Product');
+      ctx3.fillText(bname3, 36, 27+OFF);
       var bw3 = ctx3.measureText(bname3).width;
-      ctx3.fillStyle = 'rgba(0,0,0,0.15)'; ctx3.fillRect(32+bw3+6, 46+3, 0.5, 10);
-      ctx3.fillText(pname3, 32+bw3+12, 46);
-      ctx3.textBaseline = 'alphabetic';
-
-      // Info area: positions from image analysis (scale 525→328)
-      // Labels: image y≈180→card y≈112, values: image y≈132→card y≈82
-      ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
-      ctx3.fillText(gv3('test3LabelL'), 48, 112);
-      ctx3.fillText(gv3('test3LabelR'), 148, 112);
-      // Vertical divider: h=37, centered between value rows
-      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(104, 82, 0.25, 37);
-      // Values
-      ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
-      ctx3.fillText(gv3('test3ValueL'), 53, 84);
+      ctx3.fillStyle = 'rgba(0,0,0,0.2)'; ctx3.fillRect(36+bw3+6, 19+OFF, 1, 10);
       ctx3.fillStyle = '#000';
-      ctx3.fillText(gv3('test3ValueR'), 140, 84);
+      ctx3.fillText(pname3, 36+bw3+12, 27+OFF);
 
-      // Apply button: image pos (405,150)→card (253,94), 72×28, bg #D64550
-      ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(244, 88, 72, 28, 20); ctx3.fill();
+      // Values (same positions as tab1 amount)
+      ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
+      ctx3.fillText(gv3('test3ValueL'), 10, 67+OFF);
+      ctx3.fillStyle = '#000';
+      ctx3.fillText(gv3('test3ValueR'), 158, 67+OFF);
+
+      // Labels (same positions as tab1 amount label)
+      ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
+      ctx3.fillText(gv3('test3LabelL'), 11, 93+OFF);
+      ctx3.fillText(gv3('test3LabelR'), 148, 93+OFF);
+
+      // Vertical divider (between value columns)
+      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(136, 58+OFF, 0.25, 37);
+
+      // Apply button (same position as tab1 button)
+      ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(244, 44+OFF, 72, 28, 20); ctx3.fill();
       ctx3.fillStyle = '#fff'; ctx3.font = '500 14px sans-serif';
       ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle';
-      ctx3.fillText(gv3('test3BtnText'), 280, 102);
+      ctx3.fillText(gv3('test3BtnText'), 280, 58+OFF);
       ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
 
       APP.state.processedDataUrl = c3.toDataURL('image/png');
