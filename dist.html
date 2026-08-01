@@ -1793,15 +1793,15 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.fill();
       }
 
-      // Brand names + divider (adaptive, same as tab1 logic)
+      // Brand names + divider (same as tab1: x=36, gap 6px)
       ctx2.fillStyle = '#000'; ctx2.font = '400 12px sans-serif';
       var bName = gv2('test2Brand');
-      ctx2.fillText(bName, 32, 28);
+      ctx2.fillText(bName, 36, 27);
       var bw2 = ctx2.measureText(bName).width;
-      var divX2 = 32 + bw2 + 6;
-      ctx2.fillStyle = 'rgba(0,0,0,0.15)'; ctx2.fillRect(divX2, 20, 0.5, 10);
+      var divX2 = 36 + bw2 + 6;
+      ctx2.fillStyle = 'rgba(0,0,0,0.2)'; ctx2.fillRect(divX2, 19, 0.5, 10);
       ctx2.fillStyle = '#000';
-      ctx2.fillText(gv2('test2Product'), divX2 + 6, 28);
+      ctx2.fillText(gv2('test2Product'), divX2 + 6, 27);
 
       // Coupon tag (adaptive width, 4px padding, rounded corners)
       var cpn = gv2('test2Coupon');
