@@ -1893,44 +1893,48 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.fillStyle = '#fff'; ctx3.font = '400 14px sans-serif';
       ctx3.fillText(gv3('test3TopTag'), 12, 22);
 
-      // Brand row (adaptive)
-      var bname3 = gv3('test3Brand'), pname3 = gv3('test3Product');
+      // Brand row (top:46, h:16, z:3) — adaptive spacing
+      var BRY3 = 46;
       if (APP.state.uploadedImage) {
-        ctx3.save(); ctx3.beginPath(); ctx3.arc(20, 54, 8, 0, Math.PI*2); ctx3.clip();
-        ctx3.drawImage(APP.state.uploadedImage, 12, 46, 16, 16); ctx3.restore();
+        ctx3.save(); ctx3.beginPath(); ctx3.arc(20, BRY3+8, 8, 0, Math.PI*2); ctx3.clip();
+        ctx3.drawImage(APP.state.uploadedImage, 12, BRY3, 16, 16); ctx3.restore();
       } else {
         var bbg = ctx3.createLinearGradient(0, 0, 0, 16);
         bbg.addColorStop(0, '#4A90E2'); bbg.addColorStop(1, '#F5A623');
-        ctx3.fillStyle = bbg; ctx3.beginPath(); ctx3.arc(20, 54, 8, 0, Math.PI*2); ctx3.fill();
+        ctx3.fillStyle = bbg; ctx3.beginPath(); ctx3.arc(20, BRY3+8, 8, 0, Math.PI*2); ctx3.fill();
         ctx3.fillStyle = '#fff'; ctx3.font = '500 9px sans-serif';
-        ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle'; ctx3.fillText('易', 20, 54);
+        ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle'; ctx3.fillText('易', 20, BRY3+8);
         ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
       }
       ctx3.fillStyle = '#000'; ctx3.font = '400 12px sans-serif';
-      ctx3.fillText(bname3, 32, 56);
+      ctx3.textBaseline = 'top';
+      ctx3.fillText(bname3, 32, BRY3);
       var bw3 = ctx3.measureText(bname3).width;
       var divX3 = 32 + bw3 + 6;
-      ctx3.fillStyle = 'rgba(0,0,0,0.15)'; ctx3.fillRect(divX3, 50, 0.5, 10);
-      ctx3.fillText(pname3, divX3 + 6, 56);
+      ctx3.fillStyle = 'rgba(0,0,0,0.15)'; ctx3.fillRect(divX3, BRY3+3, 0.5, 10);
+      ctx3.fillText(pname3, divX3 + 6, BRY3);
+      ctx3.textBaseline = 'alphabetic';
 
-      // Info area: labels + vertical divider + values
+      // Info area: exact positions from CSS transform
+      var cardCY = 75; // card center Y (150/2)
+      // Labels at y=118 (75+43), values at y=91.5 (75+16.5)
       ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
-      var lLbl3 = gv3('test3LabelL'), rLbl3 = gv3('test3LabelR');
-      ctx3.fillText(lLbl3, 12, 108);
-      ctx3.fillText(rLbl3, 98, 108);
-      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(90, 87, 0.25, 37);
+      ctx3.fillText(gv3('test3LabelL'), 48, 118);
+      ctx3.fillText(gv3('test3LabelR'), 148, 118);
+      // Vertical divider: x=104, y=101.5-37/2=83 to 120
+      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(104, 83, 0.25, 37);
       // Values
       ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
-      ctx3.fillText(gv3('test3ValueL'), 12, 90);
+      ctx3.fillText(gv3('test3ValueL'), 53, 92);
       ctx3.fillStyle = '#000';
-      ctx3.fillText(gv3('test3ValueR'), 98, 90);
+      ctx3.fillText(gv3('test3ValueR'), 140, 92);
 
-      // Apply button
-      var btnX3 = 244, btnY3 = 88;
-      ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(btnX3, btnY3, 72, 28, 20); ctx3.fill();
+      // Apply button: center(280,102), 72x28
+      var btnCX3 = 280, btnCY3 = 102;
+      ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(btnCX3-36, btnCY3-14, 72, 28, 20); ctx3.fill();
       ctx3.fillStyle = '#fff'; ctx3.font = '500 14px sans-serif';
       ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle';
-      ctx3.fillText(gv3('test3BtnText'), btnX3 + 36, btnY3 + 14);
+      ctx3.fillText(gv3('test3BtnText'), btnCX3, btnCY3);
       ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
 
       APP.state.processedDataUrl = c3.toDataURL('image/png');
