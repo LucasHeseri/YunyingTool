@@ -1862,28 +1862,97 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       return;
     }
 
-        // === 页签3: 模板3 (render uploaded HTML as-is) ===
-    if (M.testChip === 'tab3' && typeof LOAN_TAB3_TEMPLATE !== 'undefined') {
+        // === 页签3: 模板3 (328×150, exact CSS positions) ===
+    if (M.testChip === 'tab3') {
       var W3 = 328, H3 = 150;
       var c3 = document.createElement('canvas');
       c3.width = W3 * s; c3.height = H3 * s;
       var ctx3 = c3.getContext('2d');
       ctx3.scale(s, s);
-      var tmplImg = new Image();
-      tmplImg.onload = function() {
-        ctx3.drawImage(tmplImg, 0, 0, W3, H3);
-        APP.state.processedDataUrl = c3.toDataURL('image/png');
-        var cv3 = APP.dom.previewCanvas, pctx3 = APP.ctx;
-        cv3.width = W3 * s; cv3.height = H3 * s; cv3.style.display = 'block';
-        pctx3.drawImage(c3, 0, 0);
-        var cw3 = APP.dom.previewCard.clientWidth - 32, ch3 = APP.dom.previewCard.clientHeight - 16;
-        var ds3 = Math.min(cw3 / (W3 * s), ch3 / (H3 * s), 1);
-        cv3.style.width  = Math.round(W3 * s * ds3) + 'px';
-        cv3.style.height = Math.round(H3 * s * ds3) + 'px';
-        APP.dom.downloadBtn.disabled = false;
-        APP.dom.previewInfo.textContent = '328×150 @' + s + 'x';
-      };
-      tmplImg.src = LOAN_TAB3_TEMPLATE;
+      function gv3(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+
+      // White card body (top:34, 328x116, radius:16)
+      ctx3.fillStyle = '#ffffff';
+      ctx3.beginPath(); ctx3.roundRect(0, 34, W3, 116, 16); ctx3.fill();
+      // Subtle gradient overlay on card body
+      var ovGrad = ctx3.createLinearGradient(0, 40, W3, 130);
+      ovGrad.addColorStop(0, 'rgba(255,110,67,0)');
+      ovGrad.addColorStop(1, 'rgba(255,109,67,0.2)');
+      ctx3.fillStyle = ovGrad; ctx3.fillRect(0, 34, W3, 116);
+
+      // Banner (top:0, 328x59.6, z:1)
+      var bnrG = ctx3.createLinearGradient(570, -28, -134, 268);
+      bnrG.addColorStop(0, '#FFA23F'); bnrG.addColorStop(1, '#FF3C47');
+      ctx3.fillStyle = bnrG;
+      ctx3.beginPath();
+      ctx3.moveTo(26,0); ctx3.lineTo(302,0);
+      ctx3.arcTo(328,0,328,26,26);
+      ctx3.lineTo(328,60); ctx3.lineTo(302,60);
+      ctx3.quadraticCurveTo(250,34,164,34);
+      ctx3.quadraticCurveTo(78,34,26,60);
+      ctx3.lineTo(0,60); ctx3.lineTo(0,26);
+      ctx3.arcTo(0,0,26,0,26); ctx3.closePath(); ctx3.fill();
+
+      // Coupon icon (left:269, top:0, 43x43)
+      ctx3.fillStyle = 'rgba(255,255,255,0.84)';
+      var cx3 = 269, cy3 = 0, cs3 = 43;
+      ctx3.beginPath();
+      ctx3.moveTo(cx3+cs3*0.5, cy3);
+      ctx3.lineTo(cx3+cs3*0.85, cy3+cs3*0.15);
+      ctx3.lineTo(cx3+cs3, cy3+cs3*0.5); ctx3.lineTo(cx3+cs3*0.85, cy3+cs3*0.85);
+      ctx3.lineTo(cx3+cs3*0.5, cy3+cs3);
+      ctx3.lineTo(cx3+cs3*0.15, cy3+cs3*0.85);
+      ctx3.lineTo(cx3, cy3+cs3*0.5); ctx3.lineTo(cx3+cs3*0.15, cy3+cs3*0.15);
+      ctx3.closePath(); ctx3.fill();
+
+      // Top tag (left:12, top:8, 14px, #fff, z:2)
+      ctx3.fillStyle = '#ffffff'; ctx3.font = '400 14px sans-serif';
+      ctx3.fillText(gv3('test3TopTag'), 12, 22);
+
+      // Brand row (left:12, top:46, z:3)
+      var bname3 = gv3('test3Brand'), pname3 = gv3('test3Product');
+      var bbg3 = ctx3.createLinearGradient(0, 0, 0, 16);
+      bbg3.addColorStop(0, '#4A90E2'); bbg3.addColorStop(1, '#F5A623');
+      ctx3.fillStyle = bbg3; ctx3.beginPath(); ctx3.arc(20, 54, 8, 0, Math.PI*2); ctx3.fill();
+      ctx3.fillStyle = '#fff'; ctx3.font = '500 9px sans-serif';
+      ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle'; ctx3.fillText('易', 20, 54);
+      ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
+      ctx3.fillStyle = '#000'; ctx3.font = '400 12px sans-serif';
+      ctx3.textBaseline = 'top'; ctx3.fillText(bname3, 32, 46);
+      var bw3 = ctx3.measureText(bname3).width;
+      ctx3.fillStyle = 'rgba(0,0,0,0.15)'; ctx3.fillRect(32+bw3+6, 46+3, 0.5, 10);
+      ctx3.fillText(pname3, 32+bw3+12, 46);
+      ctx3.textBaseline = 'alphabetic';
+
+      // Info: labels at y=118 (card center 75 + 43), values at y=91.5 (75 + 16.5)
+      ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
+      ctx3.fillText(gv3('test3LabelL'), 48, 118);
+      ctx3.fillText(gv3('test3LabelR'), 148, 118);
+      // Vertical divider: x=104, y=83(101.5-18.5), h=37, w=0.25
+      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(104, 83, 0.25, 37);
+      // Values
+      ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
+      ctx3.fillText(gv3('test3ValueL'), 53, 92);
+      ctx3.fillStyle = '#000';
+      ctx3.fillText(gv3('test3ValueR'), 140, 92);
+
+      // Apply button: center(280, 102), 72x28, bg #D64550, radius 20
+      ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(244, 88, 72, 28, 20); ctx3.fill();
+      ctx3.fillStyle = '#fff'; ctx3.font = '500 14px sans-serif';
+      ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle';
+      ctx3.fillText(gv3('test3BtnText'), 280, 102);
+      ctx3.textAlign = 'start'; ctx3.textBaseline = 'alphabetic';
+
+      APP.state.processedDataUrl = c3.toDataURL('image/png');
+      var cv3 = APP.dom.previewCanvas, pctx3 = APP.ctx;
+      cv3.width = W3 * s; cv3.height = H3 * s; cv3.style.display = 'block';
+      pctx3.drawImage(c3, 0, 0);
+      var cw3 = APP.dom.previewCard.clientWidth - 32, ch3 = APP.dom.previewCard.clientHeight - 16;
+      var ds3 = Math.min(cw3 / (W3 * s), ch3 / (H3 * s), 1);
+      cv3.style.width  = Math.round(W3 * s * ds3) + 'px';
+      cv3.style.height = Math.round(H3 * s * ds3) + 'px';
+      APP.dom.downloadBtn.disabled = false;
+      APP.dom.previewInfo.textContent = '328×150 @' + s + 'x';
       return;
     }
 
