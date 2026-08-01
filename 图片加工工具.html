@@ -1787,30 +1787,26 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx2.fillStyle = dm ? 'rgba(255,255,255,0.098)' : '#ffffff';
       ctx2.beginPath(); ctx2.roundRect(0, 0, W2, H2, 16); ctx2.fill();
 
-      // Brand icon + names + divider (horizontally centered)
-      ctx2.font = '400 12px sans-serif';
-      ctx2.fillStyle = '#000'; ctx2.font = '400 12px sans-serif';
+      // Brand icon + names + divider (x=36, matches tab3)
       var bName = gv2('test2Brand'), pName = gv2('test2Product');
-      var bW2 = ctx2.measureText(bName).width;
-      var pW2 = ctx2.measureText(pName).width;
-      var brandTotalW = 16 + 8 + bW2 + 6 + 0.5 + 6 + pW2; // logo+gap+name+gap+divider+gap+product
-      var brandStartX = (W2 - brandTotalW) / 2;
-      // Logo at brandStartX
       if (APP.state.uploadedImage) {
-        ctx2.save(); ctx2.beginPath(); ctx2.arc(brandStartX+8, 24, 8, 0, Math.PI*2); ctx2.clip();
-        ctx2.drawImage(APP.state.uploadedImage, brandStartX, 16, 16, 16); ctx2.restore();
+        ctx2.save(); ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.clip();
+        ctx2.drawImage(APP.state.uploadedImage, 12, 16, 16, 16); ctx2.restore();
       } else {
         ctx2.fillStyle = '#F1F3F5';
-        ctx2.beginPath(); ctx2.arc(brandStartX+8, 24, 8, 0, Math.PI*2); ctx2.fill();
+        ctx2.beginPath(); ctx2.arc(20, 24, 8, 0, Math.PI*2); ctx2.fill();
       }
-      var textX2 = brandStartX + 16 + 8; // logo right edge + 8px gap
-      ctx2.fillStyle = '#000'; ctx2.font = '400 12px sans-serif';
-      ctx2.fillText(bName, textX2, 27);
-      var divX2 = textX2 + bW2 + 6;
-      ctx2.fillStyle = dm ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)'; ctx2.fillRect(divX2, 19, 0.5, 10);
-      ctx2.fillText(pName, divX2 + 6, 27);
+      ctx2.fillStyle = dm ? '#fff' : '#000'; ctx2.font = '400 12px sans-serif';
+      ctx2.textBaseline = 'middle';
+      ctx2.fillText(bName, 36, 24);
+      var divX2 = 36 + ctx2.measureText(bName).width + 6;
+      ctx2.fillStyle = dm ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)';
+      ctx2.fillRect(divX2, 19, 0.5, 10);
+      ctx2.fillStyle = dm ? '#fff' : '#000';
+      ctx2.fillText(pName, divX2 + 6, 24);
+      ctx2.textBaseline = 'alphabetic';
 
-      // Coupon tag (adaptive width, 4px padding, rounded corners)
+// Coupon tag (adaptive width, 4px padding, rounded corners)
       var cpn = gv2('test2Coupon');
       if (cpn) {
         ctx2.font = '400 10px sans-serif';
@@ -1946,11 +1942,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         ctx3.fillStyle = '#F1F3F5'; ctx3.beginPath(); ctx3.arc(20, 24+OFF, 8, 0, Math.PI*2); ctx3.fill();
       }
       ctx3.fillStyle = '#000'; ctx3.font = '400 12px sans-serif';
-      ctx3.fillText(bname3, 36, 27+OFF);
+      ctx3.textBaseline = 'middle';
+      ctx3.fillText(bname3, 36, 24+OFF);
       var bW3 = ctx3.measureText(bname3).width;
       ctx3.fillStyle = 'rgba(0,0,0,0.2)'; ctx3.fillRect(36+bW3+6, 19+OFF, 1, 10);
       ctx3.fillStyle = '#000';
-      ctx3.fillText(pname3, 36+bW3+12, 27+OFF);
+      ctx3.fillText(pname3, 36+bW3+12, 24+OFF);
+      ctx3.textBaseline = 'alphabetic';
 
       // Values (same positions as tab1 amount)
       ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
