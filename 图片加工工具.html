@@ -1881,18 +1881,30 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ovGrad.addColorStop(1, 'rgba(255,109,67,0.2)');
       ctx3.fillStyle = ovGrad; ctx3.fillRect(0, 34, W3, 116);
 
-      // Banner (top:0, 328x59.6, z:1)
+      // Banner (top:0, 328x59.6) — exact SVG path from uploaded HTML
       var bnrG = ctx3.createLinearGradient(570, -28, -134, 268);
       bnrG.addColorStop(0, '#FFA23F'); bnrG.addColorStop(1, '#FF3C47');
       ctx3.fillStyle = bnrG;
+      // Use exact SVG path: top rounded corners + bottom involute curve
       ctx3.beginPath();
-      ctx3.moveTo(26,0); ctx3.lineTo(302,0);
-      ctx3.arcTo(328,0,328,26,26);
-      ctx3.lineTo(328,60); ctx3.lineTo(302,60);
-      ctx3.quadraticCurveTo(250,34,164,34);
-      ctx3.quadraticCurveTo(78,34,26,60);
-      ctx3.lineTo(0,60); ctx3.lineTo(0,26);
-      ctx3.arcTo(0,0,26,0,26); ctx3.closePath(); ctx3.fill();
+      ctx3.moveTo(302.4, 0);
+      ctx3.lineTo(25.6, 0);
+      ctx3.bezierCurveTo(16.639, 0, 12.159, 0, 8.736, 1.744);
+      ctx3.bezierCurveTo(5.726, 3.278, 3.278, 5.726, 1.744, 8.736);
+      ctx3.bezierCurveTo(0, 12.159, 0, 16.639, 0, 25.6);
+      ctx3.lineTo(0, 59.6);
+      ctx3.bezierCurveTo(0, 50.639, 0, 46.159, 1.744, 42.736);
+      ctx3.bezierCurveTo(3.278, 39.726, 5.726, 37.278, 8.736, 35.744);
+      ctx3.bezierCurveTo(12.159, 34, 16.639, 34, 25.6, 34);
+      ctx3.lineTo(302.4, 34);
+      ctx3.bezierCurveTo(311.361, 34, 315.841, 34, 319.264, 35.744);
+      ctx3.bezierCurveTo(322.274, 37.278, 324.722, 39.726, 326.256, 42.736);
+      ctx3.bezierCurveTo(328, 46.159, 328, 50.639, 328, 59.6);
+      ctx3.lineTo(328, 25.6);
+      ctx3.bezierCurveTo(328, 16.639, 328, 12.159, 326.256, 8.736);
+      ctx3.bezierCurveTo(324.722, 5.726, 322.274, 3.278, 319.264, 1.744);
+      ctx3.bezierCurveTo(315.841, 0, 311.361, 0, 302.4, 0);
+      ctx3.closePath(); ctx3.fill();
 
       // Coupon icon (left:269, top:0, 43x43)
       ctx3.fillStyle = 'rgba(255,255,255,0.84)';
