@@ -1756,7 +1756,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   M.couponIconImg = null;
   if (typeof LOAN_COUPON_ICON !== 'undefined') {
     var cpnPreload = new Image();
-    cpnPreload.onload = function() { M.couponIconImg = cpnPreload; };
+    cpnPreload.onload = function() { M.couponIconImg = cpnPreload; if (APP.state.currentTab === 'test' && M.testChip === 'tab3') M.process(); };
     cpnPreload.src = LOAN_COUPON_ICON;
   }
 
