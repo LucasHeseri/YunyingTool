@@ -1937,19 +1937,20 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.fillText(pname3, 32+bw3+12, 46);
       ctx3.textBaseline = 'alphabetic';
 
-      // Info: labels at y=118 (card center 75 + 43), values at y=91.5 (75 + 16.5)
+      // Info area: positions from image analysis (scale 525→328)
+      // Labels: image y≈180→card y≈112, values: image y≈132→card y≈82
       ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
-      ctx3.fillText(gv3('test3LabelL'), 48, 118);
-      ctx3.fillText(gv3('test3LabelR'), 148, 118);
-      // Vertical divider: x=104, y=83(101.5-18.5), h=37, w=0.25
-      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(104, 83, 0.25, 37);
+      ctx3.fillText(gv3('test3LabelL'), 48, 112);
+      ctx3.fillText(gv3('test3LabelR'), 148, 112);
+      // Vertical divider: h=37, centered between value rows
+      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(104, 82, 0.25, 37);
       // Values
       ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
-      ctx3.fillText(gv3('test3ValueL'), 53, 92);
+      ctx3.fillText(gv3('test3ValueL'), 53, 84);
       ctx3.fillStyle = '#000';
-      ctx3.fillText(gv3('test3ValueR'), 140, 92);
+      ctx3.fillText(gv3('test3ValueR'), 140, 84);
 
-      // Apply button: center(280, 102), 72x28, bg #D64550, radius 20
+      // Apply button: image pos (405,150)→card (253,94), 72×28, bg #D64550
       ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(244, 88, 72, 28, 20); ctx3.fill();
       ctx3.fillStyle = '#fff'; ctx3.font = '500 14px sans-serif';
       ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle';
