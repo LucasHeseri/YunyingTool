@@ -1734,30 +1734,44 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle'; ctx2.fillText('易', 20, 24);
       ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
 
-      // Brand names
+      // Brand names + divider (adaptive, same as tab1 logic)
       ctx2.fillStyle = '#000'; ctx2.font = '400 12px sans-serif';
-      ctx2.fillText(gv2('test2Brand'), 32, 28);
-      var bw2 = ctx2.measureText(gv2('test2Brand')).width;
-      ctx2.fillStyle = 'rgba(0,0,0,0.15)'; ctx2.fillRect(66, 20, 0.5, 10);
-      ctx2.fillText(gv2('test2Product'), 72, 28);
+      var bName = gv2('test2Brand');
+      ctx2.fillText(bName, 32, 28);
+      var bw2 = ctx2.measureText(bName).width;
+      var divX2 = 32 + bw2 + 6;
+      ctx2.fillStyle = 'rgba(0,0,0,0.15)'; ctx2.fillRect(divX2, 20, 0.5, 10);
+      ctx2.fillStyle = '#000';
+      ctx2.fillText(gv2('test2Product'), divX2 + 6, 28);
 
-      // Coupon tag
+      // Coupon tag (adaptive width, 4px padding each side)
       var cpn = gv2('test2Coupon');
       if (cpn) {
-        ctx2.fillStyle = 'rgba(237,111,33,0.1)'; ctx2.fillRect(117, 17, 60, 14);
-        ctx2.fillStyle = '#ED6F21'; ctx2.font = '400 10px sans-serif';
-        ctx2.fillText(cpn, 121, 28);
+        ctx2.font = '400 10px sans-serif';
+        var cpnW = ctx2.measureText(cpn).width;
+        var cpnX = divX2 + 6 + ctx2.measureText(gv2('test2Product')).width + 8;
+        ctx2.fillStyle = 'rgba(237,111,33,0.1)'; ctx2.fillRect(cpnX, 17, cpnW + 8, 14);
+        ctx2.fillStyle = '#ED6F21';
+        ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle';
+        ctx2.fillText(cpn, cpnX + (cpnW + 8) / 2, 24);
+        ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
       }
 
-      // Labels row
+      // Labels row (adaptive, same color)
       ctx2.fillStyle = 'rgba(0,0,0,0.6)'; ctx2.font = '400 12px sans-serif';
-      ctx2.fillText(gv2('test2LabelL'), 12, 54);
-      ctx2.fillStyle = 'rgba(0,0,0,0.1)'; ctx2.fillRect(76, 44, 0.5, 12);
-      ctx2.fillText(gv2('test2LabelR'), 84, 54);
+      var lblL = gv2('test2LabelL');
+      ctx2.fillText(lblL, 12, 54);
+      var lblLW = ctx2.measureText(lblL).width;
+      var lblDivX = 12 + lblLW + 6;
+      ctx2.fillStyle = 'rgba(0,0,0,0.1)'; ctx2.fillRect(lblDivX, 44, 0.5, 12);
+      var lblR = gv2('test2LabelR');
+      ctx2.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx2.fillText(lblR, lblDivX + 6, 54);
 
       // Rate value
+      var rateX = lblDivX + 6 + ctx2.measureText(lblR).width + 8;
       ctx2.fillStyle = '#F34D4F'; ctx2.font = '500 12px sans-serif';
-      ctx2.fillText(gv2('test2Rate'), 160, 54);
+      ctx2.fillText(gv2('test2Rate'), rateX, 54);
 
       // Amount
       ctx2.fillStyle = '#000'; ctx2.font = '500 16px sans-serif';
