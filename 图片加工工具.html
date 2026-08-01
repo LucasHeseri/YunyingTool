@@ -1809,7 +1809,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       if (cpn) {
         ctx2.font = '400 10px sans-serif';
         var cpnW = ctx2.measureText(cpn).width;
-        var cpnX = divX2 + 6 + ctx2.measureText(gv2('test2Product')).width + 18; // +10px right
+        var cpnX = divX2 + 6 + ctx2.measureText(gv2('test2Product')).width + 12;
         var tagW = cpnW + 8, tagH = 14, tagR = 4;
         ctx2.fillStyle = 'rgba(237,111,33,0.1)';
         ctx2.beginPath(); ctx2.roundRect(cpnX, 17, tagW, tagH, tagR); ctx2.fill();
