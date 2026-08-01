@@ -1944,15 +1944,15 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
       ctx3.fillText(gv3('test3ValueL'), 12, 67+OFF);
       ctx3.fillStyle = '#000';
-      ctx3.fillText(gv3('test3ValueR'), 148, 67+OFF);
+      ctx3.fillText(gv3('test3ValueR'), 116, 67+OFF);
 
       // Labels (left-aligned with values)
       ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
       ctx3.fillText(gv3('test3LabelL'), 12, 93+OFF);
-      ctx3.fillText(gv3('test3LabelR'), 148, 93+OFF);
+      ctx3.fillText(gv3('test3LabelR'), 116, 93+OFF);
 
-      // Vertical divider centered between columns
-      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(120, 58+OFF, 0.25, 37);
+      // Vertical divider: 12px gap on each side
+      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(104, 58+OFF, 0.25, 37);
 
       // Apply button (same position as tab1 button)
       ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(244, 44+OFF, 72, 28, 20); ctx3.fill();
