@@ -1836,7 +1836,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx2.fillText(lblR, lblDivX + 6, 58);
 
       // Rate value — gap 8px from label
-      var rateX = lblDivX + 6 + ctx2.measureText(lblR).width + 8;
+      var rateX = lblDivX + 6 + ctx2.measureText(lblR).width + 4;
       ctx2.fillStyle = dm ? '#fff' : '#F34D4F'; ctx2.font = '500 12px sans-serif';
       ctx2.fillText(gv2('test2Rate'), rateX, 58);
 
