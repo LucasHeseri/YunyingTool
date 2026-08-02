@@ -1823,8 +1823,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         var cpnW = ctx2.measureText(cpn).width;
         var cpnX = divX2 + 6 + ctx2.measureText(gv2('test2Product')).width + 12;
         var tagW = cpnW + 8, tagH = 14, tagR = 4;
-        if (!dm) { ctx2.fillStyle = 'rgba(237,111,33,0.1)'; ctx2.beginPath(); ctx2.roundRect(cpnX, 17, tagW, tagH, tagR); ctx2.fill(); }
-        ctx2.fillStyle = dm ? '#fff' : '#ED6F21';
+        ctx2.fillStyle = 'rgba(237,111,33,0.1)'; ctx2.beginPath(); ctx2.roundRect(cpnX, 17, tagW, tagH, tagR); ctx2.fill();
+        ctx2.fillStyle = '#ED6F21';
         ctx2.textAlign = 'center'; ctx2.textBaseline = 'middle';
         ctx2.fillText(cpn, cpnX + tagW / 2, 17 + tagH / 2);
         ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
@@ -2057,8 +2057,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx.font = '400 10px "HarmonyOS Sans SC",sans-serif';
       var textW = ctx.measureText(text).width;
       var tw = textW + padH * 2;
-      if (!dm) { ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill(); }
-      ctx.fillStyle = dm ? '#fff' : '#ED6F21';
+      ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
+      ctx.fillStyle = '#ED6F21';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(text, x + tw / 2, y + tagH / 2 + 1);
       ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
