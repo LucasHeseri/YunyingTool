@@ -498,7 +498,6 @@ body {
             <input type="text" id="test3TopTag" value="30天新客免息券" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;">
           </div>
           <div class="control-group">
-            <div class="control-group__label"><span>品牌名 / 产品名</span></div>
             <div style="display:flex;gap:16px;">
               <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
                 <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">品牌名</span>
@@ -511,7 +510,6 @@ body {
             </div>
           </div>
           <div class="control-group">
-            <div class="control-group__label"><span>左标签 / 左数值 / 右标签 / 右数值</span></div>
             <div style="display:flex;gap:16px;">
               <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
                 <span style="font-size:12px;color:var(--text-secondary);font-weight:500;">左标签</span>
@@ -534,7 +532,6 @@ body {
             </div>
           </div>
           <div class="control-group">
-            <div class="control-group__label"><span>按钮文案 / 导出尺寸</span></div>
             <div style="display:flex;gap:16px;align-items:flex-end;">
               <div style="flex:1;display:flex;flex-direction:column;gap:4px;">
                 <span style="font-size:12px;color:var(--text-secondary);font-weight:500;width:100%;">按钮文案</span>
@@ -1919,7 +1916,23 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.closePath();ctx3.fill();
       ctx3.globalAlpha = 1;
 
-      // Coupon icon — on top of banner, clipped// === Bottom info: same layout as tab1, shifted by banner offset ===
+      // Coupon icon — on top of banner, clipped
+      ctx3.save();
+      ctx3.beginPath(); ctx3.rect(0, 0, W3, 60); ctx3.clip();
+      ctx3.globalAlpha = 0.84;
+      ctx3.translate(269, 0);
+      var cpnGrad = ctx3.createLinearGradient(0, 0, 43, 43);
+      cpnGrad.addColorStop(0, '#ffffff'); cpnGrad.addColorStop(1, '#FF7343');
+      ctx3.fillStyle = cpnGrad;
+      var cpnPath = new Path2D('M35.523 9.512C37.871 9.512 39.775 11.416 39.775 13.765v5.176c-2.075.317-3.665 2.11-3.665 4.274 0 2.164 1.59 3.956 3.665 4.274v5.444c0 2.349-1.904 4.253-4.252 4.253H3.469c-2.348 0-4.252-1.904-4.252-4.253v-5.164c2.072-.32 3.659-2.111 3.659-4.273 0-2.162-1.587-3.953-3.659-4.273V13.765c0-2.349 1.904-4.253 4.252-4.253h32.054zm-16.239 18.494l2.215-1.164 2.215 1.164c.681.358 1.477-.22 1.347-.979l-.423-2.466 1.792-1.747c.551-.537.247-1.473-.514-1.584l-2.477-.36-1.108-2.244c-.341-.69-1.325-.69-1.665 0l-1.108 2.244-2.476.36c-.762.11-1.066 1.047-.515 1.584l1.792 1.747-.423 2.466c-.130.759.666 1.337 1.347.979z');
+      ctx3.fill(cpnPath);
+      ctx3.restore();
+
+      // Top tag (left:12, top:8, 14px, #fff)
+      ctx3.fillStyle = '#ffffff'; ctx3.font = '400 14px sans-serif';
+      ctx3.fillText(gv3('test3TopTag'), 12, 22);
+
+      // === Bottom info: same layout as tab1, shifted by banner offset ===
       var OFF = 34; // banner height offset
 
       // Brand icon + name (x=36 restored, same as tab2)
