@@ -1825,27 +1825,27 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         ctx2.textAlign = 'start'; ctx2.textBaseline = 'alphabetic';
       }
 
-      // Labels row (adaptive, same color)
+      // Labels row — moved down 4px
       ctx2.fillStyle = dm ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)'; ctx2.font = '400 12px sans-serif';
       var lblL = gv2('test2LabelL');
-      ctx2.fillText(lblL, 12, 54);
+      ctx2.fillText(lblL, 12, 58);
       var lblLW = ctx2.measureText(lblL).width;
       var lblDivX = 12 + lblLW + 6;
-      ctx2.fillStyle = dm ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; ctx2.fillRect(lblDivX, 44, 0.5, 12);
+      ctx2.fillStyle = dm ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; ctx2.fillRect(lblDivX, 48, 0.5, 12);
       var lblR = gv2('test2LabelR');
       ctx2.fillStyle = dm ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
-      ctx2.fillText(lblR, lblDivX + 6, 54);
+      ctx2.fillText(lblR, lblDivX + 6, 58);
 
-      // Rate value
-      var rateX = lblDivX + 6 + ctx2.measureText(lblR).width + 8;
+      // Rate value — moved down 4px, left 4px
+      var rateX = lblDivX + 6 + ctx2.measureText(lblR).width + 4;
       ctx2.fillStyle = dm ? '#fff' : '#F34D4F'; ctx2.font = '500 12px sans-serif';
-      ctx2.fillText(gv2('test2Rate'), rateX, 54);
+      ctx2.fillText(gv2('test2Rate'), rateX, 58);
 
-      // Amount (with ¥ prefix)
-      ctx2.fillStyle = dm ? '#F34D4F' : '#000'; ctx2.font = '500 16px sans-serif';
-      ctx2.fillText('￥', 12, 82);
-      ctx2.fillStyle = dm ? '#F34D4F' : '#000'; ctx2.font = '500 20px sans-serif';
-      ctx2.fillText(gv2('test2Amount'), 30, 82);
+      // Amount — moved down 8px, dark:white, light:black
+      ctx2.fillStyle = dm ? '#fff' : '#000'; ctx2.font = '500 16px sans-serif';
+      ctx2.fillText('￥', 12, 90);
+      ctx2.fillStyle = dm ? '#fff' : '#000'; ctx2.font = '500 20px sans-serif';
+      ctx2.fillText(gv2('test2Amount'), 30, 90);
 
       // Button
       var btnW2 = 72, btnH2 = 28;
