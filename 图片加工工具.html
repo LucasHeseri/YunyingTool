@@ -797,10 +797,10 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
   // ========================================================================
   APP.TAB_CONFIG = {
     walletkit: { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
-    compress:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
+    compress:  { maxSize: 5 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 5MB' },
     circle:    { maxSize: 1 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 1MB' },
     crop:      { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' },
-    test:      { maxSize: 512 * 1024, limits: '上传 logo 图片，支持 PNG / JPG / WebP，大小不超过 512KB' },
+    test:      { maxSize: 1 * 1024 * 1024, limits: '上传 logo 图片，支持 PNG / JPG / WebP，大小不超过 1MB' },
     goldcard:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
   };
   var ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
@@ -2800,7 +2800,6 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
         if (posterInput.files && posterInput.files[0]) {
           var file = posterInput.files[0];
           if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { APP.showToast('仅支持 PNG / JPG / WebP'); return; }
-          if (file.size > 2 * 1024 * 1024) { APP.showToast('图片不超过 2MB'); return; }
           var reader = new FileReader();
           reader.onload = function (e) {
             var img = new Image();
