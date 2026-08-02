@@ -1872,6 +1872,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       cv2.width = W2 * s; cv2.height = H2 * s;
       cv2.style.display = 'block';
       pctx2.drawImage(c2, 0, 0);
+      pctx2.strokeStyle = 'rgba(0,0,0,0.08)'; pctx2.lineWidth = 1 * s;
+      pctx2.beginPath(); pctx2.roundRect(0.5, 0.5, W2*s-1, H2*s-1, 16*s); pctx2.stroke();
       var cw2 = APP.dom.previewCard.clientWidth - 32, ch2 = APP.dom.previewCard.clientHeight - 16;
       var ds2 = Math.min(cw2 / (W2 * s), ch2 / (H2 * s), 1);
       cv2.style.width  = Math.round(W2 * s * ds2) + 'px';
@@ -1977,6 +1979,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var cv3 = APP.dom.previewCanvas, pctx3 = APP.ctx;
       cv3.width = W3 * s; cv3.height = H3 * s; cv3.style.display = 'block';
       pctx3.drawImage(c3, 0, 0);
+      pctx3.strokeStyle = 'rgba(0,0,0,0.08)'; pctx3.lineWidth = 1 * s;
+      pctx3.beginPath(); pctx3.roundRect(0.5, 0.5, W3*s-1, H3*s-1, 16*s); pctx3.stroke();
       var cw3 = APP.dom.previewCard.clientWidth - 32, ch3 = APP.dom.previewCard.clientHeight - 16;
       var ds3 = Math.min(cw3 / (W3 * s), ch3 / (H3 * s), 1);
       cv3.style.width  = Math.round(W3 * s * ds3) + 'px';
@@ -2081,6 +2085,9 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     cv.width = W * s; cv.height = H * s;
     cv.style.display = 'block';
     pctx.drawImage(c, 0, 0);
+    // Preview-only light gray stroke (NOT in download)
+    pctx.strokeStyle = 'rgba(0,0,0,0.08)'; pctx.lineWidth = 1 * s;
+    pctx.beginPath(); pctx.roundRect(0.5, 0.5, W*s-1, H*s-1, 20*s); pctx.stroke();
     var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
     var ds = Math.min(cw / (W * s), ch / (H * s), 1);
     cv.style.width  = Math.round(W * s * ds) + 'px';
