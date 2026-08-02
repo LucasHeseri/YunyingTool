@@ -1992,8 +1992,9 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     var ctx = c.getContext('2d');
     ctx.scale(s, s);
 
-    // Background
-    ctx.fillStyle = '#ffffff';
+    // Background — dark: semi-transparent white, light: solid white
+    var dm = M.darkMode;
+    ctx.fillStyle = dm ? 'rgba(255,255,255,0.098)' : '#ffffff';
     ctx.beginPath(); ctx.roundRect(0, 0, W, H, 20); ctx.fill();
 
     // Read field values
@@ -2005,7 +2006,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       vals[k] = el ? el.value : defaults[k];
     });
 
-    // Icon — 16×16 circle, matches tab2/3: logo x=12, brand x=36
+    // Icon — 16×16 circle, matches tab2/3
     if (APP.state.uploadedImage) {
       ctx.save();
       ctx.beginPath(); ctx.arc(20, 24, 8, 0, Math.PI * 2); ctx.clip();
@@ -2019,41 +2020,41 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx.stroke();
     }
 
-    // Brand | Product name — same spacing as tab2/3
-    ctx.fillStyle = '#000000'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
+    // Brand | Product name — dark:white, light:black
+    ctx.fillStyle = dm ? '#fff' : '#000'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
     ctx.textBaseline = 'middle';
     ctx.fillText(vals.brand, 36, 24);
     var brandW = ctx.measureText(vals.brand).width;
     var dividerX = 36 + brandW + 6;
-    ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(dividerX, 19, 1, 10);
-    ctx.fillStyle = '#000000';
+    ctx.fillStyle = dm ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)';
+    ctx.fillRect(dividerX, 19, 1, 10);
+    ctx.fillStyle = dm ? '#fff' : '#000';
     ctx.fillText(vals.product, dividerX + 6, 24);
     ctx.textBaseline = 'alphabetic';
 
-    // Right description — original position
-    ctx.fillStyle = '#000000'; ctx.font = '500 14px "HarmonyOS Sans SC",sans-serif';
+    // Right description — dark:white, light:black
+    ctx.fillStyle = dm ? '#fff' : '#000'; ctx.font = '500 14px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.desc, 101, 65);
 
-    // Main amount — bottom-aligned with description
+    // Main amount — always red
     ctx.fillStyle = '#F34D4F'; ctx.font = '500 20px "HarmonyOS Sans SC",sans-serif';
     ctx.textBaseline = 'bottom';
     ctx.fillText(vals.amount, 10, 68);
     ctx.textBaseline = 'alphabetic';
 
-    // Amount label
-    ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
+    // Amount label — dark:white 60%, light:black 60%
+    ctx.fillStyle = dm ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
+    ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(vals.amountLabel, 11, 93);
 
-    // Tag per Figma: returns width for proper gap calculation
+    // Tag — dark mode: no bg, white text; light: orange bg+text
     function drawTag(x, y, text) {
       var padH = 4, tagH = 18, tagR = 4;
       ctx.font = '400 10px "HarmonyOS Sans SC",sans-serif';
       var textW = ctx.measureText(text).width;
       var tw = textW + padH * 2;
-      // 10% opacity orange bg, no border
-      ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill();
-      // Orange text, centered
-      ctx.fillStyle = '#ED6F21';
+      if (!dm) { ctx.fillStyle = 'rgba(237,111,33,0.1)'; ctx.beginPath(); ctx.roundRect(x, y, tw, tagH, tagR); ctx.fill(); }
+      ctx.fillStyle = dm ? '#fff' : '#ED6F21';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillText(text, x + tw / 2, y + tagH / 2 + 1);
       ctx.textAlign = 'start'; ctx.textBaseline = 'alphabetic';
