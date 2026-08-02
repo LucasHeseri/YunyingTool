@@ -1891,8 +1891,10 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var ctx3 = c3.getContext('2d');
       ctx3.scale(s, s);
       function gv3(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+      var dm = M.darkMode;
 
-      // Banner (z:1) — bottom layer
+      // Banner (z:1) — dark: 60% opacity
+      ctx3.globalAlpha = dm ? 0.6 : 1;
       var bnrG = ctx3.createLinearGradient(570, -28, -134, 268);
       bnrG.addColorStop(0, '#FFA23F'); bnrG.addColorStop(1, '#FF3C47');
       ctx3.fillStyle = bnrG;
@@ -1907,6 +1909,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.bezierCurveTo(328,16.639,328,12.159,326.256,8.736); ctx3.bezierCurveTo(324.722,5.726,322.274,3.278,319.264,1.744);
       ctx3.bezierCurveTo(315.841,0,311.361,0,302.4,0);
       ctx3.closePath(); ctx3.fill();
+      ctx3.globalAlpha = 1;
 
       // Coupon icon (z:2)
       ctx3.save();
@@ -1919,8 +1922,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.fill(cpnPath);
       ctx3.restore();
 
-      // White card body (z:3) — covers icon overflow below banner
-      ctx3.fillStyle = '#ffffff';
+      // White card body (z:3) — dark: semi-transparent, light: solid white
+      ctx3.fillStyle = dm ? 'rgba(255,255,255,0.098)' : '#ffffff';
       ctx3.beginPath(); ctx3.roundRect(0, 34, W3, 116, 16); ctx3.fill();
       ctx3.save();
       ctx3.beginPath(); ctx3.roundRect(0, 34, W3, 116, 16); ctx3.clip();
@@ -1945,31 +1948,36 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       } else {
         ctx3.fillStyle = '#F1F3F5'; ctx3.beginPath(); ctx3.arc(20, 24+OFF, 8, 0, Math.PI*2); ctx3.fill();
       }
-      ctx3.fillStyle = '#000'; ctx3.font = '400 12px sans-serif';
+      // Brand text — dark:white, light:black
+      ctx3.fillStyle = dm ? '#fff' : '#000'; ctx3.font = '400 12px sans-serif';
       ctx3.textBaseline = 'middle';
       ctx3.fillText(bname3, 36, 24+OFF);
       var bW3 = ctx3.measureText(bname3).width;
-      ctx3.fillStyle = 'rgba(0,0,0,0.2)'; ctx3.fillRect(36+bW3+6, 19+OFF, 1, 10);
-      ctx3.fillStyle = '#000';
+      ctx3.fillStyle = dm ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.2)';
+      ctx3.fillRect(36+bW3+6, 19+OFF, 1, 10);
+      ctx3.fillStyle = dm ? '#fff' : '#000';
       ctx3.fillText(pname3, 36+bW3+12, 24+OFF);
       ctx3.textBaseline = 'alphabetic';
 
-      // Values (same positions as tab1 amount)
+      // Values — amount: always red, rate: dark:white, light:black
       ctx3.fillStyle = '#F34D4F'; ctx3.font = '500 20px sans-serif';
       ctx3.fillText(gv3('test3ValueL'), 12, 67+OFF);
-      ctx3.fillStyle = '#000';
+      ctx3.fillStyle = dm ? '#fff' : '#000';
       ctx3.fillText(gv3('test3ValueR'), 116, 67+OFF);
 
-      // Labels (left-aligned with values)
-      ctx3.fillStyle = 'rgba(0,0,0,0.6)'; ctx3.font = '400 12px sans-serif';
+      // Labels — dark:white 60%, light:black 60%
+      ctx3.fillStyle = dm ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
+      ctx3.font = '400 12px sans-serif';
       ctx3.fillText(gv3('test3LabelL'), 12, 93+OFF);
       ctx3.fillText(gv3('test3LabelR'), 116, 93+OFF);
 
-      // Vertical divider: 12px gap on each side
-      ctx3.fillStyle = 'rgba(0,0,0,0.1)'; ctx3.fillRect(104, 58+OFF, 0.25, 37);
+      // Vertical divider — dark:white, light:black
+      ctx3.fillStyle = dm ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+      ctx3.fillRect(104, 58+OFF, 0.25, 37);
 
-      // Apply button (same position as tab1 button)
-      ctx3.fillStyle = '#D64550'; ctx3.beginPath(); ctx3.roundRect(244, 44+OFF, 72, 28, 20); ctx3.fill();
+      // Apply button — dark:#D64550, light:#F34D4F
+      ctx3.fillStyle = dm ? '#D64550' : '#F34D4F';
+      ctx3.beginPath(); ctx3.roundRect(244, 44+OFF, 72, 28, 20); ctx3.fill();
       ctx3.fillStyle = '#fff'; ctx3.font = '500 14px sans-serif';
       ctx3.textAlign = 'center'; ctx3.textBaseline = 'middle';
       ctx3.fillText(gv3('test3BtnText'), 280, 58+OFF);
