@@ -1893,18 +1893,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       function gv3(id) { var e = document.getElementById(id); return e ? e.value : ''; }
       var dm = M.darkMode;
 
-      // Coupon icon (z:1) — below banner and white card
-      ctx3.save();
-      ctx3.globalAlpha = dm ? 0.5 : 0.84;
-      ctx3.translate(269, 0);
-      var cpnGrad = ctx3.createLinearGradient(0, 0, 43, 43);
-      cpnGrad.addColorStop(0, '#ffffff'); cpnGrad.addColorStop(1, '#FF7343');
-      ctx3.fillStyle = cpnGrad;
-      var cpnPath = new Path2D('M35.523 9.512C37.871 9.512 39.775 11.416 39.775 13.765v5.176c-2.075.317-3.665 2.11-3.665 4.274 0 2.164 1.59 3.956 3.665 4.274v5.444c0 2.349-1.904 4.253-4.252 4.253H3.469c-2.348 0-4.252-1.904-4.252-4.253v-5.164c2.072-.32 3.659-2.111 3.659-4.273 0-2.162-1.587-3.953-3.659-4.273V13.765c0-2.349 1.904-4.253 4.252-4.253h32.054zm-16.239 18.494l2.215-1.164 2.215 1.164c.681.358 1.477-.22 1.347-.979l-.423-2.466 1.792-1.747c.551-.537.247-1.473-.514-1.584l-2.477-.36-1.108-2.244c-.341-.69-1.325-.69-1.665 0l-1.108 2.244-2.476.36c-.762.11-1.066 1.047-.515 1.584l1.792 1.747-.423 2.466c-.13.759.666 1.337 1.347.979z');
-      ctx3.fill(cpnPath);
-      ctx3.restore();
-
-      // White card body (z:2) — covers icon overflow below banner
+      // White card body (bottom, covers icon overflow)
       ctx3.fillStyle = dm ? 'rgba(255,255,255,0.098)' : '#ffffff';
       ctx3.beginPath(); ctx3.roundRect(0, 34, W3, 116, 16); ctx3.fill();
       ctx3.save();
@@ -1915,26 +1904,22 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.fillStyle = ovGrad; ctx3.fillRect(0, 34, W3, 116);
       ctx3.restore();
 
-      // Top tag (left:12, top:8, 14px, #fff, z:2)
-      ctx3.fillStyle = '#ffffff'; ctx3.font = '400 14px sans-serif';
-      ctx3.fillText(gv3('test3TopTag'), 12, 22);
-
-      // Banner (z:3) — dark: 60% opacity, on top of white card
+      // Banner
       ctx3.globalAlpha = dm ? 0.6 : 1;
       var bnrG = ctx3.createLinearGradient(570, -28, -134, 268);
       bnrG.addColorStop(0, '#FFA23F'); bnrG.addColorStop(1, '#FF3C47');
       ctx3.fillStyle = bnrG;
       ctx3.beginPath();
       ctx3.moveTo(302.4,0);ctx3.lineTo(25.6,0);ctx3.bezierCurveTo(16.639,0,12.159,0,8.736,1.744);ctx3.bezierCurveTo(5.726,3.278,3.278,5.726,1.744,8.736);
-      ctx3.bezierCurveTo(0,12.159,0,16.639,0,25.6);ctx3.lineTo(0,59.6);ctx3.bezierCurveTo(0,50.639,0,46.159,1.744,42.736);
-      ctx3.bezierCurveTo(3.278,39.726,5.726,37.278,8.736,35.744);ctx3.bezierCurveTo(12.159,34,16.639,34,25.6,34);ctx3.lineTo(302.4,34);
+      ctx3.bezierCurveTo(0,12.159,0,16.639,0,25.6);ctx3.lineTo(0,59.6);ctx3.bezierCurveTo(0,50.639,0,46.159,1.744,42.736);ctx3.bezierCurveTo(3.278,39.726,5.726,37.278,8.736,35.744);
+      ctx3.bezierCurveTo(12.159,34,16.639,34,25.6,34);ctx3.lineTo(302.4,34);
       ctx3.bezierCurveTo(311.361,34,315.841,34,319.264,35.744);ctx3.bezierCurveTo(322.274,37.278,324.722,39.726,326.256,42.736);
       ctx3.bezierCurveTo(328,46.159,328,50.639,328,59.6);ctx3.lineTo(328,25.6);ctx3.bezierCurveTo(328,16.639,328,12.159,326.256,8.736);
       ctx3.bezierCurveTo(324.722,5.726,322.274,3.278,319.264,1.744);ctx3.bezierCurveTo(315.841,0,311.361,0,302.4,0);
       ctx3.closePath();ctx3.fill();
       ctx3.globalAlpha = 1;
 
-      // === Bottom info: same layout as tab1, shifted by banner offset ===
+      // Coupon icon — on top of banner, clipped// === Bottom info: same layout as tab1, shifted by banner offset ===
       var OFF = 34; // banner height offset
 
       // Brand icon + name (x=36 restored, same as tab2)
