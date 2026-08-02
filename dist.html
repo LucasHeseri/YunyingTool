@@ -225,10 +225,10 @@ body {
   <nav class="tab-nav tab-nav--header" id="tabNav">
     <button class="tab-nav__btn active" data-tab="walletkit">WalletKit机模</button>
     <button class="tab-nav__btn" data-tab="goldcard">票券</button>
-    <button class="tab-nav__btn" data-tab="circle">logo处理</button>
     <button class="tab-nav__btn" data-tab="compress">图片压缩</button>
     <button class="tab-nav__btn" data-tab="crop">裁切卡券</button>
     <button class="tab-nav__btn" data-tab="test">借贷模板</button>
+    <button class="tab-nav__btn" data-tab="circle">logo处理</button>
   </nav>
   <a href="chrome://settings/clearBrowserData" target="_blank" class="clear-cache-btn" title="清除浏览器缓存">清除缓存</a>
 </header>
@@ -350,7 +350,6 @@ body {
           <button class="chips-nav__btn active" data-testtab="tab1">借贷卡片</button>
           <button class="chips-nav__btn" data-testtab="tab2">页签二</button>
           <button class="chips-nav__btn" data-testtab="tab3">页签三</button>
-          <button class="chips-nav__btn" data-testtab="tab4">页签四</button>
         </div>
         <div id="testTabContent" style="display:flex;flex-direction:column;gap:16px;">
           <!-- ===== 商户logo ===== -->
@@ -545,7 +544,6 @@ body {
             </div>
           </div>
         </div>
-        <div id="testTab4" style="display:none;padding:40px 0;text-align:center;font-size:13px;color:var(--text-tertiary);">页签四 — 内容待添加</div>
       </div>
       <div id="ctrlGoldcard" style="display:none;">
         <div style="display:flex;flex-direction:column;gap:24px;">
@@ -2123,14 +2121,9 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         btn.classList.add('active');
         M.testChip = btn.dataset.testtab || 'tab1';
         if (tabContent) tabContent.style.display = (M.testChip === 'tab1') ? 'flex' : 'none';
-        // Tab2+3: show as flex column, tab4: show as block
         ['testTab2','testTab3'].forEach(function(id) {
           var el = document.getElementById(id);
           if (el) el.style.display = (id === 'test' + M.testChip.charAt(0).toUpperCase() + M.testChip.slice(1)) ? 'flex' : 'none';
-        });
-        ['testTab4'].forEach(function(id) {
-          var el = document.getElementById(id);
-          if (el) el.style.display = (id === 'test' + M.testChip.charAt(0).toUpperCase() + M.testChip.slice(1)) ? '' : 'none';
         });
         if (APP.state.currentTab === 'test') M.process();
       });
