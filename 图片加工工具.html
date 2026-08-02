@@ -1836,7 +1836,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var lblDivX = 12 + lblLW + 6;
       ctx2.fillStyle = dm ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'; ctx2.fillRect(lblDivX, 44, 0.5, 12);
       var lblR = gv2('test2LabelR');
-      ctx2.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx2.fillStyle = dm ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)';
       ctx2.fillText(lblR, lblDivX + 6, 54);
 
       // Rate value
