@@ -1911,8 +1911,9 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       ctx3.closePath(); ctx3.fill();
       ctx3.globalAlpha = 1;
 
-      // Coupon icon (z:2) — dark: match banner 60%, light: 84%
+      // Coupon icon (z:2) — clipped to banner, dark:50%, light:84%
       ctx3.save();
+      ctx3.beginPath(); ctx3.rect(0, 0, W3, 60); ctx3.clip();
       ctx3.globalAlpha = dm ? 0.5 : 0.84;
       ctx3.translate(269, 0);
       var cpnGrad = ctx3.createLinearGradient(0, 0, 43, 43);
