@@ -964,6 +964,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
+    var darkBtn = document.getElementById('darkModeBtn');
+    if (darkBtn) darkBtn.style.display = (tab === 'test') ? '' : 'none';
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
     APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
     // Restore upload zone text for non-test tabs
@@ -2102,6 +2104,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       APP.dom.previewCard.style.background = M.darkMode ? '#0d0d1a' : '';
       if (APP.state.currentTab === 'test') M.process();
     });
+    darkBtn.id = 'darkModeBtn';
+    darkBtn.style.display = 'none';
     APP.dom.previewCard.appendChild(darkBtn);
 
     var chipsNav = document.getElementById('testChipsNav');
