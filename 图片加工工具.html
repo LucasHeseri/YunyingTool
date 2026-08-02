@@ -2094,13 +2094,11 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     // Dark mode toggle button
     var darkBtn = document.createElement('button');
     darkBtn.textContent = '浅色';
-    darkBtn.style.cssText = 'position:absolute;bottom:12px;left:12px;z-index:5;padding:4px 10px;border-radius:12px;border:1px solid rgba(0,0,0,0.15);background:#fff;color:#333;font-size:11px;cursor:pointer;font-family:inherit;';
+    darkBtn.style.cssText = 'position:absolute;bottom:12px;left:12px;z-index:5;padding:6px 14px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all 0.2s;';
     darkBtn.addEventListener('click', function() {
       M.darkMode = !M.darkMode;
       darkBtn.textContent = M.darkMode ? '深色' : '浅色';
-      darkBtn.style.background = M.darkMode ? '#333' : '#fff';
-      darkBtn.style.color = M.darkMode ? '#fff' : '#333';
-      darkBtn.style.borderColor = M.darkMode ? '#555' : 'rgba(0,0,0,0.15)';
+      darkBtn.style.background = M.darkMode ? '#555' : 'var(--brand)';
       APP.dom.previewCard.style.background = M.darkMode ? '#0d0d1a' : '';
       if (APP.state.currentTab === 'test') M.process();
     });
