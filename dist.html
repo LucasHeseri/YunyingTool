@@ -2003,26 +2003,26 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       vals[k] = el ? el.value : defaults[k];
     });
 
-    // Icon — 16×16 circle, left-aligned with amount (x=10)
+    // Icon — 16×16 circle, matches tab2/3: logo x=12, brand x=36
     if (APP.state.uploadedImage) {
       ctx.save();
-      ctx.beginPath(); ctx.arc(18, 24, 8, 0, Math.PI * 2); ctx.clip();
-      ctx.drawImage(APP.state.uploadedImage, 10, 16, 16, 16);
+      ctx.beginPath(); ctx.arc(20, 24, 8, 0, Math.PI * 2); ctx.clip();
+      ctx.drawImage(APP.state.uploadedImage, 12, 16, 16, 16);
       ctx.restore();
     } else {
       ctx.fillStyle = '#FFFFFF';
-      ctx.beginPath(); ctx.arc(18, 24, 8, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(20, 24, 8, 0, Math.PI * 2); ctx.fill();
       ctx.strokeStyle = 'rgba(0,0,0,0.08)';
       ctx.lineWidth = 1;
       ctx.stroke();
     }
 
-    // Brand | Product name — left-aligned with logo (x=30, gap 4px)
+    // Brand | Product name — same spacing as tab2/3
     ctx.fillStyle = '#000000'; ctx.font = '12px "HarmonyOS Sans SC",sans-serif';
     ctx.textBaseline = 'middle';
-    ctx.fillText(vals.brand, 30, 24);
+    ctx.fillText(vals.brand, 36, 24);
     var brandW = ctx.measureText(vals.brand).width;
-    var dividerX = 30 + brandW + 6;
+    var dividerX = 36 + brandW + 6;
     ctx.fillStyle = 'rgba(0,0,0,0.2)'; ctx.fillRect(dividerX, 19, 1, 10);
     ctx.fillStyle = '#000000';
     ctx.fillText(vals.product, dividerX + 6, 24);
