@@ -1811,9 +1811,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       bctx.fillStyle = tcol(0.9); bctx.font = '400 14px sans-serif';
       bctx.fillText(bv('cropBPassLabel'), 16, 186);
       bctx.fillText(bv('cropBPassenger'), 66, 186);
+      // Seat — right-aligned: value at right edge, label 12px left
       bctx.textAlign = 'right';
-      bctx.fillText(bv('cropBSeatLabel'), 270, 186);
-      bctx.fillText(bv('cropBSeat'), 312, 186);
+      var seatVal = bv('cropBSeat');
+      bctx.fillStyle = tcol(0.9);
+      bctx.fillText(seatVal, 312, 186);
+      var seatW = bctx.measureText(seatVal).width;
+      bctx.fillStyle = tcol(0.6);
+      bctx.fillText(bv('cropBSeatLabel'), 312 - seatW - 12, 186);
       bctx.textAlign = 'start';
       // Preview
       APP.state.processedDataUrl = bc.toDataURL('image/png');
