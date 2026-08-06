@@ -959,6 +959,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     var darkBtn = document.getElementById('darkModeBtn');
     if (darkBtn) darkBtn.style.display = (tab === 'test') ? '' : 'none';
+    var textBtn = document.getElementById('textToggleBtn');
+    if (textBtn) textBtn.style.display = (tab === 'goldcard') ? '' : 'none';
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
     APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
     // Restore upload zone text for non-test tabs
@@ -2852,6 +2854,8 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     var textBtn = document.createElement('button');
     textBtn.textContent = '白色文字';
     textBtn.style.cssText = 'position:absolute;bottom:12px;left:12px;z-index:5;padding:6px 14px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all 0.2s;';
+    textBtn.id = 'textToggleBtn';
+    textBtn.style.display = 'none';
     textBtn.addEventListener('click', function() {
       M.textDark = !M.textDark;
       textBtn.textContent = M.textDark ? '黑色文字' : '白色文字';
