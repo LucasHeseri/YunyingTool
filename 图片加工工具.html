@@ -1637,7 +1637,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // Processing
   // ========================================================================
   M.process = function () {
-    // === 登机牌 mode: 328×205 blue card, no upload required ===
+    // === 登机牌 mode: 328×205 blue card ===
     if (M.state.type === 'boarding') {
       var BW = 328, BH = 205, BS = 2;
       var bc = document.createElement('canvas');
@@ -1649,48 +1649,49 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       bctx.beginPath(); bctx.roundRect(0, 0, BW, BH, 16); bctx.fill();
       // Top tear-off notch
       bctx.fillStyle = '#f5f5f5';
-      bctx.beginPath(); bctx.arc(BW/2, -6, 14, 0, Math.PI); bctx.fill();
-      // Logo area
-      bctx.fillStyle = '#C4C4C4';
-      bctx.fillRect(16, 16, 174, 36);
-      bctx.fillStyle = '#000';
-      bctx.font = '400 14px sans-serif';
-      bctx.fillText('logo区域', 35, 38);
-      // Gate
+      bctx.beginPath(); bctx.arc(BW/2, -10, 14, 0, Math.PI); bctx.fill();
+      // Logo area: left:16, top:16, 174x36
+      bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 16, 174, 36);
+      bctx.fillStyle = '#000'; bctx.font = '400 14px sans-serif';
+      bctx.fillText('logo区域', 35, 40);
+      // Gate: centerY=102.5, transformY≈-73 → y≈29
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '500 16px sans-serif';
-      bctx.fillText('登机口', 239, 38);
-      bctx.fillStyle = '#fff';
-      bctx.fillText('08', 295, 38);
-      // Airports
+      bctx.fillText('登机口', 239, 30);
+      bctx.fillStyle = '#fff'; bctx.textAlign = 'right';
+      bctx.fillText('08', 312, 30); bctx.textAlign = 'start';
+      // Airports: top:74, 12px
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
-      bctx.fillText('北京首都机场T3', 16, 86);
-      bctx.fillText('深圳宝安机场T3', 226, 86);
-      // Times
+      bctx.fillText('北京首都机场T3', 16, 88);
+      bctx.textAlign = 'right'; bctx.fillText('深圳宝安机场T3', 312, 88); bctx.textAlign = 'start';
+      // Times: top:88, 36px bold
       bctx.fillStyle = '#fff'; bctx.font = '700 36px sans-serif';
-      bctx.fillText('20:15', 16, 118);
-      bctx.textAlign = 'right'; bctx.fillText('23:40', 312, 118); bctx.textAlign = 'start';
-      // Dates
+      bctx.fillText('20:15', 16, 122);
+      bctx.textAlign = 'right'; bctx.fillText('23:40', 312, 122); bctx.textAlign = 'start';
+      // Dates: top:130, 12px
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
-      bctx.fillText('20XX/0X/XX', 16, 142);
-      bctx.textAlign = 'center'; bctx.fillStyle = '#fff';
-      bctx.fillText('MU8888', 164, 142); bctx.textAlign = 'start';
+      bctx.fillText('20XX/0X/XX', 16, 144);
+      bctx.fillStyle = '#fff'; bctx.textAlign = 'center';
+      bctx.fillText('MU8888', 164, 144); bctx.textAlign = 'start';
+      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.textAlign = 'right';
+      bctx.fillText('20XX/0X/XX', 312, 144); bctx.textAlign = 'start';
+      // Airplane icon: center(154,104), 20x20
+      var ax = 154, ay = 104;
       bctx.fillStyle = 'rgba(255,255,255,0.6)';
-      bctx.textAlign = 'right'; bctx.fillText('20XX/0X/XX', 312, 142); bctx.textAlign = 'start';
-      // Airplane icon + dots
-      bctx.fillStyle = 'rgba(255,255,255,0.6)';
-      bctx.beginPath(); bctx.moveTo(164, 155); bctx.lineTo(158, 165); bctx.lineTo(162, 165);
-      bctx.lineTo(160, 170); bctx.lineTo(164, 167); bctx.lineTo(168, 170);
-      bctx.lineTo(166, 165); bctx.lineTo(170, 165); bctx.closePath(); bctx.fill();
-      // Dots
+      bctx.beginPath(); bctx.moveTo(ax, ay-8); bctx.lineTo(ax-6, ay+2); bctx.lineTo(ax-3, ay+2);
+      bctx.lineTo(ax-4, ay+7); bctx.lineTo(ax, ay+4); bctx.lineTo(ax+4, ay+7);
+      bctx.lineTo(ax+3, ay+2); bctx.lineTo(ax+6, ay+2); bctx.closePath(); bctx.fill();
+      // Dots: left at x≈127, right at x≈181, y≈111
       bctx.fillStyle = 'rgba(255,255,255,0.3)';
-      [137, 142, 148, 154].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 168, 1.5, 0, Math.PI*2); bctx.fill(); });
-      [180, 186, 191].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 168, 1.5, 0, Math.PI*2); bctx.fill(); });
-      // Bottom info
+      [120, 126, 132, 138].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 112, 1.5, 0, Math.PI*2); bctx.fill(); });
+      [170, 176, 182, 188].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 112, 1.5, 0, Math.PI*2); bctx.fill(); });
+      // Bottom: bottom:19, 14px → y=205-19=186
       bctx.fillStyle = '#fff'; bctx.font = '400 14px sans-serif';
-      bctx.fillText('乘机人', 37, 190);
-      bctx.fillText('王小华', 87, 190);
-      bctx.fillText('座位号', 260, 190);
-      bctx.fillText('19c', 300, 190);
+      bctx.fillText('乘机人', 16, 186);
+      bctx.fillText('王小华', 66, 186);
+      bctx.textAlign = 'right';
+      bctx.fillText('座位号', 270, 186);
+      bctx.fillText('19c', 312, 186);
+      bctx.textAlign = 'start';
       // Preview
       APP.state.processedDataUrl = bc.toDataURL('image/png');
       var bcv = APP.dom.previewCanvas, bpctx = APP.ctx;
