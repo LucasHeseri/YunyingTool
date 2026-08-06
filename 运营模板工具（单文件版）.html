@@ -343,6 +343,13 @@ body {
 
         </div>
 
+        <!-- ===== 卡片外观（登机牌 & 门票共享） ===== -->
+        <div id="cropCardAppearance" style="display:none;flex-direction:column;gap:18px;margin-bottom:16px;">
+          <div class="control-group">
+            <div class="control-group__label"><span>卡片背景色</span></div>
+            <div id="cropColorPicker" style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;"></div>
+          </div>
+        </div>
         <div id="cropImageControls" style="display:flex;flex-direction:column;gap:18px;margin-top:18px;">
           <div class="control-group">
             <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="cropZoomVal">100%</span></div>
@@ -359,7 +366,7 @@ body {
           <div class="control-group">
             <div class="control-group__label"><span>导出尺寸</span></div>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);cursor:pointer;margin-bottom:4px;">
-              <input type="radio" name="cropSize" value="3x" checked style="accent-color:var(--brand);"> 正常大卡（328vp × 204vp）— 984×612
+              <input type="radio" name="cropSize" value="2x" checked style="accent-color:var(--brand);"> 二倍图（328vp × 204vp）— 656×408
             </label>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);cursor:pointer;">
               <input type="radio" name="cropSize" value="1x" style="accent-color:var(--brand);"> 小图预览（108vp × 67vp）— 328×204
@@ -825,6 +832,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     test:      { maxSize: 1 * 1024 * 1024, limits: '上传 logo 图片，支持 PNG / JPG / WebP，大小不超过 1MB' },
     goldcard:  { maxSize: 3 * 1024 * 1024, limits: '支持 PNG / JPG / WebP，大小不超过 3MB' }
   };
+  // Shared card color state — synced between goldcard (大卡) and crop (小卡)
+  APP.cardColor = { bg: '#B97600', textDark: false };
   var ALLOWED_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
 
   // ========================================================================
@@ -984,15 +993,20 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     var darkBtn = document.getElementById('darkModeBtn');
     if (darkBtn) darkBtn.style.display = (tab === 'test') ? '' : 'none';
     var textBtn = document.getElementById('textToggleBtn');
-    if (textBtn) textBtn.style.display = (tab === 'goldcard') ? '' : 'none';
+    if (textBtn) textBtn.style.display = (tab === 'goldcard' || tab === 'crop') ? '' : 'none';
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
     APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
     if (tab === 'crop' && APP.crop && APP.crop.state && APP.crop.state.type === 'boarding') {
       var bf = document.getElementById('cropBoardingFields');
       var ic = document.getElementById('cropImageControls');
+      var ca = document.getElementById('cropCardAppearance');
       if (bf) bf.style.display = 'flex';
       if (ic) ic.style.display = 'none';
+      if (ca) ca.style.display = 'flex';
       APP.dom.uploadZone.parentNode.style.display = 'none';
+    } else if (tab === 'crop' && APP.crop) {
+      var ca2 = document.getElementById('cropCardAppearance');
+      if (ca2) ca2.style.display = (APP.crop.state.type === 'ticket') ? 'flex' : 'none';
     }
     // Restore upload zone text for non-test tabs
     if (tab !== 'test') {
@@ -1593,6 +1607,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   var VIEW_W = 984, VIEW_H = 612;
   var templateImg = null;    // Subtract.svg for ticket
   var cardTemplate = null;   // generated canvas for card (rounded rect)
+  var airplaneImg = null;    // AIRPLANE_ICON for boarding mode
   var ready = false;
 
   // ========================================================================
@@ -1608,15 +1623,29 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // ========================================================================
   M.init = function (callback) {
     if (typeof CROP_TEMPLATE === 'undefined') { if (callback) callback(false); return; }
+    var total = 2, loaded = 0;
+    function checkDone() {
+      if (loaded >= total) {
+        ready = true;
+        if (callback) callback(true);
+        if (APP.state.currentTab === 'crop' && M.state.type === 'boarding') M.process();
+      }
+    }
+    // Load ticket template
     var img = new Image();
-    img.onload = function () {
-      templateImg = img;
-      generateCardTemplate();
-      ready = true;
-      if (callback) callback(true);
-    };
-    img.onerror = function () { if (callback) callback(false); };
+    img.onload = function () { templateImg = img; generateCardTemplate(); loaded++; checkDone(); };
+    img.onerror = function () { loaded++; checkDone(); };
     img.src = CROP_TEMPLATE;
+    // Load airplane icon for boarding mode
+    if (typeof AIRPLANE_ICON !== 'undefined') {
+      var ai = new Image();
+      ai.onload = function () { airplaneImg = ai; loaded++; checkDone(); };
+      ai.onerror = function () { loaded++; checkDone(); };
+      ai.src = AIRPLANE_ICON;
+    } else {
+      loaded++;
+      checkDone();
+    }
   };
 
   // Generate card template: 984×612 rounded rect (96px radius), #F1F3F5 fill
@@ -1679,15 +1708,29 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       bctx.scale(BS, BS);
       // Helper: read crop boarding field value
       function bv(id) { var e = document.getElementById(id); return e ? e.value : ''; }
-      // Card body — ticket SVG template as mask (with notch)
+      // Text color helper (same as 大卡): white→black toggle
+      function tcol(a) { var v = APP.cardColor.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
+      var cardBg = APP.cardColor.bg || '#0273FF';
+      // Card body — fill with bg color, then apply template as binary mask
+      // (template path may have opacity < 1; threshold alpha to ensure correct color)
+      bctx.fillStyle = cardBg;
+      bctx.fillRect(0, 0, BW, BH);
       if (templateImg) {
-        bctx.drawImage(templateImg, 0, 0, BW, BH);
-        bctx.globalCompositeOperation = 'source-in';
-        bctx.fillStyle = '#0273FF';
-        bctx.fillRect(0, 0, BW, BH);
+        // Create binary mask from template (threshold alpha to fully opaque/transparent)
+        var maskC = document.createElement('canvas');
+        maskC.width = BW * BS; maskC.height = BH * BS;
+        var mCtx = maskC.getContext('2d');
+        mCtx.scale(BS, BS);
+        mCtx.drawImage(templateImg, 0, 0, BW, BH);
+        var imgData = mCtx.getImageData(0, 0, BW * BS, BH * BS);
+        var px = imgData.data;
+        for (var i = 3; i < px.length; i += 4) { px[i] = px[i] > 128 ? 255 : 0; }
+        mCtx.putImageData(imgData, 0, 0);
+        // Apply binary mask to preserve card shape (with notch)
+        bctx.globalCompositeOperation = 'destination-in';
+        bctx.drawImage(maskC, 0, 0, BW, BH);
         bctx.globalCompositeOperation = 'source-over';
       } else {
-        bctx.fillStyle = '#0273FF';
         bctx.beginPath(); bctx.roundRect(0, 0, BW, BH, 16); bctx.fill();
       }
       // Logo area — 长Logo or 圆形logo (matches 大卡 positions)
@@ -1703,59 +1746,69 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         }
         // Merchant name at (64,40), 16px, middle baseline — same as 大卡
         var mn = document.getElementById('cropBCircleName2');
-        bctx.fillStyle = '#fff'; bctx.font = '400 16px sans-serif';
+        bctx.fillStyle = tcol(0.9); bctx.font = '400 16px sans-serif';
         bctx.textBaseline = 'middle';
         bctx.fillText(mn ? mn.value : '中国国航', 64, 40);
         bctx.textBaseline = 'alphabetic';
       } else {
-        // Long logo: fit by height, left-aligned
+        // Long logo: fit by height, left-aligned (y+5 from original)
         if (APP.state.uploadedImage) {
           var ls = (M.boardingLogoScale || 100) / 100;
           var lh = 36 * ls;
           var lw = lh * (APP.state.uploadedImage.naturalWidth / APP.state.uploadedImage.naturalHeight);
-          bctx.drawImage(APP.state.uploadedImage, 16, 16 + (36 - lh) / 2, lw, lh);
+          bctx.drawImage(APP.state.uploadedImage, 16, 21 + (36 - lh) / 2, lw, lh);
         } else {
-          bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 16, 174, 36);
+          bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 21, 174, 36);
           bctx.fillStyle = '#000'; bctx.font = '400 14px sans-serif';
-          bctx.fillText('logo区域', 35, 40);
+          bctx.fillText('logo区域', 35, 45);
         }
       }
-      // Gate — vertically centered with logo at y=40
-      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '500 16px sans-serif';
+      // Gate — right-aligned like 大卡: label just left of value
+      var gateX = 312;
+      bctx.fillStyle = tcol(0.6); bctx.font = '500 16px sans-serif';
       bctx.textBaseline = 'middle';
-      bctx.fillText(bv('cropBGateLabel'), 239, 40);
-      bctx.fillStyle = '#fff'; bctx.textAlign = 'right';
-      bctx.fillText(bv('cropBGate'), 312, 40); bctx.textAlign = 'start';
+      bctx.fillStyle = tcol(0.9); bctx.textAlign = 'right';
+      var gateVal = bv('cropBGate');
+      bctx.fillText(gateVal, gateX, 40);
+      var gateW = bctx.measureText(gateVal).width;
+      bctx.fillStyle = tcol(0.6);
+      bctx.fillText(bv('cropBGateLabel'), gateX - gateW - 4, 40);
+      bctx.textAlign = 'start';
       bctx.textBaseline = 'alphabetic';
       // Airports
-      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
+      bctx.fillStyle = tcol(0.6); bctx.font = '400 12px sans-serif';
       bctx.fillText(bv('cropBAirportL'), 16, 88);
       bctx.textAlign = 'right'; bctx.fillText(bv('cropBAirportR'), 312, 88); bctx.textAlign = 'start';
       // Times
-      bctx.fillStyle = '#fff'; bctx.font = '700 36px sans-serif';
+      bctx.fillStyle = tcol(1); bctx.font = '700 36px sans-serif';
       bctx.fillText(bv('cropBTimeL'), 16, 122);
       bctx.textAlign = 'right'; bctx.fillText(bv('cropBTimeR'), 312, 122); bctx.textAlign = 'start';
-      // Flight number centered below airplane (dots y=112 + 10 = 122)
-      bctx.fillStyle = '#fff'; bctx.font = '400 12px sans-serif';
+      // Airplane icon — same as 大卡, position matches 大卡 relative layout
+      // Icon 74×25 at (127,95): between airports y=88 and times y=122
+      if (airplaneImg) {
+        bctx.drawImage(airplaneImg, 127, 95, 74, 25);
+      } else {
+        // Fallback: programmatic airplane
+        var ax = 154, ay = 104;
+        bctx.fillStyle = tcol(0.6);
+        bctx.beginPath(); bctx.moveTo(ax, ay-8); bctx.lineTo(ax-6, ay+2); bctx.lineTo(ax-3, ay+2);
+        bctx.lineTo(ax-4, ay+7); bctx.lineTo(ax, ay+4); bctx.lineTo(ax+4, ay+7);
+        bctx.lineTo(ax+3, ay+2); bctx.lineTo(ax+6, ay+2); bctx.closePath(); bctx.fill();
+        bctx.fillStyle = tcol(0.3);
+        [120, 126, 132, 138].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 112, 1.5, 0, Math.PI*2); bctx.fill(); });
+        [170, 176, 182, 188].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 112, 1.5, 0, Math.PI*2); bctx.fill(); });
+      }
+      // Flight number — below airplane/dots, same gap as 大卡 (26px below time baseline)
+      bctx.fillStyle = tcol(0.9); bctx.font = '400 12px sans-serif';
       bctx.textAlign = 'center';
-      bctx.fillText(bv('cropBFlightNo'), 164, 122); bctx.textAlign = 'start';
-      // Dates
-      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
-      bctx.fillText(bv('cropBDateL'), 16, 144);
-      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.textAlign = 'right';
-      bctx.fillText(bv('cropBDateR'), 312, 144); bctx.textAlign = 'start';
-      // Airplane icon: center(154,104), 20x20
-      var ax = 154, ay = 104;
-      bctx.fillStyle = 'rgba(255,255,255,0.6)';
-      bctx.beginPath(); bctx.moveTo(ax, ay-8); bctx.lineTo(ax-6, ay+2); bctx.lineTo(ax-3, ay+2);
-      bctx.lineTo(ax-4, ay+7); bctx.lineTo(ax, ay+4); bctx.lineTo(ax+4, ay+7);
-      bctx.lineTo(ax+3, ay+2); bctx.lineTo(ax+6, ay+2); bctx.closePath(); bctx.fill();
-      // Dots: left at x≈127, right at x≈181, y≈111
-      bctx.fillStyle = 'rgba(255,255,255,0.3)';
-      [120, 126, 132, 138].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 112, 1.5, 0, Math.PI*2); bctx.fill(); });
-      [170, 176, 182, 188].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 112, 1.5, 0, Math.PI*2); bctx.fill(); });
-      // Bottom info
-      bctx.fillStyle = '#fff'; bctx.font = '400 14px sans-serif';
+      bctx.fillText(bv('cropBFlightNo'), 164, 148); bctx.textAlign = 'start';
+      // Dates — same row as flight number
+      bctx.fillStyle = tcol(0.6); bctx.font = '400 12px sans-serif';
+      bctx.fillText(bv('cropBDateL'), 16, 148);
+      bctx.fillStyle = tcol(0.6); bctx.textAlign = 'right';
+      bctx.fillText(bv('cropBDateR'), 312, 148); bctx.textAlign = 'start';
+      // Bottom info — passenger & seat
+      bctx.fillStyle = tcol(0.9); bctx.font = '400 14px sans-serif';
       bctx.fillText(bv('cropBPassLabel'), 16, 186);
       bctx.fillText(bv('cropBPassenger'), 66, 186);
       bctx.textAlign = 'right';
@@ -1798,6 +1851,9 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     workC.width = VIEW_W; workC.height = VIEW_H;
     var wCtx = workC.getContext('2d');
 
+    // Fill background with shared card color
+    wCtx.fillStyle = APP.cardColor.bg;
+    wCtx.fillRect(0, 0, VIEW_W, VIEW_H);
     // Clip to template shape
     wCtx.save();
     wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
@@ -1837,7 +1893,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   function getExportScale() {
     var radio = document.querySelector('input[name="cropSize"]:checked');
     if (radio && radio.value === '1x') return 1/3;
-    return 1;
+    return 2/3;  // 2x default: 656×408
   }
 
   // ========================================================================
@@ -1858,8 +1914,11 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var isBoarding = type === 'boarding';
       var bf = document.getElementById('cropBoardingFields');
       var ic = document.getElementById('cropImageControls');
+      var ca = document.getElementById('cropCardAppearance');
       if (bf) bf.style.display = isBoarding ? 'flex' : 'none';
       if (ic) ic.style.display = isBoarding ? 'none' : 'flex';
+      // Color picker visible for boarding and ticket, hidden for card
+      if (ca) ca.style.display = (type === 'boarding' || type === 'ticket') ? 'flex' : 'none';
       // Boarding: hide upload zone (uses own logo control)
       APP.dom.uploadZone.parentNode.style.display = isBoarding ? 'none' : '';
       if (APP.state.currentTab === 'crop') {
@@ -1964,6 +2023,90 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       radios[i].addEventListener('change', function () {
         if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
       });
+    }
+
+    // Card background color picker — same as 大卡, shared via APP.cardColor
+    var picker = document.getElementById('cropColorPicker');
+    if (picker) {
+      var colors = [
+        { color: '#564AF7', label: '紫' }, { color: '#46B1E3', label: '青' },
+        { color: '#61CFBE', label: '碧' }, { color: '#64BB5C', label: '绿' },
+        { color: '#A5D61D', label: '草' }, { color: '#AC49F5', label: '堇' },
+        { color: '#E64566', label: '玫' }, { color: '#E84026', label: '红' },
+        { color: '#ED6F21', label: '橙' }, { color: '#F9A01E', label: '橘' },
+        { color: '#F7CE00', label: '金' }, { color: '#8981F7', label: '藤' },
+        { color: '#86C5E3', label: '湖' }, { color: '#92D6CC', label: '翠' },
+        { color: '#92C48D', label: '艾' }, { color: '#BDDB69', label: '芽' },
+        { color: '#C386F0', label: '苋' }, { color: '#E67C92', label: '桃' },
+        { color: '#E87361', label: '绯' }, { color: '#ED955F', label: '杏' },
+        { color: '#F9BC64', label: '姜' }, { color: '#F5DC62', label: '葵' },
+        { color: '#B97600', label: '铜' }
+      ];
+      picker.innerHTML = '';
+      picker.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
+
+      var nativePicker = document.createElement('input');
+      nativePicker.type = 'color';
+      nativePicker.value = APP.cardColor.bg;
+      nativePicker.style.cssText = 'width:0;height:0;padding:0;border:none;position:absolute;opacity:0;pointer-events:none;';
+      picker.appendChild(nativePicker);
+
+      var allDots = [];
+
+      function highlightDot(active) {
+        allDots.forEach(function (d) { d.style.outline = ''; });
+        if (active) { active.style.outline = '2px solid var(--brand)'; active.style.outlineOffset = '2px'; }
+      }
+
+      function setColor(color) {
+        APP.cardColor.bg = color;
+        nativePicker.value = color;
+        hexInput.value = color;
+        if (APP.state.currentTab === 'crop') M.process();
+        if (APP.state.currentTab === 'goldcard' && APP.goldcard) APP.goldcard.process();
+      }
+
+      // Preset color dots
+      colors.forEach(function (c) {
+        var dot = document.createElement('span');
+        dot.style.cssText = 'width:24px;height:24px;border-radius:50%;cursor:pointer;flex-shrink:0;background:' + c.color +
+          ';border:2px solid transparent;box-shadow:0 1px 3px rgba(0,0,0,0.15)';
+        dot.title = c.label;
+        dot.addEventListener('click', function () {
+          setColor(c.color);
+          highlightDot(dot);
+        });
+        allDots.push(dot);
+        picker.appendChild(dot);
+      });
+
+      // Custom color circle (opens native picker)
+      var customDot = document.createElement('span');
+      customDot.style.cssText = 'width:24px;height:24px;border-radius:50%;cursor:pointer;flex-shrink:0;' +
+        'background:conic-gradient(red,yellow,lime,cyan,blue,magenta,red);' +
+        'border:2px solid var(--border);';
+      customDot.title = '自定义颜色';
+      customDot.addEventListener('click', function () { nativePicker.click(); });
+      allDots.push(customDot);
+      picker.appendChild(customDot);
+
+      // Hex input in same row
+      var hexInput = document.createElement('input');
+      hexInput.type = 'text';
+      hexInput.value = APP.cardColor.bg;
+      hexInput.placeholder = '#000000';
+      hexInput.style.cssText = 'width:70px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:monospace;flex-shrink:0;';
+
+      nativePicker.addEventListener('input', function () {
+        setColor(nativePicker.value);
+        highlightDot(null);
+      });
+      hexInput.addEventListener('change', function () {
+        var val = hexInput.value.trim();
+        if (/^#[0-9a-fA-F]{6}$/.test(val)) { setColor(val); highlightDot(null); }
+      });
+
+      picker.appendChild(hexInput);
     }
   };
 })();
@@ -2472,9 +2615,9 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
   var ticketTopImg = null, ticketBtmImg = null, ticketMidImg = null;
   var ready = false;
   M.mode = 'boarding';    // 'boarding' | 'ticket'
-  M.bgColor = '#B97600';  // card background color
+  M.bgColor = APP.cardColor.bg;  // card background color (shared state)
   M.avatarScale = 0;      // -20 ~ +20 %
-  M.textDark = false;      // white text toggle
+  M.textDark = APP.cardColor.textDark;      // white text toggle (shared state)
   M.posterImg = null;      // poster image for ticket
   M.posterZoom = 100;      // 80~120%
   M.posterHOff = 0;        // -50~50
@@ -2565,7 +2708,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     var ctx = c.getContext('2d');
     ctx.scale(S, S);
 
-    var bg = M.bgColor || '#B97600';
+    var bg = APP.cardColor.bg || '#B97600';
 
     if (M.mode === 'ticket') {
       // === 门票: 可换色渐变遮罩 ===
@@ -2637,7 +2780,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.textBaseline = 'middle';
 
     // Text color helper: white→black toggle, preserves opacity
-    function tcol(a) { var v = M.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
+    function tcol(a) { var v = APP.cardColor.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
 
     // === Shared top info: 标题 + 登机口 (y=40) ===
     ctx.fillStyle = tcol(0.9);
@@ -2818,7 +2961,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
 
     // Airplane + dots icon — recolored offscreen for text toggle
     if (airplaneImg) {
-      if (M.textDark) {
+      if (APP.cardColor.textDark) {
         var ac = document.createElement('canvas');
         ac.width = 74 * S; ac.height = 25 * S;
         var actx = ac.getContext('2d');
@@ -2963,7 +3106,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
 
       var nativePicker = document.createElement('input');
       nativePicker.type = 'color';
-      nativePicker.value = M.bgColor;
+      nativePicker.value = APP.cardColor.bg;
       nativePicker.style.cssText = 'width:0;height:0;padding:0;border:none;position:absolute;opacity:0;pointer-events:none;';
       picker.appendChild(nativePicker);
 
@@ -2975,10 +3118,12 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
       }
 
       function setColor(color) {
+        APP.cardColor.bg = color;
         M.bgColor = color;
         nativePicker.value = color;
         hexInput.value = color;
         if (APP.state.currentTab === 'goldcard') M.process();
+        if (APP.state.currentTab === 'crop' && APP.crop) APP.crop.process();
       }
 
       // Preset color dots
@@ -3011,7 +3156,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
       // Hex input in same row
       var hexInput = document.createElement('input');
       hexInput.type = 'text';
-      hexInput.value = M.bgColor;
+      hexInput.value = APP.cardColor.bg;
       hexInput.placeholder = '#000000';
       hexInput.style.cssText = 'width:70px;padding:4px 6px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:monospace;flex-shrink:0;';
 
@@ -3091,9 +3236,11 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     textBtn.id = 'textToggleBtn';
     textBtn.style.display = 'none';
     textBtn.addEventListener('click', function() {
-      M.textDark = !M.textDark;
-      textBtn.textContent = M.textDark ? '黑色文字' : '白色文字';
+      APP.cardColor.textDark = !APP.cardColor.textDark;
+      M.textDark = APP.cardColor.textDark;
+      textBtn.textContent = APP.cardColor.textDark ? '黑色文字' : '白色文字';
       if (APP.state.currentTab === 'goldcard') M.process();
+      if (APP.state.currentTab === 'crop' && APP.crop) APP.crop.process();
     });
     APP.dom.previewCard.appendChild(textBtn);
 
