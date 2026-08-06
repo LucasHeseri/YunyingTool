@@ -338,7 +338,7 @@ body {
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>出发机场 / 到达机场 / 出发时间 / 到达时间</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBAirportL" value="北京首都机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBAirportR" value="深圳宝安机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeL" value="20:15" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeR" value="23:40" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>日期左 / 航班号 / 日期右</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBDateL" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBFlightNo" value="MU8888" style="width:80px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"><input type="text" id="cropBDateR" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div></div>
-          <div class="control-group"><div class="control-group__label"><span>乘机人 标签 / 值 / 座位号 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBPassLabel" value="乘机人" style="width:56px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"><input type="text" id="cropBPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBSeatLabel" value="座位号" style="width:56px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"><input type="text" id="cropBSeat" value="19c" style="width:54px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
+          <div class="control-group"><div class="control-group__label"><span>乘机人 标签 / 值 / 座位号 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBPassLabel" value="乘机人" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropBPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBSeatLabel" value="座位号" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropBSeat" value="19c" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"></div></div>
         </div>
 
         </div>
@@ -1720,11 +1720,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           bctx.fillText('logo区域', 35, 40);
         }
       }
-      // Gate
+      // Gate — vertically centered with logo at y=40
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '500 16px sans-serif';
-      bctx.fillText(bv('cropBGateLabel'), 239, 30);
+      bctx.textBaseline = 'middle';
+      bctx.fillText(bv('cropBGateLabel'), 239, 40);
       bctx.fillStyle = '#fff'; bctx.textAlign = 'right';
-      bctx.fillText(bv('cropBGate'), 312, 30); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBGate'), 312, 40); bctx.textAlign = 'start';
+      bctx.textBaseline = 'alphabetic';
       // Airports
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
       bctx.fillText(bv('cropBAirportL'), 16, 88);
