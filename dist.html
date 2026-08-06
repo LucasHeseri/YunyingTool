@@ -324,7 +324,17 @@ body {
           <div class="control-group__label"><span>类型</span></div>
         <!-- 登机牌编辑字段 -->
         <div id="cropBoardingFields" style="display:none;flex-direction:column;gap:16px;">
-          <div class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropBLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropBLogoBtn" class="logo-btn">选择logo</button><span id="cropBLogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropBLogoScale" min="80" max="120" value="100" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropBLogoScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">100%</span></div></div>
+          <div class="chips-nav" id="cropBLogoChips">
+            <button class="chips-nav__btn active" data-blogo="long">长Logo</button>
+            <button class="chips-nav__btn" data-blogo="circle">圆形logo</button>
+          </div>
+          <!-- 长Logo控件 -->
+          <div id="cropBLongLogo" class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropBLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropBLogoBtn" class="logo-btn">选择logo</button><span id="cropBLogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropBLogoScale" min="80" max="120" value="100" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropBLogoScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">100%</span></div></div>
+          <!-- 圆形Logo控件 -->
+          <div id="cropBCircleLogo" style="display:none;flex-direction:column;gap:12px;">
+            <div class="control-group"><div class="control-group__label"><span>商户logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropBCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropBCircleBtn" class="logo-btn">选择logo</button><span id="cropBCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropBCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropBCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
+            <div class="control-group"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropBCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
+          </div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>出发机场 / 到达机场 / 出发时间 / 到达时间</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBAirportL" value="北京首都机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBAirportR" value="深圳宝安机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeL" value="20:15" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeR" value="23:40" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>日期左 / 航班号 / 日期右</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBDateL" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBFlightNo" value="MU8888" style="width:80px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"><input type="text" id="cropBDateR" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div></div>
@@ -1590,6 +1600,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // ========================================================================
   M.state = { type: 'ticket' }; // 'ticket' | 'card' | 'boarding'
   M.boardingLogoScale = 100; // logo zoom for boarding mode
+  M.boardingLogoType = 'long'; // 'long' | 'circle'
+  M.boardingCircleLogoImg = null; // separate image for circle logo
 
   // ========================================================================
   // Load ticket template (Subtract.svg)
@@ -1678,16 +1690,33 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         bctx.fillStyle = '#0273FF';
         bctx.beginPath(); bctx.roundRect(0, 0, BW, BH, 16); bctx.fill();
       }
-      // Logo area — fit by height, left-aligned, no stretch
-      if (APP.state.uploadedImage) {
-        var ls = (M.boardingLogoScale || 100) / 100;
-        var lh = 36 * ls;
-        var lw = lh * (APP.state.uploadedImage.naturalWidth / APP.state.uploadedImage.naturalHeight);
-        bctx.drawImage(APP.state.uploadedImage, 16, 16 + (36 - lh) / 2, lw, lh);
+      // Logo area — 长Logo or 圆形logo
+      if (M.boardingLogoType === 'circle') {
+        // Circle logo at (12,16), 32×32, radius 16
+        bctx.fillStyle = '#FFFFFF';
+        bctx.beginPath(); bctx.arc(20, 24, 16, 0, Math.PI*2); bctx.fill();
+        if (M.boardingCircleLogoImg) {
+          var cs = 1 + (M.boardingCircleScale || 0) / 100;
+          var csz = 32 * cs, cdx = 12 + (32 - csz) / 2, cdy = 16 + (32 - csz) / 2;
+          bctx.save(); bctx.beginPath(); bctx.arc(20, 24, 16, 0, Math.PI*2); bctx.clip();
+          bctx.drawImage(M.boardingCircleLogoImg, cdx, cdy, csz, csz); bctx.restore();
+        }
+        // Merchant name
+        var mn = document.getElementById('cropBCircleName2');
+        bctx.fillStyle = '#fff'; bctx.font = '400 16px sans-serif';
+        bctx.fillText(mn ? mn.value : '中国国航', 36, 26);
       } else {
-        bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 16, 174, 36);
-        bctx.fillStyle = '#000'; bctx.font = '400 14px sans-serif';
-        bctx.fillText('logo区域', 35, 40);
+        // Long logo: fit by height, left-aligned
+        if (APP.state.uploadedImage) {
+          var ls = (M.boardingLogoScale || 100) / 100;
+          var lh = 36 * ls;
+          var lw = lh * (APP.state.uploadedImage.naturalWidth / APP.state.uploadedImage.naturalHeight);
+          bctx.drawImage(APP.state.uploadedImage, 16, 16 + (36 - lh) / 2, lw, lh);
+        } else {
+          bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 16, 174, 36);
+          bctx.fillStyle = '#000'; bctx.font = '400 14px sans-serif';
+          bctx.fillText('logo区域', 35, 40);
+        }
       }
       // Gate
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '500 16px sans-serif';
@@ -1847,7 +1876,25 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
     });
 
-    // Boarding logo upload + scale
+    // Logo type chips
+    var logoChips = document.getElementById('cropBLogoChips');
+    if (logoChips) {
+      logoChips.addEventListener('click', function(e) {
+        var btn = e.target.closest('.chips-nav__btn');
+        if (!btn) return;
+        logoChips.querySelectorAll('.chips-nav__btn').forEach(function(b){b.classList.remove('active');});
+        btn.classList.add('active');
+        M.boardingLogoType = btn.dataset.blogo || 'long';
+        var isLong = M.boardingLogoType === 'long';
+        var ll = document.getElementById('cropBLongLogo');
+        var cl = document.getElementById('cropBCircleLogo');
+        if (ll) ll.style.display = isLong ? '' : 'none';
+        if (cl) cl.style.display = isLong ? 'none' : '';
+        if (M.state.type === 'boarding') M.process();
+      });
+    }
+
+    // Long logo upload + scale
     var blInput = document.getElementById('cropBLogoInput');
     var blBtn = document.getElementById('cropBLogoBtn');
     var blName = document.getElementById('cropBLogoName');
@@ -1871,6 +1918,33 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     var bls = document.getElementById('cropBLogoScale');
     var blsv = document.getElementById('cropBLogoScaleVal');
     if (bls) bls.addEventListener('input', function() { M.boardingLogoScale = parseInt(bls.value, 10); if (blsv) blsv.textContent = bls.value + '%'; if (M.state.type === 'boarding') M.process(); });
+
+    // Circle logo upload + scale
+    var bclInput = document.getElementById('cropBCircleInput');
+    var bclBtn = document.getElementById('cropBCircleBtn');
+    var bclName = document.getElementById('cropBCircleName');
+    if (bclBtn && bclInput) {
+      bclBtn.addEventListener('click', function() { bclInput.click(); });
+      bclInput.addEventListener('change', function() {
+        if (bclInput.files && bclInput.files[0]) {
+          var file = bclInput.files[0];
+          if (file.size > 512*1024) { APP.showToast('Logo不超过512KB'); return; }
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            var img = new Image();
+            img.onload = function() { M.boardingCircleLogoImg = img; if (M.state.type === 'boarding') M.process(); };
+            img.src = e.target.result;
+            if (bclName) { bclName.textContent = file.name; bclName.style.color = 'var(--text-primary)'; bclName.style.fontWeight = '700'; }
+          };
+          reader.readAsDataURL(file); bclInput.value = '';
+        }
+      });
+    }
+    var bcls = document.getElementById('cropBCircleScale');
+    var bclsv = document.getElementById('cropBCircleScaleVal');
+    if (bcls) bcls.addEventListener('input', function() { M.boardingCircleScale = parseInt(bcls.value, 10); if (bclsv) bclsv.textContent = bcls.value + '%'; if (M.state.type === 'boarding') M.process(); });
+    var bclName2 = document.getElementById('cropBCircleName2');
+    if (bclName2) bclName2.addEventListener('input', function() { if (M.state.type === 'boarding') M.process(); });
 
     // Boarding pass editable fields
     ['cropBGateLabel','cropBGate','cropBAirportL','cropBAirportR','cropBTimeL','cropBTimeR','cropBDateL','cropBFlightNo','cropBDateR','cropBPassenger','cropBSeat'].forEach(function(id) {
