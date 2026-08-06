@@ -2580,14 +2580,20 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.fillText(v('gcDateR'), 312, FY + 68);
     ctx.textAlign = 'start';
 
-    // Airplane + dots icon — follows text color toggle via source-in
+    // Airplane + dots icon — recolored offscreen for text toggle
     if (airplaneImg) {
-      ctx.drawImage(airplaneImg, 127, 99, 74, 25);
       if (M.textDark) {
-        ctx.globalCompositeOperation = 'source-in';
-        ctx.fillStyle = '#000000';
-        ctx.fillRect(127, 99, 74, 25);
-        ctx.globalCompositeOperation = 'source-over';
+        var ac = document.createElement('canvas');
+        ac.width = 74 * S; ac.height = 25 * S;
+        var actx = ac.getContext('2d');
+        actx.scale(S, S);
+        actx.drawImage(airplaneImg, 0, 0, 74, 25);
+        actx.globalCompositeOperation = 'source-in';
+        actx.fillStyle = '#000000';
+        actx.fillRect(0, 0, 74, 25);
+        ctx.drawImage(ac, 0, 0, 74 * S, 25 * S, 127, 99, 74, 25);
+      } else {
+        ctx.drawImage(airplaneImg, 127, 99, 74, 25);
       }
     }
 
@@ -2703,11 +2709,18 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     var picker = document.getElementById('gcColorPicker');
     if (picker) {
       var colors = [
-        { color: '#B97600', label: '金' },
-        { color: '#0A59F7', label: '蓝' },
-        { color: '#E84026', label: '红' },
-        { color: '#ED6F21', label: '橙' },
-        { color: '#64BB5C', label: '绿' }
+        { color: '#564AF7', label: '紫' }, { color: '#46B1E3', label: '青' },
+        { color: '#61CFBE', label: '碧' }, { color: '#64BB5C', label: '绿' },
+        { color: '#A5D61D', label: '草' }, { color: '#AC49F5', label: '堇' },
+        { color: '#E64566', label: '玫' }, { color: '#E84026', label: '红' },
+        { color: '#ED6F21', label: '橙' }, { color: '#F9A01E', label: '橘' },
+        { color: '#F7CE00', label: '金' }, { color: '#8981F7', label: '藤' },
+        { color: '#86C5E3', label: '湖' }, { color: '#92D6CC', label: '翠' },
+        { color: '#92C48D', label: '艾' }, { color: '#BDDB69', label: '芽' },
+        { color: '#C386F0', label: '苋' }, { color: '#E67C92', label: '桃' },
+        { color: '#E87361', label: '绯' }, { color: '#ED955F', label: '杏' },
+        { color: '#F9BC64', label: '姜' }, { color: '#F5DC62', label: '葵' },
+        { color: '#B97600', label: '铜' }
       ];
       picker.innerHTML = '';
       picker.style.cssText = 'display:flex;gap:6px;align-items:center;flex-wrap:wrap;';
@@ -2838,7 +2851,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     // Text toggle button (white/black)
     var textBtn = document.createElement('button');
     textBtn.textContent = '白色文字';
-    textBtn.style.cssText = 'position:absolute;bottom:12px;left:12px;z-index:5;padding:4px 10px;border-radius:8px;border:1px solid rgba(0,0,0,0.15);background:#fff;color:#333;font-size:11px;cursor:pointer;font-family:inherit;';
+    textBtn.style.cssText = 'position:absolute;bottom:12px;left:12px;z-index:5;padding:6px 14px;border-radius:8px;border:none;background:var(--brand);color:#fff;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit;transition:all 0.2s;';
     textBtn.addEventListener('click', function() {
       M.textDark = !M.textDark;
       textBtn.textContent = M.textDark ? '黑色文字' : '白色文字';
