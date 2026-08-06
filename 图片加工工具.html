@@ -2580,9 +2580,15 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.fillText(v('gcDateR'), 312, FY + 68);
     ctx.textAlign = 'start';
 
-    // Airplane + dots icon at y=99, centered (74×25, Pixso frame 821_5608)
+    // Airplane + dots icon — follows text color toggle via source-in
     if (airplaneImg) {
       ctx.drawImage(airplaneImg, 127, 99, 74, 25);
+      if (M.textDark) {
+        ctx.globalCompositeOperation = 'source-in';
+        ctx.fillStyle = '#000000';
+        ctx.fillRect(127, 99, 74, 25);
+        ctx.globalCompositeOperation = 'source-over';
+      }
     }
 
     // === Passenger info at y=174 (Pixso frame 1048_19, 296×88) ===
