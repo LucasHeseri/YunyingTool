@@ -2401,20 +2401,20 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.textBaseline = 'middle';
 
     // Text color helper: white→black toggle, preserves opacity
-    function tc(a) { var v = M.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
+    function tcol(a) { var v = M.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
 
     // === Shared top info: 标题 + 登机口 (y=40) ===
-    ctx.fillStyle = tc(0.9);
+    ctx.fillStyle = tcol(0.9);
     ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcTitle'), 64, 40);
 
     var gateX = 312, gateY = 40, gateVal = v('gcGate');
     ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
-    ctx.fillStyle = tc(0.9);
+    ctx.fillStyle = tcol(0.9);
     ctx.fillText(gateVal, gateX, gateY);
     var valW = ctx.measureText(gateVal).width;
-    ctx.fillStyle = tc(0.6);
+    ctx.fillStyle = tcol(0.6);
     ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
     ctx.textAlign = 'start';
 
@@ -2444,7 +2444,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
       var TY = 250;
       var titleLines = (v('gcTicketTitleTA') || '').split('\n').slice(0, 2);
       var titleFs = titleLines.length > 1 ? 20 : 24;
-      ctx.fillStyle = tc(1);
+      ctx.fillStyle = tcol(1);
       ctx.font = '700 ' + titleFs + 'px "HarmonyOS Sans SC",sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'bottom';
@@ -2480,13 +2480,13 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
 
       // Row 1: left / center(third) / right
       var ty1 = TY + 24;
-      ctx.fillStyle = tc(0.6);
+      ctx.fillStyle = tcol(0.6);
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcTicketPassengerLabel'), 16, ty1);
       ctx.textAlign = 'right';
       ctx.fillText(v('gcTicketSeatLabel'), 312, ty1);
       ctx.textAlign = 'start';
-      ctx.fillStyle = tc(1);
+      ctx.fillStyle = tcol(1);
       ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
       var r1lh = sharedFs * 1.25;
       drawML(ctx, v('gcTicketPassenger'), 16, ty1 + 18, r1lh);
@@ -2494,10 +2494,10 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
       drawML(ctx, v('gcTicketSeat'), 312, ty1 + 18, r1lh);
       if (hasThird1) {
         ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-        ctx.fillStyle = tc(0.6);
+        ctx.fillStyle = tcol(0.6);
         ctx.textAlign = 'center';
         ctx.fillText(v('gcTicketR1C3Label'), 164, ty1);
-        ctx.fillStyle = tc(1);
+        ctx.fillStyle = tcol(1);
         ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
         drawML(ctx, v('gcTicketR1C3'), 164, ty1 + 18, r1lh);
       }
@@ -2505,13 +2505,13 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
 
       // Row 2: left / center(third) / right
       var ty2 = ty1 + 42;
-      ctx.fillStyle = tc(0.6);
+      ctx.fillStyle = tcol(0.6);
       ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       ctx.fillText(v('gcTicketCabinLabel'), 16, ty2);
       ctx.textAlign = 'right';
       ctx.fillText(v('gcTicketPriceLabel'), 312, ty2);
       ctx.textAlign = 'start';
-      ctx.fillStyle = tc(1);
+      ctx.fillStyle = tcol(1);
       ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
       var r2lh = sharedFs * 1.25;
       drawML(ctx, v('gcTicketCabin'), 16, ty2 + 18, r2lh);
@@ -2519,10 +2519,10 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
       drawML(ctx, v('gcTicketPrice'), 312, ty2 + 18, r2lh);
       if (hasThird2) {
         ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
-        ctx.fillStyle = tc(0.6);
+        ctx.fillStyle = tcol(0.6);
         ctx.textAlign = 'center';
         ctx.fillText(v('gcTicketR2C3Label'), 164, ty2);
-        ctx.fillStyle = tc(1);
+        ctx.fillStyle = tcol(1);
         ctx.font = '400 ' + sharedFs + 'px "HarmonyOS Sans SC",sans-serif';
         drawML(ctx, v('gcTicketR2C3'), 164, ty2 + 18, r2lh);
       }
@@ -2552,7 +2552,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
     var FY = 72;
     // Row 1: Departure airport (left) / Arrival airport (right) — 12px, 60% white
-    ctx.fillStyle = tc(0.6);
+    ctx.fillStyle = tcol(0.6);
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcDepAirport'), 16, FY + 12);
     ctx.textAlign = 'right';
@@ -2560,7 +2560,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.textAlign = 'start';
 
     // Row 2: Departure time (left) / Arrival time (right) — 36px Bold, white, 96px gap
-    ctx.fillStyle = tc(1);
+    ctx.fillStyle = tcol(1);
     ctx.font = '700 36px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcDepTime'), 16, FY + 42);
     ctx.textAlign = 'right';
@@ -2568,14 +2568,14 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.textAlign = 'start';
 
     // Row 3: Date (left) / Flight No (center) / Date (right) — 12px
-    ctx.fillStyle = tc(0.6);
+    ctx.fillStyle = tcol(0.6);
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcDateL'), 16, FY + 68);
-    ctx.fillStyle = tc(1);
+    ctx.fillStyle = tcol(1);
     ctx.textAlign = 'center';
     ctx.fillText(v('gcFlightNo'), 164, FY + 68);
     ctx.textAlign = 'start';
-    ctx.fillStyle = tc(0.6);
+    ctx.fillStyle = tcol(0.6);
     ctx.textAlign = 'right';
     ctx.fillText(v('gcDateR'), 312, FY + 68);
     ctx.textAlign = 'start';
@@ -2588,14 +2588,14 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     // === Passenger info at y=174 (Pixso frame 1048_19, 296×88) ===
     var PY = 174;
     // Row 1: label + value (left, 20px) / label + value (right, 20px)
-    ctx.fillStyle = tc(0.6);
+    ctx.fillStyle = tcol(0.6);
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcPassengerLabel'), 16, PY + 8);
     ctx.textAlign = 'right';
     ctx.fillText(v('gcSeatLabel'), 312, PY + 8);
     ctx.textAlign = 'start';
     // Values — 20px Medium, 90% white, multiline
-    ctx.fillStyle = tc(0.9);
+    ctx.fillStyle = tcol(0.9);
     ctx.font = '400 20px "HarmonyOS Sans SC",sans-serif';
     drawML(ctx, v('gcPassenger'), 16, PY + 32, 24);
     ctx.textAlign = 'right';
@@ -2603,7 +2603,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.textAlign = 'start';
 
     // Row 2: label+value (left) / label+value (center) / label+value (right) — 16px
-    ctx.fillStyle = tc(0.6);
+    ctx.fillStyle = tcol(0.6);
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
     ctx.fillText(v('gcBoardTimeLabel'), 16, PY + 60);
     ctx.textAlign = 'center';
@@ -2612,7 +2612,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ctx.fillText(v('gcSeqLabel'), 312, PY + 60);
     ctx.textAlign = 'start';
     // Values — 16px Medium, 90% white, multiline
-    ctx.fillStyle = tc(0.9);
+    ctx.fillStyle = tcol(0.9);
     ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
     drawML(ctx, v('gcBoardTime'), 16, PY + 80, 20);
     ctx.textAlign = 'center';
@@ -2657,8 +2657,8 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
         var showTicket = M.mode === 'ticket';
         var pg = document.getElementById('gcPosterGroup');
         if (pg) pg.style.display = showTicket ? '' : 'none';
-        var tc = document.getElementById('gcTicketContent');
-        if (tc) tc.style.display = showTicket ? 'flex' : 'none';
+        var tct = document.getElementById('gcTicketContent');
+        if (tct) tct.style.display = showTicket ? 'flex' : 'none';
         ['gcBoardingInfo','gcPassengerGroup'].forEach(function(id) {
           var el = document.getElementById(id); if (el) el.style.display = showTicket ? 'none' : 'flex';
         });
