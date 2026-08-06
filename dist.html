@@ -977,6 +977,13 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     if (textBtn) textBtn.style.display = (tab === 'goldcard') ? '' : 'none';
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
     APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
+    if (tab === 'crop' && APP.crop && APP.crop.state && APP.crop.state.type === 'boarding') {
+      APP.dom.uploadZone.parentNode.style.display = 'none';
+      var bf = document.getElementById('cropBoardingFields');
+      var ic = document.getElementById('cropImageControls');
+      if (bf) bf.style.display = 'flex';
+      if (ic) ic.style.display = 'none';
+    }
     // Restore upload zone text for non-test tabs
     if (tab !== 'test') {
       var uploadText = APP.dom.uploadZone.querySelector('.upload-zone__text');
