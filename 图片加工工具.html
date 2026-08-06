@@ -1783,8 +1783,15 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       M.state.type = type;
       chipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
-      else M.showPlaceholder();
+      // Hide crop controls for boarding mode
+      var isBoarding = type === 'boarding';
+      ['cropZoom','cropHOffset','cropVOffset'].forEach(function(id) {
+        var el = document.getElementById(id); if (el) el.parentNode.style.display = isBoarding ? 'none' : '';
+      });
+      if (APP.state.currentTab === 'crop') {
+        if (isBoarding || APP.state.uploadedImage) M.process();
+        else M.showPlaceholder();
+      }
     });
 
     APP.dom.cropZoom.addEventListener('input', function () {
