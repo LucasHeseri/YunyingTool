@@ -324,6 +324,7 @@ body {
           <div class="control-group__label"><span>类型</span></div>
         <!-- 登机牌编辑字段 -->
         <div id="cropBoardingFields" style="display:none;flex-direction:column;gap:16px;">
+          <div class="control-group"><div class="control-group__label"><span>Logo 缩放</span><span class="control-group__value" id="cropBLogoScaleVal">100%</span></div><input type="range" class="control-group__slider" id="cropBLogoScale" min="80" max="120" value="100" step="1"></div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>出发机场 / 到达机场 / 出发时间 / 到达时间</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBAirportL" value="北京首都机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBAirportR" value="深圳宝安机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeL" value="20:15" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeR" value="23:40" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>日期左 / 航班号 / 日期右</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBDateL" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBFlightNo" value="MU8888" style="width:80px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"><input type="text" id="cropBDateR" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div></div>
@@ -977,11 +978,13 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     APP.dom.resetBtn.parentNode.style.display = (tab === 'test') ? 'none' : '';
     APP.dom.uploadZone.parentNode.style.display = (tab === 'test' || tab === 'goldcard') ? 'none' : '';
     if (tab === 'crop' && APP.crop && APP.crop.state && APP.crop.state.type === 'boarding') {
-      APP.dom.uploadZone.parentNode.style.display = 'none';
       var bf = document.getElementById('cropBoardingFields');
       var ic = document.getElementById('cropImageControls');
       if (bf) bf.style.display = 'flex';
       if (ic) ic.style.display = 'none';
+      var uzText = APP.dom.uploadZone.querySelector('.upload-zone__text');
+      if (uzText) uzText.innerHTML = '上传<strong>Logo</strong>';
+      APP.dom.uploadLimits.textContent = '支持 PNG / JPG / WebP，大小不超过 1MB';
     }
     // Restore upload zone text for non-test tabs
     if (tab !== 'test') {
@@ -1588,6 +1591,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // State
   // ========================================================================
   M.state = { type: 'ticket' }; // 'ticket' | 'card' | 'boarding'
+  M.boardingLogoScale = 100; // logo zoom for boarding mode
 
   // ========================================================================
   // Load ticket template (Subtract.svg)
@@ -1676,10 +1680,17 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         bctx.fillStyle = '#0273FF';
         bctx.beginPath(); bctx.roundRect(0, 0, BW, BH, 16); bctx.fill();
       }
-      // Logo area
-      bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 16, 174, 36);
-      bctx.fillStyle = '#000'; bctx.font = '400 14px sans-serif';
-      bctx.fillText('logo区域', 35, 40);
+      // Logo area — uploaded image (with zoom) or gray placeholder
+      if (APP.state.uploadedImage) {
+        var ls = (M.boardingLogoScale || 100) / 100;
+        var lw = 174 * ls, lh = 36 * ls;
+        var lx = 16, ly = 16 + (36 - lh) / 2;
+        bctx.drawImage(APP.state.uploadedImage, lx, ly, lw, lh);
+      } else {
+        bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 16, 174, 36);
+        bctx.fillStyle = '#000'; bctx.font = '400 14px sans-serif';
+        bctx.fillText('logo区域', 35, 40);
+      }
       // Gate
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '500 16px sans-serif';
       bctx.fillText(bv('cropBGateLabel'), 239, 30);
@@ -1816,7 +1827,11 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var ic = document.getElementById('cropImageControls');
       if (bf) bf.style.display = isBoarding ? 'flex' : 'none';
       if (ic) ic.style.display = isBoarding ? 'none' : 'flex';
-      APP.dom.uploadZone.parentNode.style.display = isBoarding ? 'none' : '';
+      // Boarding: show upload zone as logo upload
+      APP.dom.uploadZone.parentNode.style.display = '';
+      var uzText = APP.dom.uploadZone.querySelector('.upload-zone__text');
+      if (uzText) uzText.innerHTML = isBoarding ? '上传<strong>Logo</strong>' : '点击<strong>上传图片</strong>';
+      APP.dom.uploadLimits.textContent = isBoarding ? '支持 PNG / JPG / WebP，大小不超过 1MB' : '支持 PNG / JPG / WebP，大小不超过 3MB';
       if (APP.state.currentTab === 'crop') {
         if (isBoarding) M.process();
         else if (APP.state.uploadedImage) M.process();
@@ -1836,6 +1851,11 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       APP.dom.cropVOffsetVal.textContent = this.value + 'px';
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
     });
+
+    // Boarding logo scale slider
+    var bls = document.getElementById('cropBLogoScale');
+    var blsv = document.getElementById('cropBLogoScaleVal');
+    if (bls) bls.addEventListener('input', function() { M.boardingLogoScale = parseInt(bls.value, 10); if (blsv) blsv.textContent = bls.value + '%'; if (M.state.type === 'boarding') M.process(); });
 
     // Boarding pass editable fields
     ['cropBGateLabel','cropBGate','cropBAirportL','cropBAirportR','cropBTimeL','cropBTimeR','cropBDateL','cropBFlightNo','cropBDateR','cropBPassenger','cropBSeat'].forEach(function(id) {
