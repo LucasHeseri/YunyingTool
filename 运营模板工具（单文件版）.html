@@ -1184,7 +1184,9 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     var cfg = CONFIG[M.state.type], baseImg = getBaseImg();
     if (!baseImg) return;
 
-    var cw = cfg.viewBoxW, ch = cfg.viewBoxH;
+    var exportScale = 1212 / cfg.viewBoxH; // height → 1212px
+    var cw = Math.round(cfg.viewBoxW * exportScale);
+    var ch = Math.round(cfg.viewBoxH * exportScale);
     var canvas = APP.dom.previewCanvas, ctx = APP.ctx;
     canvas.width = cw; canvas.height = ch;
 
@@ -1198,17 +1200,17 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     ctx.drawImage(baseImg, 0, 0, cw, ch);
 
     if (APP.state.uploadedImage) {
-      drawUserImageOnCard(cfg);
+      drawUserImageOnCard(cfg, exportScale);
       APP.state.processedDataUrl = canvas.toDataURL('image/png');
     } else {
-      drawGuideOverlay(cfg);
+      drawGuideOverlay(cfg, exportScale);
     }
   };
 
-  function drawUserImageOnCard(cfg) {
+  function drawUserImageOnCard(cfg, s) {
     var r = cfg.rect, ctx = APP.ctx;
     ctx.save();
-    APP.drawRoundRect(ctx, r.x, r.y, r.w, r.h, r.rx);
+    APP.drawRoundRect(ctx, r.x * s, r.y * s, r.w * s, r.h * s, r.rx * s);
     ctx.clip();
 
     var imgW = APP.state.uploadedImage.naturalWidth, imgH = APP.state.uploadedImage.naturalHeight;
@@ -1226,12 +1228,13 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
       else { sw = imgW; sh = Math.round(imgW / rectRatio); sx = 0; sy = Math.round((imgH - sh) / 2); }
     }
 
-    ctx.drawImage(APP.state.uploadedImage, sx, sy, sw, sh, r.x, r.y, r.w, r.h);
+    var rx = r.x * s, ry = r.y * s, rw = r.w * s, rh = r.h * s;
+    ctx.drawImage(APP.state.uploadedImage, sx, sy, sw, sh, rx, ry, rw, rh);
 
-    // Apply fade-to-transparent at bottom (relative to full image height)
+    // Apply fade-to-transparent at bottom
     if (cfg.fadeY1) {
-      var fy1 = cfg.viewBoxH * cfg.fadeY1;
-      var fy2 = cfg.viewBoxH * cfg.fadeY2;
+      var fy1 = cfg.viewBoxH * s * cfg.fadeY1;
+      var fy2 = cfg.viewBoxH * s * cfg.fadeY2;
       ctx.globalCompositeOperation = 'destination-out';
       var fg = ctx.createLinearGradient(0, fy1, 0, fy2);
       fg.addColorStop(0, 'rgba(0,0,0,0)');
@@ -1244,7 +1247,7 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     ctx.restore();
   }
 
-  function drawGuideOverlay(cfg) {
+  function drawGuideOverlay(cfg, s) {
     var r = cfg.rect, cw = cfg.viewBoxW, ch = cfg.viewBoxH, ctx = APP.ctx;
     ctx.save();
     ctx.fillStyle = 'rgba(0,0,0,0.42)'; ctx.beginPath(); ctx.rect(0, 0, cw, ch);
