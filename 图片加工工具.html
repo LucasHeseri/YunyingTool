@@ -237,6 +237,12 @@ body {
 
   <aside class="panel-left">
 
+    <div class="chips-nav" id="cropChipsNav" style="display:none;margin-bottom:8px;">
+      <button class="chips-nav__btn active" data-crop="ticket">票券</button>
+      <button class="chips-nav__btn" data-crop="card">卡片</button>
+      <button class="chips-nav__btn" data-crop="boarding">登机牌</button>
+    </div>
+
     <div class="panel-card">
       <div class="upload-zone" id="uploadZone" role="button" tabindex="0">
         <svg class="upload-zone__icon" viewBox="0 0 44 44" fill="none">
@@ -316,12 +322,6 @@ body {
       <div id="ctrlCrop" style="display:none;">
         <div class="control-group">
           <div class="control-group__label"><span>类型</span></div>
-          <div class="chips-nav" id="cropChipsNav">
-            <button class="chips-nav__btn active" data-crop="ticket">票券</button>
-            <button class="chips-nav__btn" data-crop="card">卡片</button>
-            <button class="chips-nav__btn" data-crop="boarding">登机牌</button>
-          </div>
-        </div>
         <!-- 登机牌编辑字段 -->
         <div id="cropBoardingFields" style="display:none;flex-direction:column;gap:16px;">
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
@@ -967,6 +967,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     APP.dom.ctrlCompress.style.display  = (tab === 'compress')  ? '' : 'none';
     APP.dom.ctrlCircle.style.display    = (tab === 'circle')    ? '' : 'none';
     APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
+    var cropChips = document.getElementById('cropChipsNav');
+    if (cropChips) cropChips.style.display = (tab === 'crop') ? 'flex' : 'none';
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     var darkBtn = document.getElementById('darkModeBtn');
