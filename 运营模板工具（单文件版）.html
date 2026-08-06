@@ -1735,11 +1735,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       bctx.fillStyle = '#fff'; bctx.font = '700 36px sans-serif';
       bctx.fillText(bv('cropBTimeL'), 16, 122);
       bctx.textAlign = 'right'; bctx.fillText(bv('cropBTimeR'), 312, 122); bctx.textAlign = 'start';
-      // Dates + Flight
+      // Flight number centered below airplane (dots y=112 + 10 = 122)
+      bctx.fillStyle = '#fff'; bctx.font = '400 12px sans-serif';
+      bctx.textAlign = 'center';
+      bctx.fillText(bv('cropBFlightNo'), 164, 122); bctx.textAlign = 'start';
+      // Dates
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
       bctx.fillText(bv('cropBDateL'), 16, 144);
-      bctx.fillStyle = '#fff'; bctx.textAlign = 'center';
-      bctx.fillText(bv('cropBFlightNo'), 164, 144); bctx.textAlign = 'start';
       bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.textAlign = 'right';
       bctx.fillText(bv('cropBDateR'), 312, 144); bctx.textAlign = 'start';
       // Airplane icon: center(154,104), 20x20
