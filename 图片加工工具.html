@@ -1690,21 +1690,23 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         bctx.fillStyle = '#0273FF';
         bctx.beginPath(); bctx.roundRect(0, 0, BW, BH, 16); bctx.fill();
       }
-      // Logo area — 长Logo or 圆形logo
+      // Logo area — 长Logo or 圆形logo (matches 大卡 positions)
       if (M.boardingLogoType === 'circle') {
-        // Circle logo at (12,16), 32×32, radius 16
+        // Circle logo: center(40,40), radius 16, drawImage at (24,24) 32×32
         bctx.fillStyle = '#FFFFFF';
-        bctx.beginPath(); bctx.arc(20, 24, 16, 0, Math.PI*2); bctx.fill();
+        bctx.beginPath(); bctx.arc(40, 40, 16, 0, Math.PI*2); bctx.fill();
         if (M.boardingCircleLogoImg) {
           var cs = 1 + (M.boardingCircleScale || 0) / 100;
-          var csz = 32 * cs, cdx = 12 + (32 - csz) / 2, cdy = 16 + (32 - csz) / 2;
-          bctx.save(); bctx.beginPath(); bctx.arc(20, 24, 16, 0, Math.PI*2); bctx.clip();
+          var csz = 32 * cs, cdx = 24 + (32 - csz) / 2, cdy = 24 + (32 - csz) / 2;
+          bctx.save(); bctx.beginPath(); bctx.arc(40, 40, 16, 0, Math.PI*2); bctx.clip();
           bctx.drawImage(M.boardingCircleLogoImg, cdx, cdy, csz, csz); bctx.restore();
         }
-        // Merchant name
+        // Merchant name at (64,40), 16px, middle baseline — same as 大卡
         var mn = document.getElementById('cropBCircleName2');
         bctx.fillStyle = '#fff'; bctx.font = '400 16px sans-serif';
-        bctx.fillText(mn ? mn.value : '中国国航', 36, 26);
+        bctx.textBaseline = 'middle';
+        bctx.fillText(mn ? mn.value : '中国国航', 64, 40);
+        bctx.textBaseline = 'alphabetic';
       } else {
         // Long logo: fit by height, left-aligned
         if (APP.state.uploadedImage) {
