@@ -319,6 +319,7 @@ body {
           <div class="chips-nav" id="cropChipsNav">
             <button class="chips-nav__btn active" data-crop="ticket">票券</button>
             <button class="chips-nav__btn" data-crop="card">卡片</button>
+            <button class="chips-nav__btn" data-crop="boarding">登机牌</button>
           </div>
         </div>
         <div style="display:flex;flex-direction:column;gap:18px;margin-top:18px;">
@@ -1567,7 +1568,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // ========================================================================
   // State
   // ========================================================================
-  M.state = { type: 'ticket' }; // 'ticket' | 'card'
+  M.state = { type: 'ticket' }; // 'ticket' | 'card' | 'boarding'
 
   // ========================================================================
   // Load ticket template (Subtract.svg)
@@ -1617,6 +1618,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // Show placeholder
   // ========================================================================
   M.showPlaceholder = function () {
+    if (M.state.type === 'boarding') { M.process(); return; }
     var tmpl = getTemplate();
     if (!tmpl) return;
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
@@ -1635,6 +1637,74 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // Processing
   // ========================================================================
   M.process = function () {
+    // === 登机牌 mode: 328×205 blue card, no upload required ===
+    if (M.state.type === 'boarding') {
+      var BW = 328, BH = 205, BS = 2;
+      var bc = document.createElement('canvas');
+      bc.width = BW * BS; bc.height = BH * BS;
+      var bctx = bc.getContext('2d');
+      bctx.scale(BS, BS);
+      // Card bg
+      bctx.fillStyle = '#0273FF';
+      bctx.beginPath(); bctx.roundRect(0, 0, BW, BH, 16); bctx.fill();
+      // Top tear-off notch
+      bctx.fillStyle = '#f5f5f5';
+      bctx.beginPath(); bctx.arc(BW/2, -6, 14, 0, Math.PI); bctx.fill();
+      // Logo area
+      bctx.fillStyle = '#C4C4C4';
+      bctx.fillRect(16, 16, 174, 36);
+      bctx.fillStyle = '#000';
+      bctx.font = '400 14px sans-serif';
+      bctx.fillText('logo区域', 35, 38);
+      // Gate
+      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '500 16px sans-serif';
+      bctx.fillText('登机口', 239, 38);
+      bctx.fillStyle = '#fff';
+      bctx.fillText('08', 295, 38);
+      // Airports
+      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
+      bctx.fillText('北京首都机场T3', 16, 86);
+      bctx.fillText('深圳宝安机场T3', 226, 86);
+      // Times
+      bctx.fillStyle = '#fff'; bctx.font = '700 36px sans-serif';
+      bctx.fillText('20:15', 16, 118);
+      bctx.textAlign = 'right'; bctx.fillText('23:40', 312, 118); bctx.textAlign = 'start';
+      // Dates
+      bctx.fillStyle = 'rgba(255,255,255,0.6)'; bctx.font = '400 12px sans-serif';
+      bctx.fillText('20XX/0X/XX', 16, 142);
+      bctx.textAlign = 'center'; bctx.fillStyle = '#fff';
+      bctx.fillText('MU8888', 164, 142); bctx.textAlign = 'start';
+      bctx.fillStyle = 'rgba(255,255,255,0.6)';
+      bctx.textAlign = 'right'; bctx.fillText('20XX/0X/XX', 312, 142); bctx.textAlign = 'start';
+      // Airplane icon + dots
+      bctx.fillStyle = 'rgba(255,255,255,0.6)';
+      bctx.beginPath(); bctx.moveTo(164, 155); bctx.lineTo(158, 165); bctx.lineTo(162, 165);
+      bctx.lineTo(160, 170); bctx.lineTo(164, 167); bctx.lineTo(168, 170);
+      bctx.lineTo(166, 165); bctx.lineTo(170, 165); bctx.closePath(); bctx.fill();
+      // Dots
+      bctx.fillStyle = 'rgba(255,255,255,0.3)';
+      [137, 142, 148, 154].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 168, 1.5, 0, Math.PI*2); bctx.fill(); });
+      [180, 186, 191].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 168, 1.5, 0, Math.PI*2); bctx.fill(); });
+      // Bottom info
+      bctx.fillStyle = '#fff'; bctx.font = '400 14px sans-serif';
+      bctx.fillText('乘机人', 37, 190);
+      bctx.fillText('王小华', 87, 190);
+      bctx.fillText('座位号', 260, 190);
+      bctx.fillText('19c', 300, 190);
+      // Preview
+      APP.state.processedDataUrl = bc.toDataURL('image/png');
+      var bcv = APP.dom.previewCanvas, bpctx = APP.ctx;
+      bcv.width = BW * BS; bcv.height = BH * BS; bcv.style.display = 'block';
+      bpctx.drawImage(bc, 0, 0);
+      var bcw = APP.dom.previewCard.clientWidth - 32, bch = APP.dom.previewCard.clientHeight - 16;
+      var bds = Math.min(bcw / (BW * BS), bch / (BH * BS), 1);
+      bcv.style.width  = Math.round(BW * BS * bds) + 'px';
+      bcv.style.height = Math.round(BH * BS * bds) + 'px';
+      APP.dom.downloadBtn.disabled = false;
+      APP.dom.previewInfo.textContent = '328×205 登机牌';
+      return;
+    }
+
     var img = APP.state.uploadedImage;
     var tmpl = getTemplate();
     if (!img || !tmpl) return;
