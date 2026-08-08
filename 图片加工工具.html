@@ -2009,12 +2009,12 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       bctx.textBaseline = 'alphabetic';
       // Airports
       bctx.fillStyle = tcol(0.6); bctx.font = '400 12px sans-serif';
-      bctx.fillText(bv('cropBAirportL'), 16, 88);
-      bctx.textAlign = 'right'; bctx.fillText(bv('cropBAirportR'), 312, 88); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBAirportL'), 16, 84);
+      bctx.textAlign = 'right'; bctx.fillText(bv('cropBAirportR'), 312, 84); bctx.textAlign = 'start';
       // Times
       bctx.fillStyle = tcol(1); bctx.font = '700 36px sans-serif';
-      bctx.fillText(bv('cropBTimeL'), 16, 102);
-      bctx.textAlign = 'right'; bctx.fillText(bv('cropBTimeR'), 312, 102); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBTimeL'), 16, 122);
+      bctx.textAlign = 'right'; bctx.fillText(bv('cropBTimeR'), 312, 122); bctx.textAlign = 'start';
       // Airplane icon — same as 大卡, position matches 大卡 relative layout
       // Icon 74×25 at (127,95): between airports y=88 and times y=122
       if (airplaneImg) {
@@ -2033,12 +2033,12 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       // Flight number — below airplane/dots, same gap as 大卡 (26px below time baseline)
       bctx.fillStyle = tcol(0.9); bctx.font = '400 12px sans-serif';
       bctx.textAlign = 'center';
-      bctx.fillText(bv('cropBFlightNo'), 164, 128); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBFlightNo'), 164, 136); bctx.textAlign = 'start';
       // Dates — same row as flight number
       bctx.fillStyle = tcol(0.6); bctx.font = '400 12px sans-serif';
-      bctx.fillText(bv('cropBDateL'), 16, 128);
+      bctx.fillText(bv('cropBDateL'), 16, 136);
       bctx.fillStyle = tcol(0.6); bctx.textAlign = 'right';
-      bctx.fillText(bv('cropBDateR'), 312, 128); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBDateR'), 312, 136); bctx.textAlign = 'start';
       // Bottom info — passenger & seat
       bctx.fillStyle = tcol(0.9); bctx.font = '400 14px sans-serif';
       bctx.fillText(bv('cropBPassLabel'), 16, 186);
