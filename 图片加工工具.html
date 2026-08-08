@@ -562,6 +562,7 @@ body {
             <div class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropTCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropTCircleBtn" class="logo-btn">选择logo</button><span id="cropTCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropTCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropTCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
             <div class="control-group"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropTCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           </div>
+          <div class="control-group"><div class="control-group__label"><span>标题</span></div><input type="text" id="cropTTitle" value="标题标题" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropTGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>标签一 标签 / 值 / 标签二 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTPassLabel" value="标签一" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropTSeatLabel" value="标签二" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTSeat" value="19c" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"></div></div>
         </div>
@@ -2165,6 +2166,23 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         }
       }
 
+      // Title — vertical center, left-aligned with logo, matches goldcard title font
+      var tTitle = tv('cropTTitle') || '标题标题';
+      var tTitleLines = tTitle.split('\n');
+      var tTitleFs = tTitleLines.length > 1 ? 30 : 36;
+      wCtx.fillStyle = tcol(0.9);
+      wCtx.font = '700 ' + tTitleFs + 'px "HarmonyOS Sans SC",sans-serif';
+      wCtx.textBaseline = 'middle';
+      var tTitleY = 306;
+      if (tTitleLines.length === 1) {
+        wCtx.fillText(tTitleLines[0], 48, tTitleY);
+      } else {
+        for (var tti = 0; tti < tTitleLines.length; tti++) {
+          wCtx.fillText(tTitleLines[tti], 48, tTitleY - (tTitleLines.length - 1 - tti) * (tTitleFs * 1.25));
+        }
+      }
+      wCtx.textBaseline = 'alphabetic';
+
       // Gate — right-aligned
       wCtx.fillStyle = tcol(0.6); wCtx.font = '500 48px "HarmonyOS Sans SC",sans-serif';
       wCtx.textBaseline = 'middle';
@@ -2425,7 +2443,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     if (tcls) tcls.addEventListener('input', function() { M.ticketCircleScale = parseInt(tcls.value, 10); if (tclsv) tclsv.textContent = tcls.value + '%'; if (M.state.type === 'ticket') M.process(); });
 
     // Ticket editable fields
-    ['cropTGateLabel','cropTGate','cropTPassLabel','cropTPassenger','cropTSeatLabel','cropTSeat','cropTCircleName2'].forEach(function(id) {
+    ['cropTGateLabel','cropTGate','cropTPassLabel','cropTPassenger','cropTSeatLabel','cropTSeat','cropTCircleName2','cropTTitle'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function() {
         if (M.state.type === 'ticket' && APP.state.currentTab === 'crop') M.process();
