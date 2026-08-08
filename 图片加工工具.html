@@ -452,6 +452,11 @@ body {
       <button class="chips-nav__btn" data-crop="card">卡片</button>
     </div>
 
+    <div class="chips-nav" id="gcChipsNav" style="display:none;margin-bottom:8px;">
+      <button class="chips-nav__btn active" data-gcmode="boarding">登机牌</button>
+      <button class="chips-nav__btn" data-gcmode="ticket">门票</button>
+    </div>
+
     <div class="panel-card">
       <div class="upload-zone" id="uploadZone" role="button" tabindex="0">
         <svg class="upload-zone__icon" viewBox="0 0 44 44" fill="none">
@@ -542,8 +547,8 @@ body {
           <!-- 圆形Logo控件 -->
           <div id="cropBCircleLogo" style="display:none;flex-direction:column;gap:12px;">
             <div class="control-group"><div class="control-group__label"><span>商户logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropBCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropBCircleBtn" class="logo-btn">选择logo</button><span id="cropBCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropBCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropBCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
-            <div class="control-group"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropBCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           </div>
+          <div id="cropBCircleMerchant" class="control-group" style="display:none;"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropBCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>出发机场 / 到达机场 / 出发时间 / 到达时间</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBAirportL" value="北京首都机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBAirportR" value="深圳宝安机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeL" value="20:15" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeR" value="23:40" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>日期左 / 航班号 / 日期右</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBDateL" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBFlightNo" value="MU8888" style="width:80px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"><input type="text" id="cropBDateR" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div></div>
@@ -560,9 +565,9 @@ body {
           <!-- 圆形Logo控件 -->
           <div id="cropTCircleLogo" style="display:none;flex-direction:column;gap:12px;">
             <div class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropTCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropTCircleBtn" class="logo-btn">选择logo</button><span id="cropTCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropTCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropTCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
-            <div class="control-group"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropTCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           </div>
-          <div class="control-group"><div class="control-group__label"><span>标题</span></div><input type="text" id="cropTTitle" value="标题标题" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
+          <div id="cropTCircleMerchant" class="control-group" style="display:none;"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropTCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
+          <div class="control-group"><div class="control-group__label"><span>标题（支持换行）</span></div><textarea id="cropTTitle" rows="2" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;resize:none;">标题标题</textarea></div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropTGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>标签一 标签 / 值 / 标签二 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTPassLabel" value="标签一" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropTSeatLabel" value="标签二" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTSeat" value="19c" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"></div></div>
         </div>
@@ -802,9 +807,13 @@ body {
       </div>
       <div id="ctrlGoldcard" style="display:none;">
         <div style="display:flex;flex-direction:column;gap:24px;">
-          <div class="chips-nav" id="gcChipsNav">
-            <button class="chips-nav__btn active" data-gcmode="boarding">登机牌</button>
-            <button class="chips-nav__btn" data-gcmode="ticket">门票</button>
+          <!-- ===== 类型选择 ===== -->
+          <div class="control-group">
+            <div class="control-group__label"><span>类型</span></div>
+            <div class="chips-nav" id="gcLogoChips">
+              <button class="chips-nav__btn active" data-gclogo="circle">圆形logo</button>
+              <button class="chips-nav__btn" data-gclogo="long">长Logo</button>
+            </div>
           </div>
           <!-- ===== 卡片外观 ===== -->
           <div class="control-group">
@@ -813,6 +822,20 @@ body {
             <div style="font-size:11px;margin-top:2px;">取色工具参考：<a href="https://photokit.com/colors/eyedropper/?lang=zh" target="_blank" style="color:var(--brand);text-decoration:none;">photokit.com</a></div>
           </div>
 
+          <!-- ===== 长Logo控件 ===== -->
+          <div id="gcLongLogoGroup" class="control-group" style="display:none;">
+            <div class="control-group__label"><span>上传logo</span></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="file" id="gcLongLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
+              <button id="gcLongLogoBtn" class="logo-btn">选择logo</button>
+              <span id="gcLongLogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span>
+              <input type="range" id="gcLongLogoScale" min="80" max="120" value="100" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);">
+              <span id="gcLongLogoScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">100%</span>
+            </div>
+          </div>
+
+          <!-- ===== 圆形Logo控件组 ===== -->
+          <div id="gcCircleLogoGroup">
           <!-- ===== 商户logo ===== -->
           <div class="control-group">
             <div class="control-group__label"><span>商户logo</span></div>
@@ -824,6 +847,7 @@ body {
               <span id="gcAvatarScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span>
             </div>
           </div>
+          </div><!-- /gcCircleLogoGroup -->
 
           <!-- ===== 海报图片（仅门票） ===== -->
           <div class="control-group" id="gcPosterGroup" style="display:none;">
@@ -852,6 +876,7 @@ body {
               <input type="text" id="gcGateLabel" value="登机口" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
               <input type="text" id="gcGate" value="08" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;">
             </div>
+          </div>
           </div>
 
           <!-- ===== 门票内容 ===== -->
@@ -1214,6 +1239,8 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     APP.dom.ctrlCrop.style.display      = (tab === 'crop')      ? '' : 'none';
     var cropChips = document.getElementById('cropChipsNav');
     if (cropChips) cropChips.style.display = (tab === 'crop') ? 'flex' : 'none';
+    var gcChips = document.getElementById('gcChipsNav');
+    if (gcChips) gcChips.style.display = (tab === 'goldcard') ? '' : 'none';
     APP.dom.ctrlTest.style.display      = (tab === 'test')      ? '' : 'none';
     APP.dom.ctrlGoldcard.style.display  = (tab === 'goldcard')  ? '' : 'none';
     var darkBtn = document.getElementById('darkModeBtn');
@@ -1268,6 +1295,14 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     if (tab === 'crop' && !s.uploadedImage && APP.crop) APP.crop.showPlaceholder();
     if (tab === 'test' && APP.test) APP.test.process();
     if (tab === 'goldcard' && APP.goldcard) {
+      // Sync logo type visibility
+      var gcIsCircle = APP.goldcard.logoType !== 'long';
+      var gcllg = document.getElementById('gcLongLogoGroup');
+      var gcclg = document.getElementById('gcCircleLogoGroup');
+      var gcTitle = document.getElementById('gcTitle');
+      if (gcllg) gcllg.style.display = gcIsCircle ? 'none' : '';
+      if (gcclg) gcclg.style.display = gcIsCircle ? '' : 'none';
+      if (gcTitle) gcTitle.style.display = gcIsCircle ? '' : 'none';
       if (APP.goldcard.isReady()) APP.goldcard.process();
     }
     if (s.uploadedImage && tab !== 'walletkit') {
@@ -1998,11 +2033,11 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           var ls = (M.boardingLogoScale || 100) / 100;
           var lh = 36 * ls;
           var lw = lh * (APP.state.uploadedImage.naturalWidth / APP.state.uploadedImage.naturalHeight);
-          bctx.drawImage(APP.state.uploadedImage, 16, 21 + (36 - lh) / 2, lw, lh);
+          bctx.drawImage(APP.state.uploadedImage, 24, 21 + (36 - lh) / 2, lw, lh);
         } else {
-          bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 21, 174, 36);
+          bctx.fillStyle = '#C4C4C4'; bctx.fillRect(24, 21, 174, 36);
           bctx.fillStyle = '#000'; bctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
-          bctx.fillText('logo区域', 35, 45);
+          bctx.fillText('logo区域', 45, 45);
         }
       }
       // Gate — right-aligned like 大卡: label just left of value
@@ -2151,34 +2186,36 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         wCtx.fillText(tmn ? tmn.value : '中国国航', 192, 120);
         wCtx.textBaseline = 'alphabetic';
       } else {
-        // Long logo: height 108, left-aligned at x=48, y=63
+        // Long logo: height 108, left-aligned at x=72, y=63
         if (M.ticketLogoImg) {
           var tls = (M.ticketLogoScale || 100) / 100;
           var tlh = 108 * tls;
           var tlw = tlh * (M.ticketLogoImg.naturalWidth / M.ticketLogoImg.naturalHeight);
-          wCtx.drawImage(M.ticketLogoImg, 48, 63 + (108 - tlh) / 2, tlw, tlh);
+          wCtx.drawImage(M.ticketLogoImg, 72, 63 + (108 - tlh) / 2, tlw, tlh);
         } else {
           // Placeholder when no logo uploaded
           wCtx.fillStyle = 'rgba(255,255,255,0.15)';
-          wCtx.fillRect(48, 63, 522, 108);
+          wCtx.fillRect(72, 63, 522, 108);
           wCtx.fillStyle = tcol(0.4); wCtx.font = '400 32px "HarmonyOS Sans SC",sans-serif';
-          wCtx.fillText('logo区域', 170, 125);
+          wCtx.fillText('logo区域', 200, 125);
         }
       }
 
-      // Title — vertical center, left-aligned with logo, matches goldcard title font
+      // Title — bottom-aligned text, left-aligned with logo, y+36 from previous
       var tTitle = tv('cropTTitle') || '标题标题';
       var tTitleLines = tTitle.split('\n');
       var tTitleFs = tTitleLines.length > 1 ? 60 : 72;
       wCtx.fillStyle = tcol(0.9);
       wCtx.font = '700 ' + tTitleFs + 'px "HarmonyOS Sans SC",sans-serif';
-      wCtx.textBaseline = 'middle';
-      var tTitleY = 306;
+      wCtx.textBaseline = 'alphabetic';
+      var tTitleY = 342;
       if (tTitleLines.length === 1) {
-        wCtx.fillText(tTitleLines[0], 48, tTitleY);
+        wCtx.fillText(tTitleLines[0], 72, tTitleY);
       } else {
+        // Bottom-aligned: last line at tTitleY, lines stack upward
         for (var tti = 0; tti < tTitleLines.length; tti++) {
-          wCtx.fillText(tTitleLines[tti], 48, tTitleY - (tTitleLines.length - 1 - tti) * (tTitleFs * 1.25));
+          var lineY = tTitleY - (tTitleLines.length - 1 - tti) * (tTitleFs * 1.25);
+          wCtx.fillText(tTitleLines[tti], 72, lineY);
         }
       }
       wCtx.textBaseline = 'alphabetic';
@@ -2307,8 +2344,10 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         var isLong = M.boardingLogoType === 'long';
         var ll = document.getElementById('cropBLongLogo');
         var cl = document.getElementById('cropBCircleLogo');
+        var clm = document.getElementById('cropBCircleMerchant');
         if (ll) ll.style.display = isLong ? '' : 'none';
         if (cl) cl.style.display = isLong ? 'none' : '';
+        if (clm) clm.style.display = isLong ? 'none' : '';
         if (M.state.type === 'boarding') M.process();
       });
     }
@@ -2386,8 +2425,10 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         var isLong = M.ticketLogoType === 'long';
         var tll = document.getElementById('cropTLongLogo');
         var tcl = document.getElementById('cropTCircleLogo');
+        var tclm = document.getElementById('cropTCircleMerchant');
         if (tll) tll.style.display = isLong ? '' : 'none';
         if (tcl) tcl.style.display = isLong ? 'none' : '';
+        if (tclm) tclm.style.display = isLong ? 'none' : '';
         if (M.state.type === 'ticket') M.process();
       });
     }
@@ -3057,6 +3098,9 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
   M.posterZoom = 100;      // 80~120%
   M.posterHOff = 0;        // -50~50
   M.posterVOff = 0;        // -50~50
+  M.logoType = 'circle';    // 'circle' | 'long'
+  M.longLogoImg = null;    // long logo image (replaces circle logo + merchant name)
+  M.longLogoScale = 100;   // 80~120%
 
   // === Per-mode field data (独立存储) ===
   var FIELD_IDS = [
@@ -3218,11 +3262,48 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
     // Text color helper: white→black toggle, preserves opacity
     function tcol(a) { var v = APP.cardColor.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
 
-    // === Shared top info: 标题 + 登机口 (y=40) ===
-    ctx.fillStyle = tcol(0.9);
-    ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-    ctx.fillText(v('gcTitle'), 64, 40);
+    // === Shared top info: logo area + 登机口 ===
+    if (M.logoType === 'long') {
+      // Long logo: replaces circle logo + merchant name, same position as crop boarding pass
+      if (M.longLogoImg) {
+        var ls = (M.longLogoScale || 100) / 100;
+        var lh = 36 * ls;
+        var lw = lh * (M.longLogoImg.naturalWidth / M.longLogoImg.naturalHeight);
+        ctx.drawImage(M.longLogoImg, 24, 22 + (36 - lh) / 2, lw, lh);
+      } else {
+        // Placeholder
+        ctx.fillStyle = 'rgba(255,255,255,0.15)';
+        ctx.fillRect(24, 22, 174, 36);
+        ctx.fillStyle = tcol(0.4); ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
+        ctx.fillText('logo区域', 40, 44);
+      }
+    } else {
+      // Circle logo: merchant name at y=40
+      ctx.fillStyle = tcol(0.9);
+      ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
+      ctx.fillText(v('gcTitle'), 64, 40);
 
+      // Circle logo — white circle placeholder at (24,24), 32×32, radius 16, center(40,40)
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath();
+      ctx.arc(40, 40, 16, 0, Math.PI * 2);
+      ctx.fill();
+      if (avatarImg) {
+        var as = 1 + (M.avatarScale || 0) / 100;
+        var dSize = 32 * as;
+        var dX = 24 + (32 - dSize) / 2;
+        var dY = 24 + (32 - dSize) / 2;
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(40, 40, 16, 0, Math.PI * 2);
+        ctx.closePath();
+        ctx.clip();
+        ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
+        ctx.restore();
+      }
+    }
+
+    // Gate — shared for both modes
     var gateX = 312, gateY = 40, gateVal = v('gcGate');
     ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
@@ -3232,25 +3313,6 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
     ctx.fillStyle = tcol(0.6);
     ctx.fillText(v('gcGateLabel'), gateX - valW - 4, gateY);
     ctx.textAlign = 'start';
-
-    // Shared avatar — white circle placeholder at (24,24), 32×32, radius 16
-    ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.arc(40, 40, 16, 0, Math.PI * 2);
-    ctx.fill();
-    if (avatarImg) {
-      var as = 1 + (M.avatarScale || 0) / 100;
-      var dSize = 32 * as;
-      var dX = 24 + (32 - dSize) / 2;
-      var dY = 24 + (32 - dSize) / 2;
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(40, 40, 16, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
-      ctx.restore();
-    }
 
     if (M.mode === 'ticket') {
       // === 门票 content (y=224) ===
@@ -3493,6 +3555,27 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
       });
     }
 
+    // Logo type chips: 圆形logo / 长Logo
+    var logoChips = document.getElementById('gcLogoChips');
+    if (logoChips) {
+      logoChips.addEventListener('click', function (e) {
+        var btn = e.target.closest('.chips-nav__btn');
+        if (!btn) return;
+        logoChips.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        M.logoType = btn.dataset.gclogo || 'circle';
+        var isCircle = M.logoType === 'circle';
+        var llg = document.getElementById('gcLongLogoGroup');
+        var clg = document.getElementById('gcCircleLogoGroup');
+        if (llg) llg.style.display = isCircle ? 'none' : '';
+        if (clg) clg.style.display = isCircle ? '' : 'none';
+        // Toggle gcTitle visibility (long logo replaces merchant name)
+        var gcTitle = document.getElementById('gcTitle');
+        if (gcTitle) gcTitle.style.display = isCircle ? '' : 'none';
+        if (APP.state.currentTab === 'goldcard') M.process();
+      });
+    }
+
     var ids = [
       'gcTitle','gcGateLabel','gcGate',
       'gcDepAirport','gcArrAirport','gcFlightNo','gcTicketTitleTA',
@@ -3626,6 +3709,41 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
           reader.readAsDataURL(file);
           avatarInput.value = '';
         }
+      });
+    }
+
+    // Long logo upload
+    var llInput = document.getElementById('gcLongLogoInput');
+    var llBtn = document.getElementById('gcLongLogoBtn');
+    var llName = document.getElementById('gcLongLogoName');
+    if (llBtn && llInput) {
+      llBtn.addEventListener('click', function () { llInput.click(); });
+      llInput.addEventListener('change', function () {
+        if (llInput.files && llInput.files[0]) {
+          var file = llInput.files[0];
+          if (!['image/png','image/jpeg','image/webp'].includes(file.type)) { APP.showToast('仅支持 PNG / JPG / WebP'); return; }
+          if (file.size > 1 * 1024 * 1024) { APP.showToast('Logo不超过1MB'); return; }
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var img = new Image();
+            img.onload = function () { M.longLogoImg = img; if (APP.state.currentTab === 'goldcard') M.process(); };
+            img.src = e.target.result;
+            if (llName) { llName.textContent = file.name; llName.style.color = 'var(--text-primary)'; llName.style.fontWeight = '700'; }
+          };
+          reader.readAsDataURL(file);
+          llInput.value = '';
+        }
+      });
+    }
+
+    // Long logo scale slider
+    var llScale = document.getElementById('gcLongLogoScale');
+    var llScaleVal = document.getElementById('gcLongLogoScaleVal');
+    if (llScale) {
+      llScale.addEventListener('input', function () {
+        M.longLogoScale = parseInt(llScale.value, 10) || 100;
+        if (llScaleVal) llScaleVal.textContent = llScale.value + '%';
+        if (APP.state.currentTab === 'goldcard') M.process();
       });
     }
 
