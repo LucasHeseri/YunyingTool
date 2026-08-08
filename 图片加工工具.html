@@ -71,8 +71,10 @@
   [2131]       var LOAN_COUPON_ICON    — 借贷优惠角标图标（43×43）
   [2592]       var GOLDCARD_TEMPLATE   — 大卡登机牌模板（328×472）
   [2595]       var AIRPLANE_ICON       — 飞机小图标 SVG
-  [2601]       var TICKET_TOP          — 大卡门票顶部弧形模板
-  [2604]       var TICKET_BOT          — 大卡门票底部弧形模板
+  [2601]       var TICKET_TOP          — 大卡门票顶部渐变遮罩（328×55）
+  [2604]       var TICKET_BOTTOM       — 大卡门票底部渐变遮罩（328×264）
+  [2607]       var TICKET_MID          — 大卡门票海报占位（328×238）
+  [2815]       var TICKET_TEMPLATE     — 大卡门票外轮廓（328×472）
 
   ════════════════════════════════════════════════════════════════════
   JavaScript 模块（805–3301 行）
@@ -2814,6 +2816,9 @@ var TICKET_BOTTOM = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDI2N
 var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgd2lkdGg9IjMyOC4wMDAwMDAiIGhlaWdodD0iMjM4LjAwMDAwMCIgZmlsbD0ibm9uZSI+CiAgPHJlY3QgaWQ9InBvc3RlciIgd2lkdGg9IjMyOC4wMDAwMDAiIGhlaWdodD0iMjM4LjAwMDAwMCIgeD0iMC4wMDAwMDAiIHk9IjAuMDAwMDAwIiBmaWxsPSJyZ2IoMjQxLDI0MywyNDUpIiAvPgo8L3N2Zz4K";
 </script>
 <script>
+var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ9IjQ3MiIgdmlld0JveD0iMCAwIDMyOCA0NzIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHBhdGggZD0iTTAgMjRDMCAxMC43NDUyIDEwLjc0NTIgMCAyNCAwSDE0Ny4wMDJDMTQ5LjIzMiAwIDE1MS4zNDggMC45NDQ1OTkgMTUzLjAyNyAyLjQxMjUyQzE1NS43MiA0Ljc2Nzk0IDE2MC4xMjMgOCAxNjQgOEMxNjcuODc3IDggMTcyLjI4IDQuNzY3OTQgMTc0Ljk3MyAyLjQxMjUyQzE3Ni42NTIgMC45NDQ1OTggMTc4Ljc2OCAwIDE4MC45OTggMEgzMDRDMzE3LjI1NSAwIDMyOCAxMC43NDUyIDMyOCAyNFYzMzguODg4QzMyOCAzNDIuMDA1IDMyNi4wOTggMzQ0Ljc3NCAzMjMuNzg2IDM0Ni44NjRDMzIxLjkxNiAzNDguNTU0IDMyMC4xMDggMzUwLjk2MiAzMjAgMzU0QzMxOS44OCAzNTcuMzcyIDMyMi4xMDcgMzYwLjI0NCAzMjQuMjQgMzYyLjIwN0MzMjYuMzczIDM2NC4xNjggMzI4IDM2Ni43OTUgMzI4IDM2OS42OTNWNDQ4QzMyOCA0NjEuMjU1IDMxNy4yNTUgNDcyIDMwNCA0NzJIMjRDMTAuNzQ1MiA0NzIgMCA0NjEuMjU1IDAgNDQ4VjM2OS42OTNDMCAzNjYuNzk1IDEuNjI2ODMgMzY0LjE2OCAzLjc1OTUgMzYyLjIwN0M1Ljg5MzM1IDM2MC4yNDQgOC4xMTk1NyAzNTcuMzcyIDggMzU0QzcuODkyMjUgMzUwLjk2MiA2LjA4NDIyIDM0OC41NTQgNC4yMTQzNiAzNDYuODY0QzEuOTAyMjcgMzQ0Ljc3NCAwIDM0Mi4wMDUgMCAzMzguODg4VjI0WiIgZmlsbD0iI0I5NzYwMCIvPjwvc3ZnPg==";
+</script>
+<script>
 /**
  * goldcard.js — 金色卡片 template (328×472 SVG).
  */
@@ -2824,7 +2829,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
   var M = APP.goldcard = {};
   var W = 328, H = 472, S = 2;
   var templateImg = null, airplaneImg = null, qrImg = null, avatarImg = null;
-  var ticketTopImg = null, ticketBtmImg = null, ticketMidImg = null;
+  var ticketTopImg = null, ticketBtmImg = null, ticketMidImg = null, ticketTemplateImg = null;
   var ready = false;
   M.mode = 'boarding';    // 'boarding' | 'ticket'
   M.bgColor = APP.cardColor.bg;  // card background color (shared state)
@@ -2872,7 +2877,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
 
   M.init = function (cb) {
     if (typeof GOLDCARD_TEMPLATE === 'undefined') { if (cb) cb(false); return; }
-    var total = 6, loaded = 0;
+    var total = 7, loaded = 0;
     function checkDone() {
       if (loaded >= total) {
         ready = true;
@@ -2893,6 +2898,7 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
     ticketTopImg = loadImg(typeof TICKET_TOP !== 'undefined' ? TICKET_TOP : '');
     ticketBtmImg = loadImg(typeof TICKET_BOTTOM !== 'undefined' ? TICKET_BOTTOM : '');
     ticketMidImg = loadImg(typeof TICKET_MID !== 'undefined' ? TICKET_MID : '');
+    ticketTemplateImg = loadImg(typeof TICKET_TEMPLATE !== 'undefined' ? TICKET_TEMPLATE : '');
   };
   M.isReady = function () { return ready; };
 
@@ -2976,9 +2982,9 @@ var TICKET_MID = "data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSIwIDAgMzI4IDIzOCIg
       ctx.fillStyle = btmGrad;
       ctx.fillRect(0, btmStart, W, H - btmStart);
 
-      // Clip to card shape with notch
+      // Clip to ticket shape
       ctx.globalCompositeOperation = 'destination-in';
-      ctx.drawImage(templateImg, 0, 0, W, H);
+      ctx.drawImage(ticketTemplateImg || templateImg, 0, 0, W, H);
       ctx.globalCompositeOperation = 'source-over';
     } else {
       // === 登机牌: fill SVG shape with selected bg color ===
