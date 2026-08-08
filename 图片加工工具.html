@@ -2101,6 +2101,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.restore();
     }
 
+    // For ticket mode without image: clip to template for the notched outline
+    if (isTicket && !img) {
+      wCtx.globalCompositeOperation = 'destination-in';
+      wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
+      wCtx.globalCompositeOperation = 'source-over';
+    }
+
     // === Ticket overlays: logo, gate, passenger/seat ===
     if (isTicket) {
       function tcol(a) { var v = APP.cardColor.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
@@ -2146,20 +2153,18 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.textAlign = 'start';
       wCtx.textBaseline = 'alphabetic';
 
-      // Passenger + seat — bottom area
-      wCtx.fillStyle = tcol(0.6); wCtx.font = '400 36px "HarmonyOS Sans SC",sans-serif';
-      wCtx.fillText(tv('cropTPassLabel'), 48, 528);
+      // Passenger + seat — same line (matches boarding pass layout, 3x scale)
       wCtx.fillStyle = tcol(0.9); wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
-      wCtx.fillText(tv('cropTPassenger'), 48, 570);
+      wCtx.fillText(tv('cropTPassLabel'), 48, 558);
+      wCtx.fillText(tv('cropTPassenger'), 198, 558);
       // Seat — right-aligned: value at right edge, label 36px left
       wCtx.textAlign = 'right';
-      wCtx.fillStyle = tcol(0.6); wCtx.font = '400 36px "HarmonyOS Sans SC",sans-serif';
       var tSeatVal = tv('cropTSeat');
-      wCtx.fillStyle = tcol(0.9); wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
-      wCtx.fillText(tSeatVal, 936, 570);
+      wCtx.fillStyle = tcol(0.9);
+      wCtx.fillText(tSeatVal, 936, 558);
       var tSeatW = wCtx.measureText(tSeatVal).width;
-      wCtx.fillStyle = tcol(0.6); wCtx.font = '400 36px "HarmonyOS Sans SC",sans-serif';
-      wCtx.fillText(tv('cropTSeatLabel'), 936 - tSeatW - 36, 570);
+      wCtx.fillStyle = tcol(0.6);
+      wCtx.fillText(tv('cropTSeatLabel'), 936 - tSeatW - 36, 558);
       wCtx.textAlign = 'start';
     }
 
@@ -2491,6 +2496,22 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
 
       picker.appendChild(hexInput);
     }
+
+    // Initialize display state for current crop type (so ticket fields show on first load)
+    (function () {
+      var type = M.state.type;
+      var isBoarding = type === 'boarding';
+      var isTicket = type === 'ticket';
+      var bf = document.getElementById('cropBoardingFields');
+      var tf = document.getElementById('cropTicketFields');
+      var ic = document.getElementById('cropImageControls');
+      var ca = document.getElementById('cropCardAppearance');
+      if (bf) bf.style.display = isBoarding ? 'flex' : 'none';
+      if (tf) tf.style.display = isTicket ? 'flex' : 'none';
+      if (ic) ic.style.display = (isBoarding || isTicket) ? 'none' : 'flex';
+      if (ca) ca.style.display = (type === 'boarding' || type === 'ticket') ? 'flex' : 'none';
+      APP.dom.uploadZone.parentNode.style.display = (isBoarding || isTicket) ? 'none' : '';
+    })();
   };
 })();
 </script>
