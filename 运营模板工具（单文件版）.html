@@ -815,13 +815,6 @@ body {
               <button class="chips-nav__btn" data-gclogo="long">长Logo</button>
             </div>
           </div>
-          <!-- ===== 卡片外观 ===== -->
-          <div class="control-group">
-            <div class="control-group__label"><span>卡片背景色</span></div>
-            <div id="gcColorPicker" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-            <div style="font-size:11px;margin-top:2px;">取色工具参考：<a href="https://photokit.com/colors/eyedropper/?lang=zh" target="_blank" style="color:var(--brand);text-decoration:none;">photokit.com</a></div>
-          </div>
-
           <!-- ===== 长Logo控件 ===== -->
           <div id="gcLongLogoGroup" class="control-group" style="display:none;">
             <div class="control-group__label"><span>上传logo</span></div>
@@ -848,6 +841,13 @@ body {
             </div>
           </div>
           </div><!-- /gcCircleLogoGroup -->
+
+          <!-- ===== 卡片外观 ===== -->
+          <div class="control-group">
+            <div class="control-group__label"><span>卡片背景色</span></div>
+            <div id="gcColorPicker" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
+            <div style="font-size:11px;margin-top:2px;">取色工具参考：<a href="https://photokit.com/colors/eyedropper/?lang=zh" target="_blank" style="color:var(--brand);text-decoration:none;">photokit.com</a></div>
+          </div>
 
           <!-- ===== 海报图片（仅门票） ===== -->
           <div class="control-group" id="gcPosterGroup" style="display:none;">
@@ -2201,14 +2201,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         }
       }
 
-      // Title — bottom-aligned text, left-aligned with logo, y+36 from previous
+      // Title — bottom-aligned text, left-aligned with logo, y=390
       var tTitle = tv('cropTTitle') || '标题标题';
       var tTitleLines = tTitle.split('\n');
-      var tTitleFs = tTitleLines.length > 1 ? 60 : 72;
+      var tTitleFs = 72;
       wCtx.fillStyle = tcol(0.9);
       wCtx.font = '700 ' + tTitleFs + 'px "HarmonyOS Sans SC",sans-serif';
       wCtx.textBaseline = 'alphabetic';
-      var tTitleY = 342;
+      var tTitleY = 390;
       if (tTitleLines.length === 1) {
         wCtx.fillText(tTitleLines[0], 72, tTitleY);
       } else {
@@ -2233,20 +2233,20 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.textAlign = 'start';
       wCtx.textBaseline = 'alphabetic';
 
-      // 标签一 + 标签二 — stacked vertical layout, bottom-left, left-aligned with logo (x=48)
+      // 标签一 + 标签二 — stacked vertical layout, bottom-left, left-aligned with logo (x=72)
       // Auto-width labels with fixed 36px horizontal gap; all text at 60% opacity
       wCtx.fillStyle = tcol(0.6);
       wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
       // Line 1: 标签一 label + value
       var tpl = tv('cropTPassLabel');
-      wCtx.fillText(tpl, 48, 496);
+      wCtx.fillText(tpl, 72, 496);
       var tplW = wCtx.measureText(tpl).width;
-      wCtx.fillText(tv('cropTPassenger'), 48 + tplW + 36, 496);
+      wCtx.fillText(tv('cropTPassenger'), 72 + tplW + 36, 496);
       // Line 2: 标签二 label + value (24px baseline gap = 8px visual at 1x)
       var tsl = tv('cropTSeatLabel');
-      wCtx.fillText(tsl, 48, 562);
+      wCtx.fillText(tsl, 72, 562);
       var tslW = wCtx.measureText(tsl).width;
-      wCtx.fillText(tv('cropTSeat'), 48 + tslW + 36, 562);
+      wCtx.fillText(tv('cropTSeat'), 72 + tslW + 36, 562);
     }
 
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
