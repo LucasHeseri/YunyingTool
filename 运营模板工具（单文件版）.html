@@ -8,7 +8,7 @@
   ════════════════════════════════════════════════════════════════════
   HTML / CSS（1–795 行）
   ════════════════════════════════════════════════════════════════════
-  [1–7]        DOCTYPE、<head>、<meta>、<title>图片加工工具 - 桌面版
+  [1–7]        DOCTYPE、<head>、<meta>、<title>UxExtraTool
   [8–216]      <style> 全局 CSS
                  8–96    CSS 变量（--brand: #0a59f7）、HarmonyOS 颜色 Token（22 色）、\
                         字体、圆角、阴影、背景色
@@ -560,6 +560,7 @@ body {
           <!-- 圆形Logo控件 -->
           <div id="cropTCircleLogo" style="display:none;flex-direction:column;gap:12px;">
             <div class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropTCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropTCircleBtn" class="logo-btn">选择logo</button><span id="cropTCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropTCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropTCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
+            <div class="control-group"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropTCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           </div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropTGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>乘机人 标签 / 值 / 座位号 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTPassLabel" value="乘机人" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropTPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropTSeatLabel" value="座位号" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropTSeat" value="19c" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"></div></div>
@@ -2102,9 +2103,18 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     }
 
     // For ticket mode without image: clip to template for the notched outline
+    // Use binary mask (same as boarding pass) to avoid alpha dilution from template
     if (isTicket && !img) {
+      var tMaskC = document.createElement('canvas');
+      tMaskC.width = VIEW_W; tMaskC.height = VIEW_H;
+      var tmCtx = tMaskC.getContext('2d');
+      tmCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
+      var tImgData = tmCtx.getImageData(0, 0, VIEW_W, VIEW_H);
+      var tPx = tImgData.data;
+      for (var ti = 3; ti < tPx.length; ti += 4) { tPx[ti] = tPx[ti] > 128 ? 255 : 0; }
+      tmCtx.putImageData(tImgData, 0, 0);
       wCtx.globalCompositeOperation = 'destination-in';
-      wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
+      wCtx.drawImage(tMaskC, 0, 0, VIEW_W, VIEW_H);
       wCtx.globalCompositeOperation = 'source-over';
     }
 
@@ -2124,6 +2134,12 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           wCtx.save(); wCtx.beginPath(); wCtx.arc(120, 120, 48, 0, Math.PI*2); wCtx.clip();
           wCtx.drawImage(M.ticketCircleLogoImg, tcdx, tcdy, tcsz, tcsz); wCtx.restore();
         }
+        // Merchant name at (192, 120), 48px, middle baseline (3x boarding pass position)
+        var tmn = document.getElementById('cropTCircleName2');
+        wCtx.fillStyle = tcol(0.9); wCtx.font = '400 48px "HarmonyOS Sans SC",sans-serif';
+        wCtx.textBaseline = 'middle';
+        wCtx.fillText(tmn ? tmn.value : '中国国航', 192, 120);
+        wCtx.textBaseline = 'alphabetic';
       } else {
         // Long logo: height 108, left-aligned at x=48, y=63
         if (M.ticketLogoImg) {
@@ -2153,19 +2169,17 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.textAlign = 'start';
       wCtx.textBaseline = 'alphabetic';
 
-      // Passenger + seat — same line (matches boarding pass layout, 3x scale)
-      wCtx.fillStyle = tcol(0.9); wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
-      wCtx.fillText(tv('cropTPassLabel'), 48, 558);
-      wCtx.fillText(tv('cropTPassenger'), 198, 558);
-      // Seat — right-aligned: value at right edge, label 36px left
-      wCtx.textAlign = 'right';
-      var tSeatVal = tv('cropTSeat');
+      // Passenger + seat — stacked vertical layout, bottom-left, left-aligned with logo (x=48)
+      wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
+      // Line 1: 乘机人 label + value
       wCtx.fillStyle = tcol(0.9);
-      wCtx.fillText(tSeatVal, 936, 558);
-      var tSeatW = wCtx.measureText(tSeatVal).width;
+      wCtx.fillText(tv('cropTPassLabel'), 48, 520);
+      wCtx.fillText(tv('cropTPassenger'), 198, 520);
+      // Line 2: 座位号 label + value (24px baseline gap = 8px visual at 1x)
       wCtx.fillStyle = tcol(0.6);
-      wCtx.fillText(tv('cropTSeatLabel'), 936 - tSeatW - 36, 558);
-      wCtx.textAlign = 'start';
+      wCtx.fillText(tv('cropTSeatLabel'), 48, 586);
+      wCtx.fillStyle = tcol(0.9);
+      wCtx.fillText(tv('cropTSeat'), 198, 586);
     }
 
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
@@ -2399,7 +2413,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     if (tcls) tcls.addEventListener('input', function() { M.ticketCircleScale = parseInt(tcls.value, 10); if (tclsv) tclsv.textContent = tcls.value + '%'; if (M.state.type === 'ticket') M.process(); });
 
     // Ticket editable fields
-    ['cropTGateLabel','cropTGate','cropTPassLabel','cropTPassenger','cropTSeatLabel','cropTSeat'].forEach(function(id) {
+    ['cropTGateLabel','cropTGate','cropTPassLabel','cropTPassenger','cropTSeatLabel','cropTSeat','cropTCircleName2'].forEach(function(id) {
       var el = document.getElementById(id);
       if (el) el.addEventListener('input', function() {
         if (M.state.type === 'ticket' && APP.state.currentTab === 'crop') M.process();
@@ -2423,11 +2437,10 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         { color: '#E64566', label: '玫' }, { color: '#E84026', label: '红' },
         { color: '#ED6F21', label: '橙' }, { color: '#F9A01E', label: '橘' },
         { color: '#F7CE00', label: '金' }, { color: '#8981F7', label: '藤' },
-        { color: '#86C5E3', label: '湖' }, { color: '#92D6CC', label: '翠' },
+        { color: '#86C5E3', label: '湖' },
         { color: '#92C48D', label: '艾' }, { color: '#BDDB69', label: '芽' },
-        { color: '#C386F0', label: '苋' }, { color: '#E67C92', label: '桃' },
+        { color: '#C386F0', label: '苋' },
         { color: '#E87361', label: '绯' }, { color: '#ED955F', label: '杏' },
-        { color: '#F9BC64', label: '姜' }, { color: '#F5DC62', label: '葵' },
         { color: '#B97600', label: '铜' }
       ];
       picker.innerHTML = '';
@@ -3502,11 +3515,10 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
         { color: '#E64566', label: '玫' }, { color: '#E84026', label: '红' },
         { color: '#ED6F21', label: '橙' }, { color: '#F9A01E', label: '橘' },
         { color: '#F7CE00', label: '金' }, { color: '#8981F7', label: '藤' },
-        { color: '#86C5E3', label: '湖' }, { color: '#92D6CC', label: '翠' },
+        { color: '#86C5E3', label: '湖' },
         { color: '#92C48D', label: '艾' }, { color: '#BDDB69', label: '芽' },
-        { color: '#C386F0', label: '苋' }, { color: '#E67C92', label: '桃' },
+        { color: '#C386F0', label: '苋' },
         { color: '#E87361', label: '绯' }, { color: '#ED955F', label: '杏' },
-        { color: '#F9BC64', label: '姜' }, { color: '#F5DC62', label: '葵' },
         { color: '#B97600', label: '铜' }
       ];
       picker.innerHTML = '';
