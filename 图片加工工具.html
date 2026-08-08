@@ -2169,7 +2169,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       // Title — vertical center, left-aligned with logo, matches goldcard title font
       var tTitle = tv('cropTTitle') || '标题标题';
       var tTitleLines = tTitle.split('\n');
-      var tTitleFs = tTitleLines.length > 1 ? 30 : 36;
+      var tTitleFs = tTitleLines.length > 1 ? 60 : 72;
       wCtx.fillStyle = tcol(0.9);
       wCtx.font = '700 ' + tTitleFs + 'px "HarmonyOS Sans SC",sans-serif';
       wCtx.textBaseline = 'middle';
@@ -3045,7 +3045,7 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
   if (!window.APP) throw new Error('common.js must load before goldcard.js');
 
   var M = APP.goldcard = {};
-  var W = 328, H = 472, S = 2;
+  var W = 328, H = 472, S = 3;
   var templateImg = null, airplaneImg = null, qrImg = null, avatarImg = null;
   var ticketTopImg = null, ticketBtmImg = null, ticketMidImg = null, ticketTemplateImg = null;
   var ready = false;
@@ -3461,7 +3461,7 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
     cv.style.display = 'block';
     pctx.drawImage(c, 0, 0);
     var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
-    var ds = Math.min(cw / (W * S), ch / (H * S), 0.8);
+    var ds = Math.min(cw / (W * S), ch / (H * S), 1);
     cv.style.width  = Math.round(W * S * ds) + 'px';
     cv.style.height = Math.round(H * S * ds) + 'px';
     APP.dom.downloadBtn.disabled = false;
