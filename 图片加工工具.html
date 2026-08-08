@@ -844,9 +844,8 @@ body {
 
           <!-- ===== 卡片外观 ===== -->
           <div class="control-group">
-            <div class="control-group__label"><span>卡片背景色</span></div>
+            <div class="control-group__label"><span>卡片背景色</span><span style="font-size:11px;font-weight:400;">取色工具参考：<a href="https://photokit.com/colors/eyedropper/?lang=zh" target="_blank" style="color:var(--brand);text-decoration:none;">photokit.com</a></span></div>
             <div id="gcColorPicker" style="display:flex;gap:8px;flex-wrap:wrap;"></div>
-            <div style="font-size:11px;margin-top:2px;">取色工具参考：<a href="https://photokit.com/colors/eyedropper/?lang=zh" target="_blank" style="color:var(--brand);text-decoration:none;">photokit.com</a></div>
           </div>
 
           <!-- ===== 海报图片（仅门票） ===== -->
@@ -3406,24 +3405,6 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
 
     } else {
       // === 登机牌 content ===
-      // Avatar — white circle placeholder at (24,24), 32×32, radius 16
-      ctx.fillStyle = '#FFFFFF';
-    ctx.beginPath();
-    ctx.arc(40, 40, 16, 0, Math.PI * 2);
-    ctx.fill();
-    if (avatarImg) {
-      var as = 1 + (M.avatarScale || 0) / 100;  // 0.8 ~ 1.2
-      var dSize = 32 * as;
-      var dX = 24 + (32 - dSize) / 2;
-      var dY = 24 + (32 - dSize) / 2;
-      ctx.save();
-      ctx.beginPath();
-      ctx.arc(40, 40, 16, 0, Math.PI * 2);
-      ctx.closePath();
-      ctx.clip();
-      ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
-      ctx.restore();
-    }
 
     // === Flight info at y=72 (Pixso layout, 296px wide) ===
     var FY = 72;
