@@ -2170,16 +2170,19 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.textBaseline = 'alphabetic';
 
       // Passenger + seat — stacked vertical layout, bottom-left, left-aligned with logo (x=48)
+      // Use HarmonyOS font_primary color; auto-width labels with fixed 36px horizontal gap
       wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
+      wCtx.fillStyle = 'rgba(0,0,0,0.9)';
       // Line 1: 乘机人 label + value
-      wCtx.fillStyle = tcol(0.9);
-      wCtx.fillText(tv('cropTPassLabel'), 48, 520);
-      wCtx.fillText(tv('cropTPassenger'), 198, 520);
+      var tpl = tv('cropTPassLabel');
+      wCtx.fillText(tpl, 48, 508);
+      var tplW = wCtx.measureText(tpl).width;
+      wCtx.fillText(tv('cropTPassenger'), 48 + tplW + 36, 508);
       // Line 2: 座位号 label + value (24px baseline gap = 8px visual at 1x)
-      wCtx.fillStyle = tcol(0.6);
-      wCtx.fillText(tv('cropTSeatLabel'), 48, 586);
-      wCtx.fillStyle = tcol(0.9);
-      wCtx.fillText(tv('cropTSeat'), 198, 586);
+      var tsl = tv('cropTSeatLabel');
+      wCtx.fillText(tsl, 48, 574);
+      var tslW = wCtx.measureText(tsl).width;
+      wCtx.fillText(tv('cropTSeat'), 48 + tslW + 36, 574);
     }
 
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
