@@ -2532,7 +2532,10 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       if (tf) tf.style.display = isTicket ? 'flex' : 'none';
       if (ic) ic.style.display = (isBoarding || isTicket) ? 'none' : 'flex';
       if (ca) ca.style.display = (type === 'boarding' || type === 'ticket') ? 'flex' : 'none';
-      APP.dom.uploadZone.parentNode.style.display = (isBoarding || isTicket) ? 'none' : '';
+      // Only affect upload zone when crop tab is actually active
+      if (APP.state.currentTab === 'crop') {
+        APP.dom.uploadZone.parentNode.style.display = (isBoarding || isTicket) ? 'none' : '';
+      }
     })();
   };
 })();
