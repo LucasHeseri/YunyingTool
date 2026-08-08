@@ -2013,8 +2013,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       bctx.textAlign = 'right'; bctx.fillText(bv('cropBAirportR'), 312, 88); bctx.textAlign = 'start';
       // Times
       bctx.fillStyle = tcol(1); bctx.font = '700 36px sans-serif';
-      bctx.fillText(bv('cropBTimeL'), 16, 122);
-      bctx.textAlign = 'right'; bctx.fillText(bv('cropBTimeR'), 312, 122); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBTimeL'), 16, 130);
+      bctx.textAlign = 'right'; bctx.fillText(bv('cropBTimeR'), 312, 130); bctx.textAlign = 'start';
       // Airplane icon — same as 大卡, position matches 大卡 relative layout
       // Icon 74×25 at (127,95): between airports y=88 and times y=122
       if (airplaneImg) {
@@ -2033,12 +2033,12 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       // Flight number — below airplane/dots, same gap as 大卡 (26px below time baseline)
       bctx.fillStyle = tcol(0.9); bctx.font = '400 12px sans-serif';
       bctx.textAlign = 'center';
-      bctx.fillText(bv('cropBFlightNo'), 164, 148); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBFlightNo'), 164, 156); bctx.textAlign = 'start';
       // Dates — same row as flight number
       bctx.fillStyle = tcol(0.6); bctx.font = '400 12px sans-serif';
-      bctx.fillText(bv('cropBDateL'), 16, 148);
+      bctx.fillText(bv('cropBDateL'), 16, 156);
       bctx.fillStyle = tcol(0.6); bctx.textAlign = 'right';
-      bctx.fillText(bv('cropBDateR'), 312, 148); bctx.textAlign = 'start';
+      bctx.fillText(bv('cropBDateR'), 312, 156); bctx.textAlign = 'start';
       // Bottom info — passenger & seat
       bctx.fillStyle = tcol(0.9); bctx.font = '400 14px sans-serif';
       bctx.fillText(bv('cropBPassLabel'), 16, 186);
@@ -2170,18 +2170,20 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.textBaseline = 'alphabetic';
 
       // Passenger + seat — stacked vertical layout, bottom-left, left-aligned with logo (x=48)
-      // Use HarmonyOS font_primary color; auto-width labels with fixed 36px horizontal gap
+      // Auto-width labels with fixed 36px horizontal gap
       wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
-      wCtx.fillStyle = 'rgba(0,0,0,0.9)';
       // Line 1: 乘机人 label + value
+      wCtx.fillStyle = tcol(0.9);
       var tpl = tv('cropTPassLabel');
       wCtx.fillText(tpl, 48, 508);
       var tplW = wCtx.measureText(tpl).width;
       wCtx.fillText(tv('cropTPassenger'), 48 + tplW + 36, 508);
       // Line 2: 座位号 label + value (24px baseline gap = 8px visual at 1x)
+      wCtx.fillStyle = tcol(0.6);
       var tsl = tv('cropTSeatLabel');
       wCtx.fillText(tsl, 48, 574);
       var tslW = wCtx.measureText(tsl).width;
+      wCtx.fillStyle = tcol(0.9);
       wCtx.fillText(tv('cropTSeat'), 48 + tslW + 36, 574);
     }
 
