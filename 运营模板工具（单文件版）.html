@@ -272,7 +272,7 @@ body {
   min-height: 0; max-width: 1600px; width: 100%; margin: 0 auto;
 }
 
-.panel-left { width: 50%; flex-shrink: 0; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
+.panel-left { width: 50%; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; }
 .panel-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 24px; }
 
 /* HarmonyOS segmented control */
@@ -3260,40 +3260,40 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
     // Text color helper: white→black toggle, preserves opacity
     function tcol(a) { var v = APP.cardColor.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
 
-    // === Shared top info: logo area + 登机口 ===
+    // === Shared top info: logo area + 登机口 (y-8) ===
     if (M.logoType === 'long') {
       // Long logo: replaces circle logo + merchant name, same position as crop boarding pass
       if (M.longLogoImg) {
         var ls = (M.longLogoScale || 100) / 100;
         var lh = 36 * ls;
         var lw = lh * (M.longLogoImg.naturalWidth / M.longLogoImg.naturalHeight);
-        ctx.drawImage(M.longLogoImg, 24, 22 + (36 - lh) / 2, lw, lh);
+        ctx.drawImage(M.longLogoImg, 24, 14 + (36 - lh) / 2, lw, lh);
       } else {
         // Placeholder
         ctx.fillStyle = 'rgba(255,255,255,0.15)';
-        ctx.fillRect(24, 22, 174, 36);
+        ctx.fillRect(24, 14, 174, 36);
         ctx.fillStyle = tcol(0.4); ctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
-        ctx.fillText('logo区域', 40, 44);
+        ctx.fillText('logo区域', 40, 36);
       }
     } else {
-      // Circle logo: merchant name at y=40
+      // Circle logo: merchant name at y=32
       ctx.fillStyle = tcol(0.9);
       ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
-      ctx.fillText(v('gcTitle'), 64, 40);
+      ctx.fillText(v('gcTitle'), 64, 32);
 
-      // Circle logo — white circle placeholder at (24,24), 32×32, radius 16, center(40,40)
+      // Circle logo — white circle at center(40,32), radius 16
       ctx.fillStyle = '#FFFFFF';
       ctx.beginPath();
-      ctx.arc(40, 40, 16, 0, Math.PI * 2);
+      ctx.arc(40, 32, 16, 0, Math.PI * 2);
       ctx.fill();
       if (avatarImg) {
         var as = 1 + (M.avatarScale || 0) / 100;
         var dSize = 32 * as;
         var dX = 24 + (32 - dSize) / 2;
-        var dY = 24 + (32 - dSize) / 2;
+        var dY = 16 + (32 - dSize) / 2;
         ctx.save();
         ctx.beginPath();
-        ctx.arc(40, 40, 16, 0, Math.PI * 2);
+        ctx.arc(40, 32, 16, 0, Math.PI * 2);
         ctx.closePath();
         ctx.clip();
         ctx.drawImage(avatarImg, dX, dY, dSize, dSize);
@@ -3302,7 +3302,7 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
     }
 
     // Gate — shared for both modes
-    var gateX = 312, gateY = 40, gateVal = v('gcGate');
+    var gateX = 312, gateY = 32, gateVal = v('gcGate');
     ctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
     ctx.textAlign = 'right';
     ctx.fillStyle = tcol(0.9);
@@ -3454,8 +3454,8 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
       }
     }
 
-    // === Passenger info at y=174 (Pixso frame 1048_19, 296×88) ===
-    var PY = 174;
+    // === Passenger info at y=182 (Pixso frame 1048_19, 296×88) ===
+    var PY = 182;
     // Row 1: label + value (left, 20px) / label + value (right, 20px)
     ctx.fillStyle = tcol(0.6);
     ctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
