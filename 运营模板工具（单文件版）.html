@@ -1984,7 +1984,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         }
         // Merchant name at (64,40), 16px, middle baseline — same as 大卡
         var mn = document.getElementById('cropBCircleName2');
-        bctx.fillStyle = tcol(0.9); bctx.font = '400 16px sans-serif';
+        bctx.fillStyle = tcol(0.9); bctx.font = '400 16px "HarmonyOS Sans SC",sans-serif';
         bctx.textBaseline = 'middle';
         bctx.fillText(mn ? mn.value : '中国国航', 64, 40);
         bctx.textBaseline = 'alphabetic';
@@ -1997,13 +1997,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           bctx.drawImage(APP.state.uploadedImage, 16, 21 + (36 - lh) / 2, lw, lh);
         } else {
           bctx.fillStyle = '#C4C4C4'; bctx.fillRect(16, 21, 174, 36);
-          bctx.fillStyle = '#000'; bctx.font = '400 14px sans-serif';
+          bctx.fillStyle = '#000'; bctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
           bctx.fillText('logo区域', 35, 45);
         }
       }
       // Gate — right-aligned like 大卡: label just left of value
       var gateX = 312;
-      bctx.fillStyle = tcol(0.6); bctx.font = '500 16px sans-serif';
+      bctx.fillStyle = tcol(0.6); bctx.font = '500 16px "HarmonyOS Sans SC",sans-serif';
       bctx.textBaseline = 'middle';
       bctx.fillStyle = tcol(0.9); bctx.textAlign = 'right';
       var gateVal = bv('cropBGate');
@@ -2014,11 +2014,11 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       bctx.textAlign = 'start';
       bctx.textBaseline = 'alphabetic';
       // Airports
-      bctx.fillStyle = tcol(0.6); bctx.font = '400 12px sans-serif';
+      bctx.fillStyle = tcol(0.6); bctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       bctx.fillText(bv('cropBAirportL'), 16, 84);
       bctx.textAlign = 'right'; bctx.fillText(bv('cropBAirportR'), 312, 84); bctx.textAlign = 'start';
       // Times
-      bctx.fillStyle = tcol(1); bctx.font = '700 36px sans-serif';
+      bctx.fillStyle = tcol(1); bctx.font = '700 36px "HarmonyOS Sans SC",sans-serif';
       bctx.fillText(bv('cropBTimeL'), 16, 122);
       bctx.textAlign = 'right'; bctx.fillText(bv('cropBTimeR'), 312, 122); bctx.textAlign = 'start';
       // Airplane icon — same as 大卡, position matches 大卡 relative layout
@@ -2037,16 +2037,16 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         [170, 176, 182, 188].forEach(function(x) { bctx.beginPath(); bctx.arc(x, 112, 1.5, 0, Math.PI*2); bctx.fill(); });
       }
       // Flight number — below airplane/dots, same gap as 大卡 (26px below time baseline)
-      bctx.fillStyle = tcol(0.9); bctx.font = '400 12px sans-serif';
+      bctx.fillStyle = tcol(0.9); bctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       bctx.textAlign = 'center';
       bctx.fillText(bv('cropBFlightNo'), 164, 140); bctx.textAlign = 'start';
       // Dates — same row as flight number
-      bctx.fillStyle = tcol(0.6); bctx.font = '400 12px sans-serif';
+      bctx.fillStyle = tcol(0.6); bctx.font = '400 12px "HarmonyOS Sans SC",sans-serif';
       bctx.fillText(bv('cropBDateL'), 16, 140);
       bctx.fillStyle = tcol(0.6); bctx.textAlign = 'right';
       bctx.fillText(bv('cropBDateR'), 312, 140); bctx.textAlign = 'start';
       // Bottom info — passenger & seat
-      bctx.fillStyle = tcol(0.9); bctx.font = '400 14px sans-serif';
+      bctx.fillStyle = tcol(0.9); bctx.font = '400 14px "HarmonyOS Sans SC",sans-serif';
       bctx.fillText(bv('cropBPassLabel'), 16, 186);
       bctx.fillText(bv('cropBPassenger'), 66, 186);
       // Seat — right-aligned: value at right edge, label 12px left
@@ -2157,7 +2157,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           // Placeholder when no logo uploaded
           wCtx.fillStyle = 'rgba(255,255,255,0.15)';
           wCtx.fillRect(48, 63, 522, 108);
-          wCtx.fillStyle = tcol(0.4); wCtx.font = '400 32px sans-serif';
+          wCtx.fillStyle = tcol(0.4); wCtx.font = '400 32px "HarmonyOS Sans SC",sans-serif';
           wCtx.fillText('logo区域', 170, 125);
         }
       }
@@ -2181,14 +2181,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.font = '400 42px "HarmonyOS Sans SC",sans-serif';
       // Line 1: 标签一 label + value
       var tpl = tv('cropTPassLabel');
-      wCtx.fillText(tpl, 48, 508);
+      wCtx.fillText(tpl, 48, 496);
       var tplW = wCtx.measureText(tpl).width;
-      wCtx.fillText(tv('cropTPassenger'), 48 + tplW + 36, 508);
+      wCtx.fillText(tv('cropTPassenger'), 48 + tplW + 36, 496);
       // Line 2: 标签二 label + value (24px baseline gap = 8px visual at 1x)
       var tsl = tv('cropTSeatLabel');
-      wCtx.fillText(tsl, 48, 574);
+      wCtx.fillText(tsl, 48, 562);
       var tslW = wCtx.measureText(tsl).width;
-      wCtx.fillText(tv('cropTSeat'), 48 + tslW + 36, 574);
+      wCtx.fillText(tv('cropTSeat'), 48 + tslW + 36, 562);
     }
 
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
