@@ -422,6 +422,27 @@ body {
   .panel-left, .panel-right { width: 100%; flex-shrink: 1; }
   .panel-right { min-height: 350px; }
 }
+
+/* HarmonyOS style slider for ticket image controls */
+.hm-slider { display: flex; flex-direction: column; gap: 6px; }
+.hm-slider__header { display: flex; justify-content: space-between; align-items: center; }
+.hm-slider__label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.hm-slider__value { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.hm-slider__track input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 2px;
+  background: linear-gradient(to right, var(--brand) 0%, var(--brand) 0%, var(--border) 0%, var(--border) 100%);
+  outline: none; cursor: pointer;
+}
+.hm-slider__track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--brand); box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.15s ease;
+}
+.hm-slider__track input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.hm-slider__track input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid var(--brand);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
 </style>
 </head>
 <body>
@@ -482,6 +503,36 @@ body {
           <button id="tolPlus" style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;line-height:1;">+</button>
         </div>
       </div>
+      <!-- 门票背景图调整（鸿蒙UI滑块） -->
+      <div id="cropTicketImgPanel" style="display:none;flex-direction:column;gap:14px;margin-top:14px;">
+        <div class="hm-slider">
+          <div class="hm-slider__header">
+            <span class="hm-slider__label">图片缩放</span>
+            <span class="hm-slider__value" id="cropTZVal">100%</span>
+          </div>
+          <div class="hm-slider__track">
+            <input type="range" id="cropTZ" min="50" max="150" value="100" step="1">
+          </div>
+        </div>
+        <div class="hm-slider">
+          <div class="hm-slider__header">
+            <span class="hm-slider__label">水平偏移</span>
+            <span class="hm-slider__value" id="cropTHVal">0px</span>
+          </div>
+          <div class="hm-slider__track">
+            <input type="range" id="cropTH" min="-50" max="50" value="0" step="5">
+          </div>
+        </div>
+        <div class="hm-slider">
+          <div class="hm-slider__header">
+            <span class="hm-slider__label">垂直偏移</span>
+            <span class="hm-slider__value" id="cropTVVal">0px</span>
+          </div>
+          <div class="hm-slider__track">
+            <input type="range" id="cropTV" min="-100" max="100" value="0" step="5">
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="panel-card" id="controlsCard">
@@ -539,26 +590,26 @@ body {
         <!-- 登机牌编辑字段 -->
         <div id="cropBoardingFields" style="display:none;flex-direction:column;gap:16px;">
           <div class="chips-nav" id="cropBLogoChips">
-            <button class="chips-nav__btn active" data-blogo="long">长Logo</button>
-            <button class="chips-nav__btn" data-blogo="circle">圆形logo</button>
+            <button class="chips-nav__btn active" data-blogo="circle">圆形logo</button>
+            <button class="chips-nav__btn" data-blogo="long">长Logo</button>
           </div>
           <!-- 长Logo控件 -->
           <div id="cropBLongLogo" class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropBLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropBLogoBtn" class="logo-btn">选择logo</button><span id="cropBLogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropBLogoScale" min="80" max="120" value="100" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropBLogoScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">100%</span></div></div>
           <!-- 圆形Logo控件 -->
           <div id="cropBCircleLogo" style="display:none;flex-direction:column;gap:12px;">
-            <div class="control-group"><div class="control-group__label"><span>商户logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropBCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropBCircleBtn" class="logo-btn">选择logo</button><span id="cropBCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropBCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropBCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
+            <div class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropBCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropBCircleBtn" class="logo-btn">选择logo</button><span id="cropBCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropBCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropBCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
           </div>
           <div id="cropBCircleMerchant" class="control-group" style="display:none;"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropBCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>出发机场 / 到达机场 / 出发时间 / 到达时间</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBAirportL" value="北京首都机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBAirportR" value="深圳宝安机场T3" style="flex:3;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeL" value="20:15" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBTimeR" value="23:40" style="flex:2;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>日期左 / 航班号 / 日期右</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBDateL" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropBFlightNo" value="MU8888" style="width:80px;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"><input type="text" id="cropBDateR" value="20XX/0X/XX" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div></div>
-          <div class="control-group"><div class="control-group__label"><span>乘机人 标签 / 值 / 座位号 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBPassLabel" value="乘机人" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropBPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBSeatLabel" value="座位号" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropBSeat" value="19c" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"></div></div>
+          <div class="control-group"><div class="control-group__label"><span>乘机人 标签 / 值 / 座位号 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropBPassLabel" value="乘机人" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropBPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropBSeatLabel" value="座位号" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"><input type="text" id="cropBSeat" value="19c" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
         </div>
         <!-- 门票编辑字段 -->
         <div id="cropTicketFields" style="display:none;flex-direction:column;gap:16px;">
           <div class="chips-nav" id="cropTLogoChips">
-            <button class="chips-nav__btn active" data-tlogo="long">长Logo</button>
-            <button class="chips-nav__btn" data-tlogo="circle">圆形logo</button>
+            <button class="chips-nav__btn active" data-tlogo="circle">圆形logo</button>
+            <button class="chips-nav__btn" data-tlogo="long">长Logo</button>
           </div>
           <!-- 长Logo控件 -->
           <div id="cropTLongLogo" class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropTLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropTLogoBtn" class="logo-btn">选择logo</button><span id="cropTLogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropTLogoScale" min="80" max="120" value="100" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropTLogoScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">100%</span></div></div>
@@ -569,7 +620,7 @@ body {
           <div id="cropTCircleMerchant" class="control-group" style="display:none;"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropTCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
           <div class="control-group"><div class="control-group__label"><span>标题（支持换行）</span></div><textarea id="cropTTitle" rows="2" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;resize:none;">标题标题</textarea></div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropTGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
-          <div class="control-group"><div class="control-group__label"><span>标签一 标签 / 值 / 标签二 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTPassLabel" value="标签一" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropTSeatLabel" value="标签二" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTSeat" value="19c" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;min-width:0;"></div></div>
+          <div class="control-group"><div class="control-group__label"><span>标签一 标签 / 值 / 标签二 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTPassLabel" value="标签一" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropTSeatLabel" value="标签二" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTSeat" value="19c" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
         </div>
 
         </div>
@@ -584,7 +635,7 @@ body {
         <div id="cropImageControls" style="display:flex;flex-direction:column;gap:18px;margin-top:18px;">
           <div class="control-group">
             <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="cropZoomVal">100%</span></div>
-            <input type="range" class="control-group__slider" id="cropZoom" min="100" max="110" value="100" step="1">
+            <input type="range" class="control-group__slider" id="cropZoom" min="50" max="150" value="100" step="1">
           </div>
           <div class="control-group">
             <div class="control-group__label"><span>水平偏移</span><span class="control-group__value" id="cropHOffsetVal">0px</span></div>
@@ -829,9 +880,9 @@ body {
 
           <!-- ===== 圆形Logo控件组 ===== -->
           <div id="gcCircleLogoGroup">
-          <!-- ===== 商户logo ===== -->
+          <!-- ===== 上传logo ===== -->
           <div class="control-group">
-            <div class="control-group__label"><span>商户logo</span></div>
+            <div class="control-group__label"><span>上传logo</span></div>
             <div style="display:flex;align-items:center;gap:8px;">
               <input type="file" id="gcAvatarInput" accept="image/png,image/jpeg,image/webp" style="display:none;">
               <button id="gcAvatarBtn" class="logo-btn">选择logo</button>
@@ -1254,11 +1305,13 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
       var tf = document.getElementById('cropTicketFields');
       var ic = document.getElementById('cropImageControls');
       var ca = document.getElementById('cropCardAppearance');
+      var tip = document.getElementById('cropTicketImgPanel');
       if (bf) bf.style.display = isB ? 'flex' : 'none';
       if (tf) tf.style.display = isT ? 'flex' : 'none';
       if (ic) ic.style.display = (isB || isT) ? 'none' : 'flex';
       if (ca) ca.style.display = (isB || isT) ? 'flex' : 'none';
-      APP.dom.uploadZone.parentNode.style.display = (isB || isT) ? 'none' : '';
+      if (tip) tip.style.display = isT ? 'flex' : 'none';
+      APP.dom.uploadZone.parentNode.style.display = isB ? 'none' : '';
     }
     // Restore upload zone text for non-test tabs
     if (tab !== 'test') {
@@ -1882,11 +1935,11 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // ========================================================================
   M.state = { type: 'ticket' }; // 'ticket' | 'card' | 'boarding'
   M.boardingLogoScale = 100; // logo zoom for boarding mode
-  M.boardingLogoType = 'long'; // 'long' | 'circle'
+  M.boardingLogoType = 'circle'; // 'circle' | 'long'
   M.boardingCircleLogoImg = null; // separate image for circle logo
 
   // Ticket-mode state (similar to boarding, but for ticket card)
-  M.ticketLogoType = 'long'; // 'long' | 'circle'
+  M.ticketLogoType = 'circle'; // 'circle' | 'long'
   M.ticketLogoImg = null;    // long logo Image for ticket
   M.ticketLogoScale = 100;   // 80~120%
   M.ticketCircleLogoImg = null;
@@ -1949,6 +2002,16 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   }
 
   M.isReady = function () { return ready; };
+
+  // Helper: parse #RRGGBB → {r,g,b}
+  function hexToRgb(hex) {
+    var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return m ? {
+      r: parseInt(m[1], 16),
+      g: parseInt(m[2], 16),
+      b: parseInt(m[3], 16)
+    } : { r: 0, g: 0, b: 0 };
+  }
 
   // ========================================================================
   // Show placeholder
@@ -2121,32 +2184,55 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     var outW = Math.round(VIEW_W * scale);
     var outH = Math.round(VIEW_H * scale);
 
+    // Precompute image dest rect if image exists
+    var imgW, imgH, destW, destH, destX, destY;
+    if (img) {
+      imgW = img.naturalWidth; imgH = img.naturalHeight;
+      destW = Math.round(VIEW_W * zoom);
+      destH = Math.round(imgH * (destW / imgW));
+      var baseDestH = Math.round(imgH * (VIEW_W / imgW));
+      destX = Math.round(-(destW - VIEW_W) / 2) + hOffset;
+      destY = Math.round(-(destH - baseDestH) / 2) + vOffset;
+    }
+
     var workC = document.createElement('canvas');
     workC.width = VIEW_W; workC.height = VIEW_H;
     var wCtx = workC.getContext('2d');
 
-    // Fill background with shared card color
-    wCtx.fillStyle = APP.cardColor.bg;
-    wCtx.fillRect(0, 0, VIEW_W, VIEW_H);
-
-    if (img) {
-      var imgW = img.naturalWidth, imgH = img.naturalHeight;
-      var destW = Math.round(VIEW_W * zoom);
-      var destH = Math.round(imgH * (destW / imgW));
-      var baseDestH = Math.round(imgH * (VIEW_W / imgW));
-      var destX = Math.round(-(destW - VIEW_W) / 2) + hOffset;
-      var destY = Math.round(-(destH - baseDestH) / 2) + vOffset;
-      // Clip to template shape
-      wCtx.save();
-      wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
-      wCtx.globalCompositeOperation = 'source-in';
-      wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
-      wCtx.restore();
+    if (isTicket) {
+      // Ticket: bottom image layer + gradient overlay, then clip to template
+      if (img) {
+        wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
+      }
+      var rgb = hexToRgb(APP.cardColor.bg);
+      var grd = wCtx.createLinearGradient(0, 0, VIEW_W, 0);
+      grd.addColorStop(0.4, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',1)');
+      grd.addColorStop(0.6, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
+      wCtx.fillStyle = grd;
+      wCtx.fillRect(0, 0, VIEW_W, VIEW_H);
+    } else {
+      // Card: image clipped to round rect (no background fill)
+      if (img) {
+        wCtx.save();
+        var r = 72;
+        wCtx.beginPath();
+        wCtx.moveTo(r, 0); wCtx.lineTo(VIEW_W - r, 0);
+        wCtx.arcTo(VIEW_W, 0, VIEW_W, r, r);
+        wCtx.lineTo(VIEW_W, VIEW_H - r);
+        wCtx.arcTo(VIEW_W, VIEW_H, VIEW_W - r, VIEW_H, r);
+        wCtx.lineTo(r, VIEW_H);
+        wCtx.arcTo(0, VIEW_H, 0, VIEW_H - r, r);
+        wCtx.lineTo(0, r);
+        wCtx.arcTo(0, 0, r, 0, r);
+        wCtx.closePath();
+        wCtx.clip();
+        wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
+        wCtx.restore();
+      }
     }
 
-    // For ticket mode without image: clip to template for the notched outline
-    // Use binary mask (same as boarding pass) to avoid alpha dilution from template
-    if (isTicket && !img) {
+    // Clip ticket result to template shape (with notch)
+    if (isTicket) {
       var tMaskC = document.createElement('canvas');
       tMaskC.width = VIEW_W; tMaskC.height = VIEW_H;
       var tmCtx = tMaskC.getContext('2d');
@@ -2202,7 +2288,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var tTitle = tv('cropTTitle') || '标题标题';
       var tTitleLines = tTitle.split('\n');
       var tTitleFs = 72;
-      wCtx.fillStyle = tcol(0.9);
+      wCtx.fillStyle = tcol(1);
       wCtx.font = '700 ' + tTitleFs + 'px "HarmonyOS Sans SC",sans-serif';
       wCtx.textBaseline = 'alphabetic';
       var tTitleY = 390;
@@ -2285,6 +2371,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // Events
   // ========================================================================
   M.bindEvents = function () {
+    // Helper: update HarmonyOS slider fill track
+    function updateHmSlider(el) {
+      var min = parseFloat(el.min), max = parseFloat(el.max), val = parseFloat(el.value);
+      var pct = (val - min) / (max - min) * 100;
+      el.style.background = 'linear-gradient(to right, var(--brand) ' + pct + '%, var(--border) ' + pct + '%)';
+    }
+
     // Crop chips (票券 / 卡片)
     var chipsNav = document.getElementById('cropChipsNav');
     chipsNav.addEventListener('click', function (e) {
@@ -2302,13 +2395,22 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var tf = document.getElementById('cropTicketFields');
       var ic = document.getElementById('cropImageControls');
       var ca = document.getElementById('cropCardAppearance');
+      var tip = document.getElementById('cropTicketImgPanel');
       if (bf) bf.style.display = isBoarding ? 'flex' : 'none';
       if (tf) tf.style.display = isTicket ? 'flex' : 'none';
       if (ic) ic.style.display = (isBoarding || isTicket) ? 'none' : 'flex';
+      if (tip) tip.style.display = isTicket ? 'flex' : 'none';
       // Color picker visible for boarding and ticket, hidden for card
       if (ca) ca.style.display = (type === 'boarding' || type === 'ticket') ? 'flex' : 'none';
-      // Boarding & ticket: hide upload zone (uses own logo control)
-      APP.dom.uploadZone.parentNode.style.display = (isBoarding || isTicket) ? 'none' : '';
+      // Boarding: hide upload zone (uses own logo control); Ticket: show upload zone for background image
+      APP.dom.uploadZone.parentNode.style.display = isBoarding ? 'none' : '';
+      // Sync ticket image sliders when switching to ticket
+      if (isTicket) {
+        var tz = document.getElementById('cropTZ'), th = document.getElementById('cropTH'), tv2 = document.getElementById('cropTV');
+        if (tz) { tz.value = APP.dom.cropZoom.value; document.getElementById('cropTZVal').textContent = tz.value + '%'; updateHmSlider(tz); }
+        if (th) { th.value = APP.dom.cropHOffset.value; document.getElementById('cropTHVal').textContent = th.value + 'px'; updateHmSlider(th); }
+        if (tv2) { tv2.value = APP.dom.cropVOffset.value; document.getElementById('cropTVVal').textContent = tv2.value + 'px'; updateHmSlider(tv2); }
+      }
       if (APP.state.currentTab === 'crop') {
         if (isBoarding || isTicket) M.process();
         else if (APP.state.uploadedImage) M.process();
@@ -2329,6 +2431,39 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
     });
 
+    // Ticket image adjustment sliders (HarmonyOS style)
+    var tz = document.getElementById('cropTZ'), th = document.getElementById('cropTH'), tv2 = document.getElementById('cropTV');
+    if (tz) {
+      updateHmSlider(tz);
+      tz.addEventListener('input', function () {
+        document.getElementById('cropTZVal').textContent = this.value + '%';
+        updateHmSlider(this);
+        APP.dom.cropZoom.value = this.value;
+        APP.dom.cropZoomVal.textContent = this.value + '%';
+        if (APP.state.currentTab === 'crop') M.process();
+      });
+    }
+    if (th) {
+      updateHmSlider(th);
+      th.addEventListener('input', function () {
+        document.getElementById('cropTHVal').textContent = this.value + 'px';
+        updateHmSlider(this);
+        APP.dom.cropHOffset.value = this.value;
+        APP.dom.cropHOffsetVal.textContent = this.value + 'px';
+        if (APP.state.currentTab === 'crop') M.process();
+      });
+    }
+    if (tv2) {
+      updateHmSlider(tv2);
+      tv2.addEventListener('input', function () {
+        document.getElementById('cropTVVal').textContent = this.value + 'px';
+        updateHmSlider(this);
+        APP.dom.cropVOffset.value = this.value;
+        APP.dom.cropVOffsetVal.textContent = this.value + 'px';
+        if (APP.state.currentTab === 'crop') M.process();
+      });
+    }
+
     // Logo type chips
     var logoChips = document.getElementById('cropBLogoChips');
     if (logoChips) {
@@ -2337,7 +2472,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         if (!btn) return;
         logoChips.querySelectorAll('.chips-nav__btn').forEach(function(b){b.classList.remove('active');});
         btn.classList.add('active');
-        M.boardingLogoType = btn.dataset.blogo || 'long';
+        M.boardingLogoType = btn.dataset.blogo || 'circle';
         var isLong = M.boardingLogoType === 'long';
         var ll = document.getElementById('cropBLongLogo');
         var cl = document.getElementById('cropBCircleLogo');
@@ -2362,9 +2497,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           var reader = new FileReader();
           reader.onload = function(e) {
             var img = new Image();
-            img.onload = function() { APP.state.uploadedImage = img; if (M.state.type === 'boarding') M.process(); };
+            img.onload = function() {
+              APP.state.uploadedImage = img;
+              M.boardingCircleLogoImg = img;
+              if (M.state.type === 'boarding') M.process();
+            };
             img.src = e.target.result;
             if (blName) { blName.textContent = file.name; blName.style.color = 'var(--text-primary)'; blName.style.fontWeight = '700'; }
+            if (bclName) { bclName.textContent = file.name; bclName.style.color = 'var(--text-primary)'; bclName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); blInput.value = '';
         }
@@ -2387,9 +2527,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           var reader = new FileReader();
           reader.onload = function(e) {
             var img = new Image();
-            img.onload = function() { M.boardingCircleLogoImg = img; if (M.state.type === 'boarding') M.process(); };
+            img.onload = function() {
+              M.boardingCircleLogoImg = img;
+              APP.state.uploadedImage = img;
+              if (M.state.type === 'boarding') M.process();
+            };
             img.src = e.target.result;
             if (bclName) { bclName.textContent = file.name; bclName.style.color = 'var(--text-primary)'; bclName.style.fontWeight = '700'; }
+            if (blName) { blName.textContent = file.name; blName.style.color = 'var(--text-primary)'; blName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); bclInput.value = '';
         }
@@ -2418,7 +2563,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         if (!btn) return;
         tLogoChips.querySelectorAll('.chips-nav__btn').forEach(function(b){b.classList.remove('active');});
         btn.classList.add('active');
-        M.ticketLogoType = btn.dataset.tlogo || 'long';
+        M.ticketLogoType = btn.dataset.tlogo || 'circle';
         var isLong = M.ticketLogoType === 'long';
         var tll = document.getElementById('cropTLongLogo');
         var tcl = document.getElementById('cropTCircleLogo');
@@ -2443,9 +2588,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           var reader = new FileReader();
           reader.onload = function(e) {
             var img = new Image();
-            img.onload = function() { M.ticketLogoImg = img; if (M.state.type === 'ticket') M.process(); };
+            img.onload = function() {
+              M.ticketLogoImg = img;
+              M.ticketCircleLogoImg = img;
+              if (M.state.type === 'ticket') M.process();
+            };
             img.src = e.target.result;
             if (tlName) { tlName.textContent = file.name; tlName.style.color = 'var(--text-primary)'; tlName.style.fontWeight = '700'; }
+            if (tclName) { tclName.textContent = file.name; tclName.style.color = 'var(--text-primary)'; tclName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); tlInput.value = '';
         }
@@ -2468,9 +2618,14 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           var reader = new FileReader();
           reader.onload = function(e) {
             var img = new Image();
-            img.onload = function() { M.ticketCircleLogoImg = img; if (M.state.type === 'ticket') M.process(); };
+            img.onload = function() {
+              M.ticketCircleLogoImg = img;
+              M.ticketLogoImg = img;
+              if (M.state.type === 'ticket') M.process();
+            };
             img.src = e.target.result;
             if (tclName) { tclName.textContent = file.name; tclName.style.color = 'var(--text-primary)'; tclName.style.fontWeight = '700'; }
+            if (tlName) { tlName.textContent = file.name; tlName.style.color = 'var(--text-primary)'; tlName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); tclInput.value = '';
         }
@@ -3683,7 +3838,11 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
           var reader = new FileReader();
           reader.onload = function (e) {
             M.setAvatar(e.target.result);
+            var img = new Image();
+            img.onload = function () { M.longLogoImg = img; if (APP.state.currentTab === 'goldcard') M.process(); };
+            img.src = e.target.result;
             if (avatarName) { avatarName.textContent = file.name; avatarName.style.color = 'var(--text-primary)'; avatarName.style.fontWeight = '700'; }
+            if (llName) { llName.textContent = file.name; llName.style.color = 'var(--text-primary)'; llName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file);
           avatarInput.value = '';
@@ -3704,10 +3863,12 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
           if (file.size > 1 * 1024 * 1024) { APP.showToast('Logo不超过1MB'); return; }
           var reader = new FileReader();
           reader.onload = function (e) {
+            M.setAvatar(e.target.result);
             var img = new Image();
             img.onload = function () { M.longLogoImg = img; if (APP.state.currentTab === 'goldcard') M.process(); };
             img.src = e.target.result;
             if (llName) { llName.textContent = file.name; llName.style.color = 'var(--text-primary)'; llName.style.fontWeight = '700'; }
+            if (avatarName) { avatarName.textContent = file.name; avatarName.style.color = 'var(--text-primary)'; avatarName.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file);
           llInput.value = '';
