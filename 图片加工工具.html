@@ -2496,15 +2496,23 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           if (file.size > 1*1024*1024) { APP.showToast('Logo不超过1MB'); return; }
           var reader = new FileReader();
           reader.onload = function(e) {
+            APP.goldcard.setAvatar(e.target.result);
             var img = new Image();
             img.onload = function() {
               APP.state.uploadedImage = img;
               M.boardingCircleLogoImg = img;
+              M.ticketLogoImg = img;
+              M.ticketCircleLogoImg = img;
+              APP.goldcard.longLogoImg = img;
               if (M.state.type === 'boarding') M.process();
             };
             img.src = e.target.result;
             if (blName) { blName.textContent = file.name; blName.style.color = 'var(--text-primary)'; blName.style.fontWeight = '700'; }
             if (bclName) { bclName.textContent = file.name; bclName.style.color = 'var(--text-primary)'; bclName.style.fontWeight = '700'; }
+            var tn = document.getElementById('cropTLogoName'); if (tn) { tn.textContent = file.name; tn.style.color = 'var(--text-primary)'; tn.style.fontWeight = '700'; }
+            var tcn = document.getElementById('cropTCircleName'); if (tcn) { tcn.textContent = file.name; tcn.style.color = 'var(--text-primary)'; tcn.style.fontWeight = '700'; }
+            var gn = document.getElementById('gcLongLogoName'); if (gn) { gn.textContent = file.name; gn.style.color = 'var(--text-primary)'; gn.style.fontWeight = '700'; }
+            var gan = document.getElementById('gcAvatarName'); if (gan) { gan.textContent = file.name; gan.style.color = 'var(--text-primary)'; gan.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); blInput.value = '';
         }
@@ -2526,15 +2534,23 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           if (file.size > 512*1024) { APP.showToast('Logo不超过512KB'); return; }
           var reader = new FileReader();
           reader.onload = function(e) {
+            APP.goldcard.setAvatar(e.target.result);
             var img = new Image();
             img.onload = function() {
               M.boardingCircleLogoImg = img;
               APP.state.uploadedImage = img;
+              M.ticketLogoImg = img;
+              M.ticketCircleLogoImg = img;
+              APP.goldcard.longLogoImg = img;
               if (M.state.type === 'boarding') M.process();
             };
             img.src = e.target.result;
             if (bclName) { bclName.textContent = file.name; bclName.style.color = 'var(--text-primary)'; bclName.style.fontWeight = '700'; }
             if (blName) { blName.textContent = file.name; blName.style.color = 'var(--text-primary)'; blName.style.fontWeight = '700'; }
+            var tn = document.getElementById('cropTLogoName'); if (tn) { tn.textContent = file.name; tn.style.color = 'var(--text-primary)'; tn.style.fontWeight = '700'; }
+            var tcn = document.getElementById('cropTCircleName'); if (tcn) { tcn.textContent = file.name; tcn.style.color = 'var(--text-primary)'; tcn.style.fontWeight = '700'; }
+            var gn = document.getElementById('gcLongLogoName'); if (gn) { gn.textContent = file.name; gn.style.color = 'var(--text-primary)'; gn.style.fontWeight = '700'; }
+            var gan = document.getElementById('gcAvatarName'); if (gan) { gan.textContent = file.name; gan.style.color = 'var(--text-primary)'; gan.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); bclInput.value = '';
         }
@@ -2587,15 +2603,23 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           if (file.size > 1*1024*1024) { APP.showToast('Logo不超过1MB'); return; }
           var reader = new FileReader();
           reader.onload = function(e) {
+            APP.goldcard.setAvatar(e.target.result);
             var img = new Image();
             img.onload = function() {
               M.ticketLogoImg = img;
               M.ticketCircleLogoImg = img;
+              APP.state.uploadedImage = img;
+              M.boardingCircleLogoImg = img;
+              APP.goldcard.longLogoImg = img;
               if (M.state.type === 'ticket') M.process();
             };
             img.src = e.target.result;
             if (tlName) { tlName.textContent = file.name; tlName.style.color = 'var(--text-primary)'; tlName.style.fontWeight = '700'; }
             if (tclName) { tclName.textContent = file.name; tclName.style.color = 'var(--text-primary)'; tclName.style.fontWeight = '700'; }
+            var bn = document.getElementById('cropBLogoName'); if (bn) { bn.textContent = file.name; bn.style.color = 'var(--text-primary)'; bn.style.fontWeight = '700'; }
+            var bcn = document.getElementById('cropBCircleName'); if (bcn) { bcn.textContent = file.name; bcn.style.color = 'var(--text-primary)'; bcn.style.fontWeight = '700'; }
+            var gn = document.getElementById('gcLongLogoName'); if (gn) { gn.textContent = file.name; gn.style.color = 'var(--text-primary)'; gn.style.fontWeight = '700'; }
+            var gan = document.getElementById('gcAvatarName'); if (gan) { gan.textContent = file.name; gan.style.color = 'var(--text-primary)'; gan.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); tlInput.value = '';
         }
@@ -2617,15 +2641,23 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
           if (file.size > 1*1024*1024) { APP.showToast('Logo不超过1MB'); return; }
           var reader = new FileReader();
           reader.onload = function(e) {
+            APP.goldcard.setAvatar(e.target.result);
             var img = new Image();
             img.onload = function() {
               M.ticketCircleLogoImg = img;
               M.ticketLogoImg = img;
+              APP.state.uploadedImage = img;
+              M.boardingCircleLogoImg = img;
+              APP.goldcard.longLogoImg = img;
               if (M.state.type === 'ticket') M.process();
             };
             img.src = e.target.result;
             if (tclName) { tclName.textContent = file.name; tclName.style.color = 'var(--text-primary)'; tclName.style.fontWeight = '700'; }
             if (tlName) { tlName.textContent = file.name; tlName.style.color = 'var(--text-primary)'; tlName.style.fontWeight = '700'; }
+            var bn = document.getElementById('cropBLogoName'); if (bn) { bn.textContent = file.name; bn.style.color = 'var(--text-primary)'; bn.style.fontWeight = '700'; }
+            var bcn = document.getElementById('cropBCircleName'); if (bcn) { bcn.textContent = file.name; bcn.style.color = 'var(--text-primary)'; bcn.style.fontWeight = '700'; }
+            var gn = document.getElementById('gcLongLogoName'); if (gn) { gn.textContent = file.name; gn.style.color = 'var(--text-primary)'; gn.style.fontWeight = '700'; }
+            var gan = document.getElementById('gcAvatarName'); if (gan) { gan.textContent = file.name; gan.style.color = 'var(--text-primary)'; gan.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file); tclInput.value = '';
         }
@@ -3839,10 +3871,21 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
           reader.onload = function (e) {
             M.setAvatar(e.target.result);
             var img = new Image();
-            img.onload = function () { M.longLogoImg = img; if (APP.state.currentTab === 'goldcard') M.process(); };
+            img.onload = function () {
+              M.longLogoImg = img;
+              APP.state.uploadedImage = img;
+              APP.crop.boardingCircleLogoImg = img;
+              APP.crop.ticketLogoImg = img;
+              APP.crop.ticketCircleLogoImg = img;
+              if (APP.state.currentTab === 'goldcard') M.process();
+            };
             img.src = e.target.result;
             if (avatarName) { avatarName.textContent = file.name; avatarName.style.color = 'var(--text-primary)'; avatarName.style.fontWeight = '700'; }
             if (llName) { llName.textContent = file.name; llName.style.color = 'var(--text-primary)'; llName.style.fontWeight = '700'; }
+            var bn = document.getElementById('cropBLogoName'); if (bn) { bn.textContent = file.name; bn.style.color = 'var(--text-primary)'; bn.style.fontWeight = '700'; }
+            var bcn = document.getElementById('cropBCircleName'); if (bcn) { bcn.textContent = file.name; bcn.style.color = 'var(--text-primary)'; bcn.style.fontWeight = '700'; }
+            var tn = document.getElementById('cropTLogoName'); if (tn) { tn.textContent = file.name; tn.style.color = 'var(--text-primary)'; tn.style.fontWeight = '700'; }
+            var tcn = document.getElementById('cropTCircleName'); if (tcn) { tcn.textContent = file.name; tcn.style.color = 'var(--text-primary)'; tcn.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file);
           avatarInput.value = '';
@@ -3865,10 +3908,21 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
           reader.onload = function (e) {
             M.setAvatar(e.target.result);
             var img = new Image();
-            img.onload = function () { M.longLogoImg = img; if (APP.state.currentTab === 'goldcard') M.process(); };
+            img.onload = function () {
+              M.longLogoImg = img;
+              APP.state.uploadedImage = img;
+              APP.crop.boardingCircleLogoImg = img;
+              APP.crop.ticketLogoImg = img;
+              APP.crop.ticketCircleLogoImg = img;
+              if (APP.state.currentTab === 'goldcard') M.process();
+            };
             img.src = e.target.result;
             if (llName) { llName.textContent = file.name; llName.style.color = 'var(--text-primary)'; llName.style.fontWeight = '700'; }
             if (avatarName) { avatarName.textContent = file.name; avatarName.style.color = 'var(--text-primary)'; avatarName.style.fontWeight = '700'; }
+            var bn = document.getElementById('cropBLogoName'); if (bn) { bn.textContent = file.name; bn.style.color = 'var(--text-primary)'; bn.style.fontWeight = '700'; }
+            var bcn = document.getElementById('cropBCircleName'); if (bcn) { bcn.textContent = file.name; bcn.style.color = 'var(--text-primary)'; bcn.style.fontWeight = '700'; }
+            var tn = document.getElementById('cropTLogoName'); if (tn) { tn.textContent = file.name; tn.style.color = 'var(--text-primary)'; tn.style.fontWeight = '700'; }
+            var tcn = document.getElementById('cropTCircleName'); if (tcn) { tcn.textContent = file.name; tcn.style.color = 'var(--text-primary)'; tcn.style.fontWeight = '700'; }
           };
           reader.readAsDataURL(file);
           llInput.value = '';
