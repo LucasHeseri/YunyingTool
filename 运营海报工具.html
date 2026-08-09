@@ -1,0 +1,1235 @@
+<!--
+================================================================================
+  运营海报工具 — AI 快速理解注释
+  （阅读本注释即可掌握全貌，无需逐行扫描）
+================================================================================
+
+【文件定位】
+  单文件纯前端应用（HTML+CSS+JS），基于 HarmonyOS Design Token 设计系统。
+  用途：生成「HUAWEI Mate XT 非凡大师」黑金科技风运营海报（1000×249 px，导出 4×）。
+
+【整体架构】
+  页面：左右分栏。左侧编辑面板（可滚动），右侧 Canvas 预览区（sticky 固定）。
+  技术：全部内联，无构建步骤，浏览器直接打开即可运行。
+
+【状态对象】state = {
+  visualMode:   'dual' | 'single'        // 右侧视觉模式切换
+  carImage:     Image|null              // 双图模式-汽车
+  cardImage:    Image|null              // 双图模式-信用卡
+  singleImage:  Image|null              // 单图模式-右侧视觉大图
+  bgDark:       boolean                 // 预览背景切换
+  layout: {
+    mainTitle, subTitle, btnText,       // 左侧文案默认值
+    carX/carY/carScale,                 // 汽车微调（像素/百分比）
+    cardX/cardY/cardScale,              // 信用卡微调
+    singleX/singleY/singleScale         // 单图微调
+  }
+}
+
+【DOM 缓存】d = { canvas, 所有 input/上传区/滑块/按钮 }
+
+【核心函数】
+  drawPoster()        // 主渲染：背景 → 视觉（按模式分支）→ 文字 → 按钮
+  exportImage()       // 创建 2× 临时 canvas，复刻 drawPoster 逻辑后下载 PNG
+  fitImageInRect()    // 等比缩放图片并居中到指定矩形
+  roundRect()         // Canvas 圆角矩形路径
+  drawText()          // 统一文字绘制（已固定鸿蒙黑体 + 固定字号字重）
+
+【绘制参数（像素级复刻参考图）】
+  画布：1000×249，背景 #FBF7F4
+  主标题：(65,38)  700 38px  #1A1A1A
+  副标题：(65,107) 400 18px  #A07C4F
+  按钮：  (65,163) 147×39   圆角19px（胶囊） 背景#EDD3A0  文字#1F0F00
+  双图-汽车占位： (540,75)  380×170
+  双图-信用卡占位：(767,68)  170×115  圆角8px
+  单图-右侧区域：  (500,0)   500×249   无圆角裁剪
+
+【事件绑定速查】
+  上传：bindUpload() 支持点击/拖拽/粘贴（paste 根据当前焦点或模式自动分配）
+  滑块：bindSlider() 实时更新 state.layout 并重绘
+  模式切换：setVisualMode('dual'|'single') 显隐面板并切换绘制分支
+  重置：清空所有图片、恢复默认值、切回双图模式
+  下载：exportImage() → poster_<timestamp>.png
+
+【字体处理】
+  初始化使用 document.fonts.ready.then(drawPoster)，确保 HarmonyOS Sans SC
+  加载完成后再首次绘制，避免编辑时字重/字号跳动。
+
+【扩展提示】
+  若需新增视觉模式：① 添加 chips-nav 按钮 ② 扩展 state.visualMode
+  ③ 在 drawPoster() 和 exportImage() 的 visualMode 分支中添加绘制逻辑
+  ④ 新增上传区与滑块并绑定事件即可。
+================================================================================
+-->
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>运营海报工具 - 桌面版</title>
+<style>
+:root {
+  --brand: #0a59f7;
+  --brand-hover: #0850e0;
+  --brand-light: rgba(10,89,247,0.06);
+  --text-primary: rgba(0,0,0,0.9);
+  --text-secondary: rgba(0,0,0,0.55);
+  --text-tertiary: rgba(0,0,0,0.35);
+  --bg-app: #f0f2f5;
+  --bg-card: #ffffff;
+  --bg-upload: #f8f9fa;
+  --border: rgba(0,0,0,0.08);
+  --border-upload: rgba(0,0,0,0.15);
+  --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --radius-sm: 8px;
+  --radius: 12px;
+  --transition: 0.2s ease;
+}
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("./HarmonyOS_Sans_SC.ttf") format("truetype");
+  font-weight: 400;
+}
+@font-face {
+  font-family: "HarmonyOS Sans SC";
+  src: url("./HarmonyOS_Sans_SC.ttf") format("truetype");
+  font-weight: 700;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+  background: var(--bg-app); color: var(--text-primary);
+  min-height: 100vh; display: flex; flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+.app-header {
+  background: var(--bg-card); border-bottom: 1px solid var(--border);
+  padding: 0 32px; height: 56px; display: flex; align-items: center;
+  justify-content: space-between; flex-shrink: 0; z-index: 10;
+}
+.app-header__title { font-size: 18px; font-weight: 600; flex-shrink: 0; }
+
+.app-main {
+  display: flex; flex: 1; padding: 24px; gap: 24px;
+  min-height: 0; max-width: 1600px; width: 100%; margin: 0 auto;
+}
+
+.panel-left { flex: 1; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; overflow-y: auto; min-width: 0; }
+.panel-card { background: var(--bg-card); border-radius: var(--radius); box-shadow: var(--shadow-card); padding: 24px; display: flex; flex-direction: column; gap: 18px; }
+
+.control-group { display: flex; flex-direction: column; gap: 8px; }
+.control-group__label { display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+.control-group__value { font-size: 13px; color: var(--brand); font-weight: 600; min-width: 42px; text-align: right; }
+.control-group__input {
+  width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  font-size: 14px; font-family: inherit; transition: border-color var(--transition);
+}
+.control-group__input:focus { outline: none; border-color: var(--brand); }
+
+.upload-zone {
+  border: 2px dashed var(--border-upload); border-radius: var(--radius);
+  background: var(--bg-upload); padding: 24px 16px; text-align: center;
+  cursor: pointer; transition: all var(--transition); display: flex;
+  flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 120px;
+}
+.upload-zone:hover, .upload-zone.drag-over { border-color: var(--brand); background: var(--brand-light); }
+.upload-zone.has-image { border-style: solid; border-color: #4caf50; background: #f1f8f4; padding: 12px; min-height: auto; }
+.upload-zone__icon { width: 40px; height: 40px; color: var(--text-tertiary); transition: color var(--transition); }
+.upload-zone:hover .upload-zone__icon { color: var(--brand); }
+.upload-zone__text { font-size: 14px; color: var(--text-secondary); }
+.upload-zone__text strong { color: var(--brand); }
+.upload-zone__limits { font-size: 12px; color: var(--text-tertiary); }
+.upload-zone__thumb { max-width: 100%; max-height: 140px; object-fit: contain; border-radius: 6px; display: none; }
+.upload-zone.has-image .upload-zone__thumb { display: block; }
+.upload-zone.has-image .upload-zone__icon,
+.upload-zone.has-image .upload-zone__text,
+.upload-zone.has-image .upload-zone__limits { display: none; }
+.upload-zone__file-input { display: none; }
+
+.btn-row { display: flex; gap: 12px; }
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 10px 20px; border: 0; border-radius: var(--radius-sm);
+  font-size: 14px; font-weight: 500; font-family: inherit;
+  cursor: pointer; transition: all var(--transition); white-space: nowrap;
+}
+.btn-primary { flex: 1; background: var(--brand); color: #fff; height: 42px; }
+.btn-primary:hover { background: var(--brand-hover); }
+.btn-primary:disabled { opacity: 0.4; pointer-events: none; }
+.btn-outline {
+  background: transparent; color: var(--text-secondary);
+  border: 1.5px solid var(--border); height: 42px; padding: 10px 16px;
+}
+.btn-outline:hover { border-color: var(--text-tertiary); color: var(--text-primary); }
+
+.chips-nav { display: flex; gap: 8px; }
+.chips-nav__btn {
+  flex: 1; padding: 8px 16px; border: 1.5px solid var(--border); background: transparent;
+  border-radius: 20px; font-size: 13px; font-weight: 500; color: var(--text-secondary);
+  cursor: pointer; font-family: inherit; transition: all var(--transition); text-align: center;
+}
+.chips-nav__btn:hover { border-color: var(--brand); color: var(--brand); }
+.chips-nav__btn.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+
+.panel-right { width: 50%; flex-shrink: 0; display: flex; flex-direction: column; gap: 16px; min-width: 0; position: sticky; top: 24px; align-self: flex-start; height: fit-content; }
+.preview-card {
+  flex: 1; background: var(--bg-card); border-radius: var(--radius);
+  box-shadow: var(--shadow-card); display: flex; align-items: center;
+  justify-content: center; overflow: auto; position: relative;
+  min-height: 200px; max-height: calc(100vh - 200px); padding: 16px;
+}
+#previewCanvas { display: block; max-width: 100%; max-height: calc(100% - 8px); border-radius: 4px; object-fit: contain; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+
+.preview-actions { display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.preview-info { font-size: 13px; color: var(--text-secondary); text-align: left; padding: 4px 0; }
+
+.slider-group { display: flex; flex-direction: column; gap: 6px; }
+.slider-group__header { display: flex; justify-content: space-between; align-items: center; }
+.slider-group__label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.slider-group__value { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.slider-group__track input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 2px;
+  background: linear-gradient(to right, var(--brand) 0%, var(--brand) 0%, var(--border) 0%, var(--border) 100%);
+  outline: none; cursor: pointer;
+}
+.slider-group__track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--brand); box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.15s ease;
+}
+.slider-group__track input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+.toast {
+  position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,0.82); color: #fff; padding: 10px 24px;
+  border-radius: 20px; font-size: 14px; font-weight: 500;
+  z-index: 1000; pointer-events: none; opacity: 0; transition: opacity 0.3s;
+}
+.toast.show { opacity: 1; }
+
+.section-title { font-size: 14px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px; }
+.asset-preview { display: flex; align-items: center; gap: 10px; margin-top: 6px; }
+.asset-preview img { width: 48px; height: 48px; object-fit: contain; border-radius: 6px; background: var(--bg-upload); border: 1px solid var(--border); }
+.asset-preview span { font-size: 12px; color: var(--text-secondary); }
+
+/* Color scheme cards */
+.scheme-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+.scheme-card {
+  border: 2px solid var(--border); border-radius: var(--radius);
+  cursor: pointer; transition: all var(--transition); overflow: hidden;
+  padding: 8px; display: flex; flex-direction: column; gap: 6px;
+}
+.scheme-card:hover { border-color: var(--brand); transform: translateY(-1px); box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+.scheme-card.active { border-color: var(--brand); box-shadow: 0 0 0 2px var(--brand-light); }
+.scheme-card__name { font-size: 11px; color: var(--text-secondary); text-align: center; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.scheme-card__swatches { display: flex; gap: 5px; justify-content: center; }
+.scheme-card__swatch {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid rgba(0,0,0,0.1); flex-shrink: 0;
+}
+.scheme-card__swatch.main { box-shadow: 0 0 0 1px rgba(0,0,0,0.15); }
+
+/* Custom color inputs */
+.custom-color-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.custom-color-item { display: flex; align-items: center; gap: 6px; }
+.custom-color-item label { font-size: 12px; color: var(--text-secondary); white-space: nowrap; }
+.custom-color-item input[type="color"] {
+  width: 32px; height: 28px; border: 1.5px solid var(--border); border-radius: 6px;
+  cursor: pointer; padding: 2px; background: #fff;
+}
+.custom-color-item input[type="color"]:hover { border-color: var(--brand); }
+
+@media (max-width: 900px) {
+  .app-main { flex-direction: column; padding: 16px; gap: 16px; }
+  .panel-left, .panel-right { width: 100%; flex-shrink: 1; }
+  .panel-right { min-height: 350px; }
+}
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<header class="app-header">
+  <span class="app-header__title">运营海报工具</span>
+  <span style="font-size:11px;color:var(--text-tertiary);margin-left:8px;font-weight:400;">by UCD中心-智慧空间工作室</span>
+</header>
+
+<main class="app-main">
+  <aside class="panel-left">
+
+    <div class="panel-card">
+      <div class="section-title">左侧文案</div>
+      <div class="control-group">
+        <div class="control-group__label"><span>主标题</span></div>
+        <input type="text" class="control-group__input" id="mainTitle" value="Huawei Card车主礼遇">
+      </div>
+      <div class="control-group">
+        <div class="control-group__label"><span>副标题</span></div>
+        <input type="text" class="control-group__input" id="subTitle" value="成功分期，获500元现金红包">
+      </div>
+      <div class="control-group">
+        <div class="control-group__label"><span>按钮文案</span></div>
+        <input type="text" class="control-group__input" id="btnText" value="立即查看 >">
+      </div>
+    </div>
+
+    <div class="panel-card">
+      <div class="section-title" style="display:flex;justify-content:space-between;align-items:center;">
+        <span>右侧视觉素材</span>
+        <button class="btn btn-outline" id="resetBtn" style="height:30px;padding:4px 14px;font-size:12px;">重置</button>
+      </div>
+      <div class="chips-nav" id="visualModeChips" style="margin-bottom:8px;">
+        <button class="chips-nav__btn active" data-mode="dual">双图模式</button>
+        <button class="chips-nav__btn" data-mode="single">单图模式</button>
+      </div>
+
+      <!-- 双图模式面板 -->
+      <div id="dualVisualPanel">
+      <div class="control-group">
+        <div class="control-group__label"><span>汽车图片</span></div>
+        <div class="upload-zone" id="carUploadZone" role="button" tabindex="0">
+          <svg class="upload-zone__icon" viewBox="0 0 40 40" fill="none">
+            <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/>
+            <line x1="20" y1="12" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="20" x2="28" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p class="upload-zone__text">点击<strong>上传汽车图片</strong></p>
+          <p class="upload-zone__limits">支持 PNG / JPG / WebP</p>
+          <img class="upload-zone__thumb" id="carThumb" alt="汽车预览">
+          <input type="file" class="upload-zone__file-input" id="carInput" accept="image/png,image/jpeg,image/webp">
+        </div>
+      </div>
+
+      <div id="carAdjustPanel" style="display:none;flex-direction:column;gap:12px;">
+        <div class="slider-group">
+          <div class="slider-group__header">
+            <span class="slider-group__label">缩放</span>
+            <span class="slider-group__value" id="carScaleVal">100%</span>
+          </div>
+          <div class="slider-group__track">
+            <input type="range" id="carScale" min="50" max="150" value="100" step="1">
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-group__header">
+            <span class="slider-group__label">水平偏移</span>
+            <span class="slider-group__value" id="carXVal">0px</span>
+          </div>
+          <div class="slider-group__track">
+            <input type="range" id="carX" min="-100" max="100" value="0" step="5">
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-group__header">
+            <span class="slider-group__label">垂直偏移</span>
+            <span class="slider-group__value" id="carYVal">0px</span>
+          </div>
+          <div class="slider-group__track">
+            <input type="range" id="carY" min="-50" max="50" value="0" step="5">
+          </div>
+        </div>
+      </div>
+
+      <div class="control-group" style="margin-top:8px;">
+        <div class="control-group__label"><span>信用卡图片</span></div>
+        <div class="upload-zone" id="cardUploadZone" role="button" tabindex="0">
+          <svg class="upload-zone__icon" viewBox="0 0 40 40" fill="none">
+            <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/>
+            <line x1="20" y1="12" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <line x1="12" y1="20" x2="28" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p class="upload-zone__text">点击<strong>上传信用卡图片</strong></p>
+          <p class="upload-zone__limits">支持 PNG / JPG / WebP</p>
+          <img class="upload-zone__thumb" id="cardThumb" alt="信用卡预览">
+          <input type="file" class="upload-zone__file-input" id="cardInput" accept="image/png,image/jpeg,image/webp">
+        </div>
+      </div>
+
+      <div id="cardAdjustPanel" style="display:none;flex-direction:column;gap:12px;">
+        <div class="slider-group">
+          <div class="slider-group__header">
+            <span class="slider-group__label">缩放</span>
+            <span class="slider-group__value" id="cardScaleVal">100%</span>
+          </div>
+          <div class="slider-group__track">
+            <input type="range" id="cardScale" min="50" max="150" value="100" step="1">
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-group__header">
+            <span class="slider-group__label">水平偏移</span>
+            <span class="slider-group__value" id="cardXVal">0px</span>
+          </div>
+          <div class="slider-group__track">
+            <input type="range" id="cardX" min="-100" max="100" value="0" step="5">
+          </div>
+        </div>
+        <div class="slider-group">
+          <div class="slider-group__header">
+            <span class="slider-group__label">垂直偏移</span>
+            <span class="slider-group__value" id="cardYVal">0px</span>
+          </div>
+          <div class="slider-group__track">
+            <input type="range" id="cardY" min="-50" max="50" value="0" step="5">
+          </div>
+        </div>
+      </div>
+      </div><!-- /dualVisualPanel -->
+
+      <!-- 单图模式面板 -->
+      <div id="singleVisualPanel" style="display:none;flex-direction:column;gap:18px;">
+        <div class="control-group">
+          <div class="control-group__label"><span>右侧视觉大图</span></div>
+          <div class="upload-zone" id="singleUploadZone" role="button" tabindex="0">
+            <svg class="upload-zone__icon" viewBox="0 0 40 40" fill="none">
+              <rect x="2" y="2" width="36" height="36" rx="8" stroke="currentColor" stroke-width="2" stroke-dasharray="4 3"/>
+              <line x1="20" y1="12" x2="20" y2="28" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <line x1="12" y1="20" x2="28" y2="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <p class="upload-zone__text">点击<strong>上传右侧视觉大图</strong></p>
+            <p class="upload-zone__limits">支持 PNG / JPG / WebP，占满右侧视觉空间</p>
+            <img class="upload-zone__thumb" id="singleThumb" alt="视觉大图预览">
+            <input type="file" class="upload-zone__file-input" id="singleInput" accept="image/png,image/jpeg,image/webp">
+          </div>
+        </div>
+
+        <div id="singleAdjustPanel" style="display:none;flex-direction:column;gap:12px;">
+          <div class="slider-group">
+            <div class="slider-group__header">
+              <span class="slider-group__label">缩放</span>
+              <span class="slider-group__value" id="singleScaleVal">100%</span>
+            </div>
+            <div class="slider-group__track">
+              <input type="range" id="singleScale" min="50" max="150" value="100" step="1">
+            </div>
+          </div>
+          <div class="slider-group">
+            <div class="slider-group__header">
+              <span class="slider-group__label">水平偏移</span>
+              <span class="slider-group__value" id="singleXVal">0px</span>
+            </div>
+            <div class="slider-group__track">
+              <input type="range" id="singleX" min="-100" max="100" value="0" step="5">
+            </div>
+          </div>
+          <div class="slider-group">
+            <div class="slider-group__header">
+              <span class="slider-group__label">垂直偏移</span>
+              <span class="slider-group__value" id="singleYVal">0px</span>
+            </div>
+            <div class="slider-group__track">
+              <input type="range" id="singleY" min="-50" max="50" value="0" step="5">
+            </div>
+          </div>
+        </div>
+      </div><!-- /singleVisualPanel -->
+    </div>
+
+    <!-- 配色方案 -->
+    <div class="panel-card" id="colorSchemePanel">
+      <div class="section-title">配色方案</div>
+      <div class="scheme-grid" id="schemeGrid">
+        <!-- dynamically filled -->
+      </div>
+      <div class="custom-color-row" id="customColorRow" style="display:none;">
+        <div class="custom-color-item">
+          <label>背景色</label>
+          <input type="color" id="customBg" value="#FBF7F4">
+        </div>
+        <div class="custom-color-item">
+          <label>按钮底色</label>
+          <input type="color" id="customBtnBg" value="#EDD3A0">
+        </div>
+        <div class="custom-color-item">
+          <label>按钮文字</label>
+          <input type="color" id="customBtnText" value="#1F0F00">
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+  <section class="panel-right">
+    <div class="preview-card" id="previewCard">
+      <canvas id="previewCanvas" width="1000" height="249"></canvas>
+    </div>
+    <div class="preview-actions">
+      <span class="preview-info" id="previewInfo">导出：4000 × 996 px</span>
+      <button class="btn btn-primary" id="downloadBtn" disabled>下载图片（.png）</button>
+    </div>
+  </section>
+</main>
+
+<script>
+(function() {
+  'use strict';
+
+  // ==================== Color Schemes ====================
+  var COLOR_SCHEMES = [
+    {
+      id: 'original', name: '沙金暖白',
+      bg: '#FBF7F4', mainTitle: '#1A1A1A', subTitle: '#A07C4F',
+      btnBg: '#EDD3A0', btnText: '#1F0F00'
+    },
+    {
+      id: 'luminous-white', name: '皓月银灰',
+      bg: '#FAFAFA', mainTitle: '#1A1A1A', subTitle: '#8C7B6F',
+      btnBg: '#A89888', btnText: '#FFFFFF'
+    },
+    {
+      id: 'camel-grey', name: '驼绒暖灰',
+      bg: '#F3EDE5', mainTitle: '#2C2416', subTitle: '#9B8878',
+      btnBg: '#7A5C3E', btnText: '#FFFFFF'
+    },
+    {
+      id: 'lavender-mist', name: '槿紫雾灰',
+      bg: '#F5F2F7', mainTitle: '#2D1B3E', subTitle: '#7B6B9E',
+      btnBg: '#6B4E8A', btnText: '#FFFFFF'
+    },
+    {
+      id: 'auspicious-red', name: '瑞红浅金',
+      bg: '#FCF8F7', mainTitle: '#2C1A18', subTitle: '#A05A52',
+      btnBg: '#C4203A', btnText: '#FFFFFF'
+    },
+    {
+      id: 'morning-ivory', name: '晨光象牙',
+      bg: '#FEFAF2', mainTitle: '#2C2216', subTitle: '#B8944A',
+      btnBg: '#C8964A', btnText: '#FFFFFF'
+    },
+    {
+      id: 'mist-blue', name: '雾蓝晨曦',
+      bg: '#F3F6F9', mainTitle: '#1A2A3E', subTitle: '#6A8A9E',
+      btnBg: '#4A6A8A', btnText: '#FFFFFF'
+    },
+    {
+      id: 'apricot-cream', name: '奶油杏色',
+      bg: '#FDF6EF', mainTitle: '#3C1E0E', subTitle: '#B8704A',
+      btnBg: '#C8845C', btnText: '#FFFFFF'
+    },
+    {
+      id: 'sage-grey', name: '鼠尾草灰',
+      bg: '#F4F5F1', mainTitle: '#2C3028', subTitle: '#7B8B72',
+      btnBg: '#6B7B6A', btnText: '#FFFFFF'
+    },
+    {
+      id: 'pearl-nacre', name: '珍珠贝母',
+      bg: '#F9F6F2', mainTitle: '#2C2218', subTitle: '#A0886B',
+      btnBg: '#B8A088', btnText: '#3C2A18'
+    },
+    {
+      id: 'rose-mist', name: '玫瑰雾粉',
+      bg: '#FBF6F8', mainTitle: '#3C1A1E', subTitle: '#A86A72',
+      btnBg: '#B8727A', btnText: '#FFFFFF'
+    },
+    {
+      id: 'cashmere-beige', name: '羊绒米色',
+      bg: '#F6F1EA', mainTitle: '#2C2016', subTitle: '#9B7B5C',
+      btnBg: '#8B7355', btnText: '#FFFFFF'
+    },
+    {
+      id: 'lavender-haze', name: '雾紫薰衣',
+      bg: '#F7F5FA', mainTitle: '#2D1E3A', subTitle: '#8B7AA0',
+      btnBg: '#8B7BA8', btnText: '#FFFFFF'
+    },
+    {
+      id: 'sandstone-tan', name: '沙岩浅棕',
+      bg: '#F5EFE6', mainTitle: '#2C1E10', subTitle: '#A0805A',
+      btnBg: '#9B7B5C', btnText: '#FFFFFF'
+    }
+  ];
+
+  // ==================== State ====================
+  var state = {
+    carImage: null,
+    cardImage: null,
+    singleImage: null,
+    processedDataUrl: null,
+    visualMode: 'dual', // 'dual' | 'single'
+    colorScheme: 'original',
+    colors: Object.assign({}, COLOR_SCHEMES[0]),
+    // Default layout tuned to match reference pixel-perfectly
+    layout: {
+      mainTitle: 'Huawei Card车主礼遇',
+      subTitle: '成功分期，获500元现金红包',
+      btnText: '立即查看 >',
+      // Car default bounds (ref image visual estimation)
+      carX: 0, carY: 0, carScale: 100,
+      // Card default bounds
+      cardX: 0, cardY: 0, cardScale: 100,
+      // Single image default bounds (right half of poster)
+      singleX: 0, singleY: 0, singleScale: 100,
+    }
+  };
+
+  // ==================== DOM refs ====================
+  var d = {
+    canvas: document.getElementById('previewCanvas'),
+    previewInfo: document.getElementById('previewInfo'),
+    downloadBtn: document.getElementById('downloadBtn'),
+    resetBtn: document.getElementById('resetBtn'),
+    toast: document.getElementById('toast'),
+
+    mainTitle: document.getElementById('mainTitle'),
+    subTitle: document.getElementById('subTitle'),
+    btnText: document.getElementById('btnText'),
+
+    carUploadZone: document.getElementById('carUploadZone'),
+    carInput: document.getElementById('carInput'),
+    carThumb: document.getElementById('carThumb'),
+    carAdjustPanel: document.getElementById('carAdjustPanel'),
+    carScale: document.getElementById('carScale'),
+    carX: document.getElementById('carX'),
+    carY: document.getElementById('carY'),
+    carScaleVal: document.getElementById('carScaleVal'),
+    carXVal: document.getElementById('carXVal'),
+    carYVal: document.getElementById('carYVal'),
+
+    cardUploadZone: document.getElementById('cardUploadZone'),
+    cardInput: document.getElementById('cardInput'),
+    cardThumb: document.getElementById('cardThumb'),
+    cardAdjustPanel: document.getElementById('cardAdjustPanel'),
+    cardScale: document.getElementById('cardScale'),
+    cardX: document.getElementById('cardX'),
+    cardY: document.getElementById('cardY'),
+    cardScaleVal: document.getElementById('cardScaleVal'),
+    cardXVal: document.getElementById('cardXVal'),
+    cardYVal: document.getElementById('cardYVal'),
+
+    // Visual mode
+    visualModeChips: document.getElementById('visualModeChips'),
+    dualVisualPanel: document.getElementById('dualVisualPanel'),
+    singleVisualPanel: document.getElementById('singleVisualPanel'),
+
+    // Single image
+    singleUploadZone: document.getElementById('singleUploadZone'),
+    singleInput: document.getElementById('singleInput'),
+    singleThumb: document.getElementById('singleThumb'),
+    singleAdjustPanel: document.getElementById('singleAdjustPanel'),
+    singleScale: document.getElementById('singleScale'),
+    singleX: document.getElementById('singleX'),
+    singleY: document.getElementById('singleY'),
+    singleScaleVal: document.getElementById('singleScaleVal'),
+    singleXVal: document.getElementById('singleXVal'),
+    singleYVal: document.getElementById('singleYVal'),
+
+    // Color scheme
+    schemeGrid: document.getElementById('schemeGrid'),
+    customColorRow: document.getElementById('customColorRow'),
+    customBg: document.getElementById('customBg'),
+    customBtnBg: document.getElementById('customBtnBg'),
+    customBtnText: document.getElementById('customBtnText'),
+  };
+
+  var ctx = d.canvas.getContext('2d');
+  var CANVAS_W = 1000;
+  var CANVAS_H = 249;
+  var EXPORT_SCALE = 4;
+
+  // ==================== Utils ====================
+  function showToast(msg) {
+    d.toast.textContent = msg;
+    d.toast.classList.add('show');
+    setTimeout(function() { d.toast.classList.remove('show'); }, 2000);
+  }
+
+  function getInputValue(el) { return el ? el.value.trim() : ''; }
+
+  // ==================== Draw helpers ====================
+  function roundRect(ctx, x, y, w, h, r) {
+    if (w < 2 * r) r = w / 2;
+    if (h < 2 * r) r = h / 2;
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function drawText(ctx, text, x, y, font, color, baseline, align) {
+    ctx.font = font;
+    ctx.fillStyle = color;
+    ctx.textBaseline = baseline || 'top';
+    ctx.textAlign = align || 'left';
+    ctx.fillText(text, x, y);
+  }
+
+  // ==================== Main render ====================
+  function drawPoster() {
+    var c = d.canvas;
+    // Clear
+    ctx.clearRect(0, 0, c.width, c.height);
+
+    // Background
+    ctx.fillStyle = state.colors.bg;
+    ctx.fillRect(0, 0, c.width, c.height);
+
+
+    if (state.visualMode === 'dual') {
+      // ----- Dual mode: Car + Card -----
+      // Car image (draw first, behind card)
+      if (state.carImage) {
+        var car = state.carImage;
+        var carRect = fitImageInRect(car, 540, 75, 380, 170);
+        var cs = state.layout.carScale / 100;
+        var cw = carRect.w * cs;
+        var ch = carRect.h * cs;
+        var cx = carRect.x + (carRect.w - cw) / 2 + state.layout.carX;
+        var cy = carRect.y + (carRect.h - ch) / 2 + state.layout.carY;
+        ctx.drawImage(car, cx, cy, cw, ch);
+      } else {
+        // Placeholder: subtle car silhouette hint in pink tone
+        ctx.save();
+        ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        roundRect(ctx, 540, 75, 380, 170, 8);
+        ctx.stroke();
+        ctx.fillStyle = 'rgba(214, 160, 160, 0.25)';
+        ctx.beginPath();
+        roundRect(ctx, 540+40, 75+60, 300, 80, 12);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(30,30,30,0.15)';
+        ctx.beginPath();
+        ctx.arc(540+90, 75+140, 18, 0, Math.PI*2);
+        ctx.arc(540+290, 75+140, 18, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,0.2)';
+        ctx.font = '13px "HarmonyOS Sans SC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('点击上传汽车图片', 540 + 190, 75 + 40);
+        ctx.restore();
+      }
+
+      // Card image (draw after car, so card overlays car)
+      if (state.cardImage) {
+        var card = state.cardImage;
+        var cardRect = fitImageInRect(card, 767, 68, 170, 115);
+        var ccs = state.layout.cardScale / 100;
+        var ccw = cardRect.w * ccs;
+        var cch = cardRect.h * ccs;
+        var ccx = cardRect.x + (cardRect.w - ccw) / 2 + state.layout.cardX;
+        var ccy = cardRect.y + (cardRect.h - cch) / 2 + state.layout.cardY;
+        ctx.save();
+        roundRect(ctx, ccx, ccy, ccw, cch, 8);
+        ctx.clip();
+        ctx.drawImage(card, ccx, ccy, ccw, cch);
+        ctx.restore();
+      } else {
+        // Placeholder: realistic card mockup matching reference
+        ctx.save();
+        roundRect(ctx, 767, 68, 170, 115, 8);
+        ctx.fillStyle = '#0C0C0C';
+        ctx.fill();
+        var grad = ctx.createLinearGradient(767, 68, 767+170, 68+115);
+        grad.addColorStop(0, 'rgba(255,255,255,0.06)');
+        grad.addColorStop(1, 'rgba(255,255,255,0)');
+        ctx.fillStyle = grad;
+        ctx.fill();
+        ctx.fillStyle = '#C2C2C2';
+        ctx.font = '10px "HarmonyOS Sans SC", -apple-system, sans-serif';
+        ctx.textAlign = 'left';
+        ctx.textBaseline = 'top';
+        ctx.fillText('HUAWEI', 775, 78);
+        ctx.fillStyle = '#A1A1A1';
+        ctx.font = '9px "HarmonyOS Sans SC", -apple-system, sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText('广发银行 CGB', 767+162, 78);
+        ctx.fillStyle = '#fff';
+        ctx.beginPath();
+        ctx.arc(775+8, 68+95, 6, 0, Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle = '#0C0C0C';
+        ctx.font = '7px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('UnionPay', 775+8, 68+95);
+        ctx.restore();
+      }
+    } else {
+      // ----- Single mode: one image fills right visual space -----
+      if (state.singleImage) {
+        var simg = state.singleImage;
+        var sRect = fitImageInRect(simg, 500, 0, 500, 249);
+        var ss = state.layout.singleScale / 100;
+        var sw = sRect.w * ss;
+        var sh = sRect.h * ss;
+        var sx = sRect.x + (sRect.w - sw) / 2 + state.layout.singleX;
+        var sy = sRect.y + (sRect.h - sh) / 2 + state.layout.singleY;
+        ctx.drawImage(simg, sx, sy, sw, sh);
+      } else {
+        ctx.save();
+        ctx.strokeStyle = 'rgba(0,0,0,0.08)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([6, 4]);
+        ctx.strokeRect(500, 0, 500, 249);
+        ctx.fillStyle = 'rgba(0,0,0,0.15)';
+        ctx.font = '14px "HarmonyOS Sans SC", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('点击上传右侧视觉大图', 500 + 250, 249 / 2);
+        ctx.restore();
+      }
+    }
+
+    // ----- Text elements (draw on top) -----
+    var mainTitle = getInputValue(d.mainTitle) || state.layout.mainTitle;
+    var subTitle = getInputValue(d.subTitle) || state.layout.subTitle;
+    var btnText = getInputValue(d.btnText) || state.layout.btnText;
+
+    // Main title
+    drawText(ctx, mainTitle, 65, 38, '700 38px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.mainTitle, 'top', 'left');
+
+    // Sub title (left aligned with main title)
+    drawText(ctx, subTitle, 65, 107, '400 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.subTitle, 'top', 'left');
+
+    // Button background: capsule at (65,163) 147x39
+    ctx.save();
+    roundRect(ctx, 65, 163, 147, 39, 19);
+    ctx.fillStyle = state.colors.btnBg;
+    ctx.fill();
+    ctx.restore();
+
+    // Button text centered in capsule
+    drawText(ctx, btnText, 65 + 73, 163 + 19, '500 15px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.btnText, 'middle', 'center');
+
+    // Update state
+    state.processedDataUrl = d.canvas.toDataURL('image/png');
+    var exportW = CANVAS_W * EXPORT_SCALE;
+    var exportH = CANVAS_H * EXPORT_SCALE;
+    // Estimate export file size from 1x preview data URL
+    // data URL format: "data:image/png;base64,<base64>"
+    // binary bytes ≈ (base64 string length) × 3/4
+    var headerEnd = state.processedDataUrl.indexOf(',') + 1;
+    var base64Len = state.processedDataUrl.length - headerEnd;
+    var previewBytes = Math.round(base64Len * 0.75);
+    var estExportBytes = previewBytes * 4; // 4x scale; PNG compression scales sub-linearly
+    var sizeStr;
+    if (estExportBytes < 1024) {
+      sizeStr = estExportBytes + ' B';
+    } else if (estExportBytes < 1024 * 1024) {
+      sizeStr = (estExportBytes / 1024).toFixed(1) + ' KB';
+    } else {
+      sizeStr = (estExportBytes / 1024 / 1024).toFixed(1) + ' MB';
+    }
+    d.downloadBtn.disabled = false;
+    d.previewInfo.textContent = '导出：' + exportW + ' × ' + exportH + ' px  ≈' + sizeStr;
+  }
+
+  function fitImageInRect(img, rx, ry, rw, rh) {
+    var scale = Math.min(rw / img.width, rh / img.height);
+    var w = img.width * scale;
+    var h = img.height * scale;
+    var x = rx + (rw - w) / 2;
+    var y = ry + (rh - h) / 2;
+    return { x: x, y: y, w: w, h: h };
+  }
+
+  // ==================== PNG DPI metadata ====================
+  var CRC32_TABLE = (function() {
+    var table = new Uint32Array(256);
+    for (var i = 0; i < 256; i++) {
+      var c = i;
+      for (var j = 0; j < 8; j++) {
+        c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1);
+      }
+      table[i] = c;
+    }
+    return table;
+  })();
+
+  function crc32(data) {
+    var crc = 0xFFFFFFFF;
+    for (var i = 0; i < data.length; i++) {
+      crc = CRC32_TABLE[(crc ^ data[i]) & 0xFF] ^ (crc >>> 8);
+    }
+    return (crc ^ 0xFFFFFFFF) >>> 0;
+  }
+
+  function setPNGdpi(blob, dpi, callback) {
+    var reader = new FileReader();
+    reader.onload = function() {
+      var buf = new Uint8Array(reader.result);
+      // After PNG sig(8) + IHDR len+type+data+crc(4+4+13+4=25) = 33 bytes
+      var insertPos = 33;
+      var ppm = Math.round(dpi / 0.0254);
+      var physType = new TextEncoder().encode('pHYs');
+      var physData = new Uint8Array(9);
+      physData[0] = (ppm >>> 24); physData[1] = (ppm >>> 16); physData[2] = (ppm >>> 8); physData[3] = ppm;
+      physData[4] = (ppm >>> 24); physData[5] = (ppm >>> 16); physData[6] = (ppm >>> 8); physData[7] = ppm;
+      physData[8] = 1; // meter
+
+      var crcInput = new Uint8Array(13);
+      crcInput.set(physType, 0);
+      crcInput.set(physData, 4);
+      var physCRC = crc32(crcInput);
+
+      var chunk = new Uint8Array(21); // 4(len) + 4(type) + 9(data) + 4(crc)
+      chunk[3] = 9; // length=9 at bytes 0-3
+      chunk.set(physType, 4);
+      chunk.set(physData, 8);
+      chunk[17] = (physCRC >>> 24); chunk[18] = (physCRC >>> 16); chunk[19] = (physCRC >>> 8); chunk[20] = physCRC;
+
+      var newBuf = new Uint8Array(buf.length + 21);
+      newBuf.set(buf.subarray(0, insertPos), 0);
+      newBuf.set(chunk, insertPos);
+      newBuf.set(buf.subarray(insertPos), insertPos + 21);
+      callback(new Blob([newBuf], { type: 'image/png' }));
+    };
+    reader.readAsArrayBuffer(blob);
+  }
+
+  // ==================== Export ====================
+  function exportImage() {
+    var exportCanvas = document.createElement('canvas');
+    exportCanvas.width = CANVAS_W * EXPORT_SCALE;
+    exportCanvas.height = CANVAS_H * EXPORT_SCALE;
+    var ectx = exportCanvas.getContext('2d');
+    ectx.scale(EXPORT_SCALE, EXPORT_SCALE);
+
+    // Redraw on export canvas using same logic
+    // Background
+    ectx.fillStyle = state.colors.bg;
+    ectx.fillRect(0, 0, CANVAS_W, CANVAS_H);
+
+    // Visuals
+    if (state.visualMode === 'dual') {
+      if (state.carImage) {
+        var car = state.carImage;
+        var carRect = fitImageInRect(car, 540, 75, 380, 170);
+        var cs = state.layout.carScale / 100;
+        var cw = carRect.w * cs;
+        var ch = carRect.h * cs;
+        var cx = carRect.x + (carRect.w - cw) / 2 + state.layout.carX;
+        var cy = carRect.y + (carRect.h - ch) / 2 + state.layout.carY;
+        ectx.drawImage(car, cx, cy, cw, ch);
+      }
+      if (state.cardImage) {
+        var card = state.cardImage;
+        var cardRect = fitImageInRect(card, 767, 68, 170, 115);
+        var ccs = state.layout.cardScale / 100;
+        var ccw = cardRect.w * ccs;
+        var cch = cardRect.h * ccs;
+        var ccx = cardRect.x + (cardRect.w - ccw) / 2 + state.layout.cardX;
+        var ccy = cardRect.y + (cardRect.h - cch) / 2 + state.layout.cardY;
+        ectx.save();
+        roundRect(ectx, ccx, ccy, ccw, cch, 8);
+        ectx.clip();
+        ectx.drawImage(card, ccx, ccy, ccw, cch);
+        ectx.restore();
+      }
+    } else {
+      if (state.singleImage) {
+        var simg = state.singleImage;
+        var sRect = fitImageInRect(simg, 500, 0, 500, 249);
+        var ss = state.layout.singleScale / 100;
+        var sw = sRect.w * ss;
+        var sh = sRect.h * ss;
+        var sx = sRect.x + (sRect.w - sw) / 2 + state.layout.singleX;
+        var sy = sRect.y + (sRect.h - sh) / 2 + state.layout.singleY;
+        ectx.drawImage(simg, sx, sy, sw, sh);
+      }
+    }
+
+    var mainTitle = getInputValue(d.mainTitle) || state.layout.mainTitle;
+    var subTitle = getInputValue(d.subTitle) || state.layout.subTitle;
+    var btnText = getInputValue(d.btnText) || state.layout.btnText;
+
+    drawText(ectx, mainTitle, 65, 38, '700 38px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.mainTitle, 'top', 'left');
+    drawText(ectx, subTitle, 65, 107, '400 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.subTitle, 'top', 'left');
+
+    ectx.save();
+    roundRect(ectx, 65, 163, 147, 39, 19);
+    ectx.fillStyle = state.colors.btnBg;
+    ectx.fill();
+    ectx.restore();
+
+    drawText(ectx, btnText, 65 + 73, 163 + 19, '500 15px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.btnText, 'middle', 'center');
+
+    exportCanvas.toBlob(function(blob) {
+      setPNGdpi(blob, 150, function(dpiBlob) {
+        var url = URL.createObjectURL(dpiBlob);
+        var a = document.createElement('a');
+        a.download = 'poster_' + Date.now() + '.png';
+        a.href = url;
+        a.click();
+        URL.revokeObjectURL(url);
+        showToast('导出完成');
+      });
+    }, 'image/png');
+  }
+
+  // ==================== Upload handlers ====================
+  function bindUpload(zone, input, thumb, adjustPanel, onLoad) {
+    zone.addEventListener('click', function() { input.click(); });
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag-over'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('drag-over'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      if (e.dataTransfer.files && e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0], thumb, zone, adjustPanel, onLoad);
+    });
+    input.addEventListener('change', function(e) {
+      if (e.target.files && e.target.files[0]) handleFile(e.target.files[0], thumb, zone, adjustPanel, onLoad);
+    });
+  }
+
+  function handleFile(file, thumb, zone, adjustPanel, onLoad) {
+    if (!file.type.match(/^image\/(png|jpeg|webp)/)) {
+      showToast('仅支持 PNG / JPG / WebP 图片');
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      var img = new Image();
+      img.onload = function() {
+        thumb.src = e.target.result;
+        zone.classList.add('has-image');
+        if (adjustPanel) adjustPanel.style.display = 'flex';
+        onLoad(img);
+        drawPoster();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  bindUpload(d.carUploadZone, d.carInput, d.carThumb, d.carAdjustPanel, function(img) { state.carImage = img; });
+  bindUpload(d.cardUploadZone, d.cardInput, d.cardThumb, d.cardAdjustPanel, function(img) { state.cardImage = img; });
+  bindUpload(d.singleUploadZone, d.singleInput, d.singleThumb, d.singleAdjustPanel, function(img) { state.singleImage = img; });
+
+  // ==================== Slider updates ====================
+  function bindSlider(input, label, key) {
+    input.addEventListener('input', function() {
+      var val = parseInt(input.value, 10);
+      var suffix = key.indexOf('Scale') !== -1 ? '%' : 'px';
+      label.textContent = val + suffix;
+      state.layout[key] = val;
+      drawPoster();
+    });
+  }
+  bindSlider(d.carScale, d.carScaleVal, 'carScale');
+  bindSlider(d.carX, d.carXVal, 'carX');
+  bindSlider(d.carY, d.carYVal, 'carY');
+  bindSlider(d.cardScale, d.cardScaleVal, 'cardScale');
+  bindSlider(d.cardX, d.cardXVal, 'cardX');
+  bindSlider(d.cardY, d.cardYVal, 'cardY');
+  bindSlider(d.singleScale, d.singleScaleVal, 'singleScale');
+  bindSlider(d.singleX, d.singleXVal, 'singleX');
+  bindSlider(d.singleY, d.singleYVal, 'singleY');
+
+  // ==================== Visual mode switch ====================
+  function setVisualMode(mode) {
+    state.visualMode = mode;
+    var btns = d.visualModeChips.querySelectorAll('.chips-nav__btn');
+    btns.forEach(function(b) {
+      b.classList.toggle('active', b.dataset.mode === mode);
+    });
+    if (mode === 'dual') {
+      d.dualVisualPanel.style.display = 'block';
+      d.singleVisualPanel.style.display = 'none';
+    } else {
+      d.dualVisualPanel.style.display = 'none';
+      d.singleVisualPanel.style.display = 'flex';
+    }
+    drawPoster();
+  }
+  d.visualModeChips.addEventListener('click', function(e) {
+    var btn = e.target.closest('.chips-nav__btn');
+    if (!btn) return;
+    setVisualMode(btn.dataset.mode);
+  });
+
+  // ==================== Text inputs ====================
+  [d.mainTitle, d.subTitle, d.btnText].forEach(function(el) {
+    el.addEventListener('input', drawPoster);
+  });
+
+  // ==================== Download / Reset ====================
+  d.downloadBtn.addEventListener('click', exportImage);
+
+  d.resetBtn.addEventListener('click', function() {
+    state.carImage = null;
+    state.cardImage = null;
+    state.singleImage = null;
+    d.carThumb.src = '';
+    d.carUploadZone.classList.remove('has-image');
+    d.carAdjustPanel.style.display = 'none';
+    d.cardThumb.src = '';
+    d.cardUploadZone.classList.remove('has-image');
+    d.cardAdjustPanel.style.display = 'none';
+    d.singleThumb.src = '';
+    d.singleUploadZone.classList.remove('has-image');
+    d.singleAdjustPanel.style.display = 'none';
+
+    d.mainTitle.value = state.layout.mainTitle;
+    d.subTitle.value = state.layout.subTitle;
+    d.btnText.value = state.layout.btnText;
+
+    d.carScale.value = 100; d.carScaleVal.textContent = '100%';
+    d.carX.value = 0; d.carXVal.textContent = '0px';
+    d.carY.value = 0; d.carYVal.textContent = '0px';
+    d.cardScale.value = 100; d.cardScaleVal.textContent = '100%';
+    d.cardX.value = 0; d.cardXVal.textContent = '0px';
+    d.cardY.value = 0; d.cardYVal.textContent = '0px';
+    d.singleScale.value = 100; d.singleScaleVal.textContent = '100%';
+    d.singleX.value = 0; d.singleXVal.textContent = '0px';
+    d.singleY.value = 0; d.singleYVal.textContent = '0px';
+
+    state.layout.carScale = 100; state.layout.carX = 0; state.layout.carY = 0;
+    state.layout.cardScale = 100; state.layout.cardX = 0; state.layout.cardY = 0;
+    state.layout.singleScale = 100; state.layout.singleX = 0; state.layout.singleY = 0;
+
+    setVisualMode('dual');
+    drawPoster();
+    showToast('已重置');
+  });
+
+
+  // ==================== Paste upload ====================
+  document.addEventListener('paste', function(e) {
+    var items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    var focused = document.activeElement;
+    var targetZone = null;
+    if (d.carUploadZone.contains(focused) || focused === d.carUploadZone) targetZone = 'car';
+    else if (d.cardUploadZone.contains(focused) || focused === d.cardUploadZone) targetZone = 'card';
+    else if (d.singleUploadZone.contains(focused) || focused === d.singleUploadZone) targetZone = 'single';
+    // If no focus, assign based on current mode
+    if (!targetZone) {
+      if (state.visualMode === 'single') {
+        targetZone = 'single';
+      } else {
+        if (!state.carImage) targetZone = 'car';
+        else if (!state.cardImage) targetZone = 'card';
+        else targetZone = 'car';
+      }
+    }
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type.match(/^image\//)) {
+        var file = items[i].getAsFile();
+        if (targetZone === 'car') {
+          handleFile(file, d.carThumb, d.carUploadZone, d.carAdjustPanel, function(img) { state.carImage = img; });
+        } else if (targetZone === 'single') {
+          handleFile(file, d.singleThumb, d.singleUploadZone, d.singleAdjustPanel, function(img) { state.singleImage = img; });
+        } else {
+          handleFile(file, d.cardThumb, d.cardUploadZone, d.cardAdjustPanel, function(img) { state.cardImage = img; });
+        }
+        break;
+      }
+    }
+  });
+
+  // ==================== Color scheme ====================
+  function applyScheme(scheme) {
+    state.colorScheme = scheme.id;
+    state.colors = {
+      bg: scheme.bg,
+      mainTitle: scheme.mainTitle,
+      subTitle: scheme.subTitle,
+      btnBg: scheme.btnBg,
+      btnText: scheme.btnText
+    };
+    // Update custom color inputs to match
+    d.customBg.value = scheme.bg;
+    d.customBtnBg.value = scheme.btnBg;
+    d.customBtnText.value = scheme.btnText;
+    // Update scheme card active states
+    var cards = d.schemeGrid.querySelectorAll('.scheme-card');
+    cards.forEach(function(card) {
+      card.classList.toggle('active', card.dataset.schemeId === scheme.id);
+    });
+    // Show/hide custom color row
+    if (scheme.id === 'custom') {
+      d.customColorRow.style.display = 'flex';
+    } else {
+      d.customColorRow.style.display = 'none';
+    }
+    drawPoster();
+  }
+
+  function isDark(hex) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    // Perceived brightness
+    return (r * 0.299 + g * 0.587 + b * 0.114) < 128;
+  }
+
+  function applyCustomColors() {
+    state.colorScheme = 'custom';
+    var bgColor = d.customBg.value;
+    var darkBg = isDark(bgColor);
+    state.colors = {
+      bg: bgColor,
+      mainTitle: darkBg ? '#FFFFFF' : '#1A1A1A',
+      subTitle: darkBg ? (isDark(d.customBtnBg.value) ? '#CCCCCC' : '#BBAA88') : '#A07C4F',
+      btnBg: d.customBtnBg.value,
+      btnText: d.customBtnText.value
+    };
+    var cards = d.schemeGrid.querySelectorAll('.scheme-card');
+    cards.forEach(function(card) {
+      card.classList.toggle('active', card.dataset.schemeId === 'custom');
+    });
+    d.customColorRow.style.display = 'flex';
+    drawPoster();
+  }
+
+  function renderSchemeCards() {
+    var html = '';
+    COLOR_SCHEMES.forEach(function(scheme) {
+      html += '<div class="scheme-card' + (state.colorScheme === scheme.id ? ' active' : '') + '" data-scheme-id="' + scheme.id + '">';
+      html += '<div class="scheme-card__swatches">';
+      html += '<span class="scheme-card__swatch main" style="background:' + scheme.bg + '"></span>';
+      html += '<span class="scheme-card__swatch" style="background:' + scheme.btnBg + '"></span>';
+      html += '<span class="scheme-card__swatch" style="background:' + scheme.btnText + '"></span>';
+      html += '</div>';
+      html += '<span class="scheme-card__name">' + scheme.name + '</span>';
+      html += '</div>';
+    });
+    // Add custom slot
+    html += '<div class="scheme-card' + (state.colorScheme === 'custom' ? ' active' : '') + '" data-scheme-id="custom">';
+    html += '<div class="scheme-card__swatches">';
+    html += '<svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5" stroke-dasharray="3 2"/><line x1="7" y1="9" x2="11" y2="9" stroke="var(--text-tertiary)" stroke-width="1.5"/><line x1="9" y1="7" x2="9" y2="11" stroke="var(--text-tertiary)" stroke-width="1.5"/></svg>';
+    html += '</div>';
+    html += '<span class="scheme-card__name">自定义</span>';
+    html += '</div>';
+    d.schemeGrid.innerHTML = html;
+    if (state.colorScheme === 'custom') {
+      d.customColorRow.style.display = 'flex';
+    }
+  }
+
+  // Scheme card click handler
+  d.schemeGrid.addEventListener('click', function(e) {
+    var card = e.target.closest('.scheme-card');
+    if (!card) return;
+    var schemeId = card.dataset.schemeId;
+    if (schemeId === 'custom') {
+      applyCustomColors();
+    } else {
+      var scheme = COLOR_SCHEMES.find(function(s) { return s.id === schemeId; });
+      if (scheme) applyScheme(scheme);
+    }
+  });
+
+  // Custom color input handlers
+  [d.customBg, d.customBtnBg, d.customBtnText].forEach(function(input) {
+    input.addEventListener('input', applyCustomColors);
+  });
+
+  // ==================== Init ====================
+  // Wait for HarmonyOS font to load before first draw to ensure consistent metrics
+  document.fonts.ready.then(function() {
+    renderSchemeCards();
+    drawPoster();
+  });
+})();
+</script>
+</body>
+</html>
