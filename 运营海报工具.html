@@ -127,6 +127,15 @@ body {
   font-size: 14px; font-family: inherit; transition: border-color var(--transition);
 }
 .control-group__input:focus { outline: none; border-color: var(--brand); }
+.control-group__richtext {
+  width: 100%; min-height: 42px; padding: 8px 12px; border: 1px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px; font-family: inherit;
+  transition: border-color var(--transition); outline: none; line-height: 1.6;
+  background: #fff; word-break: break-all;
+}
+.control-group__richtext:focus { border-color: var(--brand); }
+.control-group__richtext b, .control-group__richtext strong { font-weight: 700; }
+.control-group__hint { font-size: 11px; color: var(--text-tertiary); font-weight: 400; }
 
 .upload-zone {
   border: 2px dashed var(--border-upload); border-radius: var(--radius);
@@ -267,8 +276,8 @@ body {
         <input type="text" class="control-group__input" id="mainTitle" value="Huawei Card车主礼遇">
       </div>
       <div class="control-group">
-        <div class="control-group__label"><span>副标题</span></div>
-        <input type="text" class="control-group__input" id="subTitle" value="成功分期，获500元现金红包">
+        <div class="control-group__label"><span>副标题</span><span class="control-group__hint">（选中文本 Ctrl+B 可加粗）</span></div>
+        <div class="control-group__richtext" id="subTitle" contenteditable="true">成功分期，获500元现金红包</div>
       </div>
       <div class="control-group">
         <div class="control-group__label"><span>按钮文案</span></div>
@@ -658,6 +667,54 @@ body {
     ctx.fillText(text, x, y);
   }
 
+  // Draw rich text (HTML with <b>/<strong> tags) segment by segment
+  function drawRichText(ctx, html, x, y, fontRegular, fontBold, color, baseline) {
+    baseline = baseline || 'top';
+    ctx.textBaseline = baseline;
+    ctx.textAlign = 'left';
+
+    // Parse HTML into segments: { text, bold }
+    var segments = [];
+    var div = document.createElement('div');
+    div.innerHTML = html;
+    function walk(node) {
+      if (node.nodeType === 3) { // Text node
+        if (node.textContent) segments.push({ text: node.textContent, bold: false });
+      } else if (node.nodeType === 1) {
+        var isBold = node.tagName === 'B' || node.tagName === 'STRONG';
+        if (isBold) {
+          if (node.textContent) segments.push({ text: node.textContent, bold: true });
+        } else {
+          for (var i = 0; i < node.childNodes.length; i++) {
+            walk(node.childNodes[i]);
+          }
+        }
+      }
+    }
+    for (var i = 0; i < div.childNodes.length; i++) {
+      walk(div.childNodes[i]);
+    }
+
+    // Draw segments
+    var cx = x;
+    for (var i = 0; i < segments.length; i++) {
+      var seg = segments[i];
+      ctx.font = seg.bold ? fontBold : fontRegular;
+      ctx.fillStyle = color;
+      ctx.fillText(seg.text, cx, y);
+      cx += ctx.measureText(seg.text).width;
+    }
+  }
+
+  // Get plain text from contenteditable (for exports that need plain)
+  function getRichText(el) {
+    return el ? el.innerHTML : '';
+  }
+
+  function getPlainText(el) {
+    return el ? el.textContent.trim() : '';
+  }
+
   // ==================== Main render ====================
   function drawPoster() {
     var c = d.canvas;
@@ -779,14 +836,16 @@ body {
 
     // ----- Text elements (draw on top) -----
     var mainTitle = getInputValue(d.mainTitle) || state.layout.mainTitle;
-    var subTitle = getInputValue(d.subTitle) || state.layout.subTitle;
+    var subTitleHtml = getRichText(d.subTitle) || state.layout.subTitle;
     var btnText = getInputValue(d.btnText) || state.layout.btnText;
 
     // Main title
     drawText(ctx, mainTitle, 65, 38, '700 38px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.mainTitle, 'top', 'left');
 
-    // Sub title (left aligned with main title)
-    drawText(ctx, subTitle, 65, 107, '400 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.subTitle, 'top', 'left');
+    // Sub title (rich text, left aligned with main title)
+    var subFontRegular = '400 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+    var subFontBold = '700 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+    drawRichText(ctx, subTitleHtml, 65, 107, subFontRegular, subFontBold, state.colors.subTitle, 'top');
 
     // Button background: capsule at (65,163) 147x39
     ctx.save();
@@ -937,11 +996,13 @@ body {
     }
 
     var mainTitle = getInputValue(d.mainTitle) || state.layout.mainTitle;
-    var subTitle = getInputValue(d.subTitle) || state.layout.subTitle;
+    var subTitleHtml = getRichText(d.subTitle) || state.layout.subTitle;
     var btnText = getInputValue(d.btnText) || state.layout.btnText;
 
     drawText(ectx, mainTitle, 65, 38, '700 38px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.mainTitle, 'top', 'left');
-    drawText(ectx, subTitle, 65, 107, '400 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif', state.colors.subTitle, 'top', 'left');
+    var eSubFontRegular = '400 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+    var eSubFontBold = '700 18px "HarmonyOS Sans SC", -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif';
+    drawRichText(ectx, subTitleHtml, 65, 107, eSubFontRegular, eSubFontBold, state.colors.subTitle, 'top');
 
     ectx.save();
     roundRect(ectx, 65, 163, 147, 39, 19);
@@ -1050,6 +1111,15 @@ body {
     el.addEventListener('input', drawPoster);
   });
 
+  // Ctrl+B / Cmd+B bold toggle in subtitle
+  d.subTitle.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'b') {
+      // Browser handles the bold toggle natively in contenteditable;
+      // ensure redraw after the DOM mutates
+      setTimeout(drawPoster, 0);
+    }
+  });
+
   // ==================== Download / Reset ====================
   d.downloadBtn.addEventListener('click', exportImage);
 
@@ -1068,7 +1138,7 @@ body {
     d.singleAdjustPanel.style.display = 'none';
 
     d.mainTitle.value = state.layout.mainTitle;
-    d.subTitle.value = state.layout.subTitle;
+    d.subTitle.innerHTML = state.layout.subTitle;
     d.btnText.value = state.layout.btnText;
 
     d.carScale.value = 100; d.carScaleVal.textContent = '100%';

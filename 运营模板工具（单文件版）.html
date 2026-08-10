@@ -8,7 +8,7 @@
   ════════════════════════════════════════════════════════════════════
   HTML / CSS（1–795 行）
   ════════════════════════════════════════════════════════════════════
-  [1–7]        DOCTYPE、<head>、<meta>、<title>UxExtraTool
+  [1–7]        DOCTYPE、<head>、<meta>、<title>图片加工工具 - 桌面版
   [8–216]      <style> 全局 CSS
                  8–96    CSS 变量（--brand: #0a59f7）、HarmonyOS 颜色 Token（22 色）、\
                         字体、圆角、阴影、背景色
@@ -212,7 +212,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UxExtraTool</title>
+<title>图片加工工具 - 桌面版</title>
 <style>
 :root {
   --brand: #0a59f7;
@@ -422,6 +422,27 @@ body {
   .panel-left, .panel-right { width: 100%; flex-shrink: 1; }
   .panel-right { min-height: 350px; }
 }
+
+/* HarmonyOS style slider for ticket image controls */
+.hm-slider { display: flex; flex-direction: column; gap: 6px; }
+.hm-slider__header { display: flex; justify-content: space-between; align-items: center; }
+.hm-slider__label { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.hm-slider__value { font-size: 13px; color: var(--text-secondary); font-variant-numeric: tabular-nums; }
+.hm-slider__track input[type="range"] {
+  -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 2px;
+  background: linear-gradient(to right, var(--brand) 0%, var(--brand) 0%, var(--border) 0%, var(--border) 100%);
+  outline: none; cursor: pointer;
+}
+.hm-slider__track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%;
+  background: #fff; border: 2px solid var(--brand); box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+  transition: transform 0.15s ease;
+}
+.hm-slider__track input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.hm-slider__track input[type="range"]::-moz-range-thumb {
+  width: 16px; height: 16px; border-radius: 50%; background: #fff; border: 2px solid var(--brand);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
 </style>
 </head>
 <body>
@@ -429,7 +450,7 @@ body {
 <div class="toast" id="toast"></div>
 
 <header class="app-header">
-  <span class="app-header__title">UxExtraTool</span>
+  <span class="app-header__title">运营图片加工工具</span>
   <span style="font-size:11px;color:var(--text-tertiary);margin-left:8px;font-weight:400;">by UCD中心-智慧空间工作室</span>
   <nav class="tab-nav tab-nav--header" id="tabNav">
     <button class="tab-nav__btn active" data-tab="walletkit">WalletKit机模</button>
@@ -480,6 +501,36 @@ body {
           <button id="tolMinus" style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;line-height:1;">−</button>
           <span id="tolValue" style="font-size:13px;font-weight:600;min-width:24px;">55</span>
           <button id="tolPlus" style="width:24px;height:24px;border-radius:50%;border:1.5px solid var(--border);background:#fff;cursor:pointer;font-size:14px;line-height:1;">+</button>
+        </div>
+      </div>
+      <!-- 门票背景图调整（鸿蒙UI滑块） -->
+      <div id="cropTicketImgPanel" style="display:none;flex-direction:column;gap:14px;margin-top:14px;">
+        <div class="hm-slider">
+          <div class="hm-slider__header">
+            <span class="hm-slider__label">图片缩放</span>
+            <span class="hm-slider__value" id="cropTZVal">100%</span>
+          </div>
+          <div class="hm-slider__track">
+            <input type="range" id="cropTZ" min="50" max="150" value="100" step="1">
+          </div>
+        </div>
+        <div class="hm-slider">
+          <div class="hm-slider__header">
+            <span class="hm-slider__label">水平偏移</span>
+            <span class="hm-slider__value" id="cropTHVal">0px</span>
+          </div>
+          <div class="hm-slider__track">
+            <input type="range" id="cropTH" min="-50" max="50" value="0" step="5">
+          </div>
+        </div>
+        <div class="hm-slider">
+          <div class="hm-slider__header">
+            <span class="hm-slider__label">垂直偏移</span>
+            <span class="hm-slider__value" id="cropTVVal">0px</span>
+          </div>
+          <div class="hm-slider__track">
+            <input type="range" id="cropTV" min="-100" max="100" value="0" step="5">
+          </div>
         </div>
       </div>
     </div>
@@ -584,7 +635,7 @@ body {
         <div id="cropImageControls" style="display:flex;flex-direction:column;gap:18px;margin-top:18px;">
           <div class="control-group">
             <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="cropZoomVal">100%</span></div>
-            <input type="range" class="control-group__slider" id="cropZoom" min="100" max="110" value="100" step="1">
+            <input type="range" class="control-group__slider" id="cropZoom" min="50" max="150" value="100" step="1">
           </div>
           <div class="control-group">
             <div class="control-group__label"><span>水平偏移</span><span class="control-group__value" id="cropHOffsetVal">0px</span></div>
@@ -1254,11 +1305,13 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
       var tf = document.getElementById('cropTicketFields');
       var ic = document.getElementById('cropImageControls');
       var ca = document.getElementById('cropCardAppearance');
+      var tip = document.getElementById('cropTicketImgPanel');
       if (bf) bf.style.display = isB ? 'flex' : 'none';
       if (tf) tf.style.display = isT ? 'flex' : 'none';
       if (ic) ic.style.display = (isB || isT) ? 'none' : 'flex';
       if (ca) ca.style.display = (isB || isT) ? 'flex' : 'none';
-      APP.dom.uploadZone.parentNode.style.display = (isB || isT) ? 'none' : '';
+      if (tip) tip.style.display = isT ? 'flex' : 'none';
+      APP.dom.uploadZone.parentNode.style.display = isB ? 'none' : '';
     }
     // Restore upload zone text for non-test tabs
     if (tab !== 'test') {
@@ -1950,6 +2003,16 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
 
   M.isReady = function () { return ready; };
 
+  // Helper: parse #RRGGBB → {r,g,b}
+  function hexToRgb(hex) {
+    var m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return m ? {
+      r: parseInt(m[1], 16),
+      g: parseInt(m[2], 16),
+      b: parseInt(m[3], 16)
+    } : { r: 0, g: 0, b: 0 };
+  }
+
   // ========================================================================
   // Show placeholder
   // ========================================================================
@@ -2121,32 +2184,55 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     var outW = Math.round(VIEW_W * scale);
     var outH = Math.round(VIEW_H * scale);
 
+    // Precompute image dest rect if image exists
+    var imgW, imgH, destW, destH, destX, destY;
+    if (img) {
+      imgW = img.naturalWidth; imgH = img.naturalHeight;
+      destW = Math.round(VIEW_W * zoom);
+      destH = Math.round(imgH * (destW / imgW));
+      var baseDestH = Math.round(imgH * (VIEW_W / imgW));
+      destX = Math.round(-(destW - VIEW_W) / 2) + hOffset;
+      destY = Math.round(-(destH - baseDestH) / 2) + vOffset;
+    }
+
     var workC = document.createElement('canvas');
     workC.width = VIEW_W; workC.height = VIEW_H;
     var wCtx = workC.getContext('2d');
 
-    // Fill background with shared card color
-    wCtx.fillStyle = APP.cardColor.bg;
-    wCtx.fillRect(0, 0, VIEW_W, VIEW_H);
-
-    if (img) {
-      var imgW = img.naturalWidth, imgH = img.naturalHeight;
-      var destW = Math.round(VIEW_W * zoom);
-      var destH = Math.round(imgH * (destW / imgW));
-      var baseDestH = Math.round(imgH * (VIEW_W / imgW));
-      var destX = Math.round(-(destW - VIEW_W) / 2) + hOffset;
-      var destY = Math.round(-(destH - baseDestH) / 2) + vOffset;
-      // Clip to template shape
-      wCtx.save();
-      wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
-      wCtx.globalCompositeOperation = 'source-in';
-      wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
-      wCtx.restore();
+    if (isTicket) {
+      // Ticket: bottom image layer + gradient overlay, then clip to template
+      if (img) {
+        wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
+      }
+      var rgb = hexToRgb(APP.cardColor.bg);
+      var grd = wCtx.createLinearGradient(0, 0, VIEW_W, 0);
+      grd.addColorStop(0.4, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',1)');
+      grd.addColorStop(0.6, 'rgba(' + rgb.r + ',' + rgb.g + ',' + rgb.b + ',0)');
+      wCtx.fillStyle = grd;
+      wCtx.fillRect(0, 0, VIEW_W, VIEW_H);
+    } else {
+      // Card: image clipped to round rect (no background fill)
+      if (img) {
+        wCtx.save();
+        var r = 72;
+        wCtx.beginPath();
+        wCtx.moveTo(r, 0); wCtx.lineTo(VIEW_W - r, 0);
+        wCtx.arcTo(VIEW_W, 0, VIEW_W, r, r);
+        wCtx.lineTo(VIEW_W, VIEW_H - r);
+        wCtx.arcTo(VIEW_W, VIEW_H, VIEW_W - r, VIEW_H, r);
+        wCtx.lineTo(r, VIEW_H);
+        wCtx.arcTo(0, VIEW_H, 0, VIEW_H - r, r);
+        wCtx.lineTo(0, r);
+        wCtx.arcTo(0, 0, r, 0, r);
+        wCtx.closePath();
+        wCtx.clip();
+        wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
+        wCtx.restore();
+      }
     }
 
-    // For ticket mode without image: clip to template for the notched outline
-    // Use binary mask (same as boarding pass) to avoid alpha dilution from template
-    if (isTicket && !img) {
+    // Clip ticket result to template shape (with notch)
+    if (isTicket) {
       var tMaskC = document.createElement('canvas');
       tMaskC.width = VIEW_W; tMaskC.height = VIEW_H;
       var tmCtx = tMaskC.getContext('2d');
@@ -2285,6 +2371,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // Events
   // ========================================================================
   M.bindEvents = function () {
+    // Helper: update HarmonyOS slider fill track
+    function updateHmSlider(el) {
+      var min = parseFloat(el.min), max = parseFloat(el.max), val = parseFloat(el.value);
+      var pct = (val - min) / (max - min) * 100;
+      el.style.background = 'linear-gradient(to right, var(--brand) ' + pct + '%, var(--border) ' + pct + '%)';
+    }
+
     // Crop chips (票券 / 卡片)
     var chipsNav = document.getElementById('cropChipsNav');
     chipsNav.addEventListener('click', function (e) {
@@ -2302,13 +2395,22 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       var tf = document.getElementById('cropTicketFields');
       var ic = document.getElementById('cropImageControls');
       var ca = document.getElementById('cropCardAppearance');
+      var tip = document.getElementById('cropTicketImgPanel');
       if (bf) bf.style.display = isBoarding ? 'flex' : 'none';
       if (tf) tf.style.display = isTicket ? 'flex' : 'none';
       if (ic) ic.style.display = (isBoarding || isTicket) ? 'none' : 'flex';
+      if (tip) tip.style.display = isTicket ? 'flex' : 'none';
       // Color picker visible for boarding and ticket, hidden for card
       if (ca) ca.style.display = (type === 'boarding' || type === 'ticket') ? 'flex' : 'none';
-      // Boarding & ticket: hide upload zone (uses own logo control)
-      APP.dom.uploadZone.parentNode.style.display = (isBoarding || isTicket) ? 'none' : '';
+      // Boarding: hide upload zone (uses own logo control); Ticket: show upload zone for background image
+      APP.dom.uploadZone.parentNode.style.display = isBoarding ? 'none' : '';
+      // Sync ticket image sliders when switching to ticket
+      if (isTicket) {
+        var tz = document.getElementById('cropTZ'), th = document.getElementById('cropTH'), tv2 = document.getElementById('cropTV');
+        if (tz) { tz.value = APP.dom.cropZoom.value; document.getElementById('cropTZVal').textContent = tz.value + '%'; updateHmSlider(tz); }
+        if (th) { th.value = APP.dom.cropHOffset.value; document.getElementById('cropTHVal').textContent = th.value + 'px'; updateHmSlider(th); }
+        if (tv2) { tv2.value = APP.dom.cropVOffset.value; document.getElementById('cropTVVal').textContent = tv2.value + 'px'; updateHmSlider(tv2); }
+      }
       if (APP.state.currentTab === 'crop') {
         if (isBoarding || isTicket) M.process();
         else if (APP.state.uploadedImage) M.process();
@@ -2328,6 +2430,39 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       APP.dom.cropVOffsetVal.textContent = this.value + 'px';
       if (APP.state.uploadedImage && APP.state.currentTab === 'crop') M.process();
     });
+
+    // Ticket image adjustment sliders (HarmonyOS style)
+    var tz = document.getElementById('cropTZ'), th = document.getElementById('cropTH'), tv2 = document.getElementById('cropTV');
+    if (tz) {
+      updateHmSlider(tz);
+      tz.addEventListener('input', function () {
+        document.getElementById('cropTZVal').textContent = this.value + '%';
+        updateHmSlider(this);
+        APP.dom.cropZoom.value = this.value;
+        APP.dom.cropZoomVal.textContent = this.value + '%';
+        if (APP.state.currentTab === 'crop') M.process();
+      });
+    }
+    if (th) {
+      updateHmSlider(th);
+      th.addEventListener('input', function () {
+        document.getElementById('cropTHVal').textContent = this.value + 'px';
+        updateHmSlider(this);
+        APP.dom.cropHOffset.value = this.value;
+        APP.dom.cropHOffsetVal.textContent = this.value + 'px';
+        if (APP.state.currentTab === 'crop') M.process();
+      });
+    }
+    if (tv2) {
+      updateHmSlider(tv2);
+      tv2.addEventListener('input', function () {
+        document.getElementById('cropTVVal').textContent = this.value + 'px';
+        updateHmSlider(this);
+        APP.dom.cropVOffset.value = this.value;
+        APP.dom.cropVOffsetVal.textContent = this.value + 'px';
+        if (APP.state.currentTab === 'crop') M.process();
+      });
+    }
 
     // Logo type chips
     var logoChips = document.getElementById('cropBLogoChips');
