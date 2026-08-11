@@ -621,6 +621,19 @@ body {
           <div class="control-group"><div class="control-group__label"><span>标题（支持换行）</span></div><textarea id="cropTTitle" rows="2" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;resize:none;">标题标题</textarea></div>
           <div class="control-group"><div class="control-group__label"><span>登机口</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTGateLabel" value="登机口" style="width:60px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"><input type="text" id="cropTGate" value="08" style="width:50px;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:center;"></div></div>
           <div class="control-group"><div class="control-group__label"><span>标签一 标签 / 值 / 标签二 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTPassLabel" value="标签一" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropTSeatLabel" value="标签二" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTSeat" value="19c" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
+        <!-- 卡片编辑字段 -->
+        <div id="cropCardFields" style="display:none;flex-direction:column;gap:16px;">
+          <div class="chips-nav" id="cropCLogoChips">
+            <button class="chips-nav__btn active" data-clogo="circle">圆形logo</button>
+            <button class="chips-nav__btn" data-clogo="long">长Logo</button>
+          </div>
+          <!-- 长Logo控件 -->
+          <div id="cropCLongLogo" class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropCLogoInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropCLogoBtn" class="logo-btn">选择logo</button><span id="cropCLogoName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropCLogoScale" min="80" max="120" value="100" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropCLogoScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">100%</span></div></div>
+          <!-- 圆形Logo控件 -->
+          <div id="cropCCircleLogo" style="display:none;flex-direction:column;gap:12px;">
+            <div class="control-group"><div class="control-group__label"><span>上传logo</span></div><div style="display:flex;align-items:center;gap:8px;"><input type="file" id="cropCCircleInput" accept="image/png,image/jpeg,image/webp" style="display:none;"><button id="cropCCircleBtn" class="logo-btn">选择logo</button><span id="cropCCircleName" style="font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:80px;">未选择</span><input type="range" id="cropCCircleScale" min="-20" max="20" value="0" step="1" style="flex:1;min-width:60px;accent-color:var(--brand);"><span id="cropCCircleScaleVal" style="font-size:12px;color:var(--text-secondary);min-width:32px;text-align:right;font-variant-numeric:tabular-nums;">0%</span></div></div>
+            <div class="control-group"><div class="control-group__label"><span>商户名</span></div><input type="text" id="cropCCircleName2" value="中国国航" style="width:100%;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;"></div>
+          </div>
         </div>
 
         </div>
@@ -1300,14 +1313,16 @@ var TICKET_ORIGINAL = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjg3IiBoZWlnaHQ
     // Crop sub-type: boarding / ticket / card — unified visibility
     if (tab === 'crop' && APP.crop && APP.crop.state) {
       var type = APP.crop.state.type;
-      var isB = type === 'boarding', isT = type === 'ticket';
+      var isB = type === 'boarding', isT = type === 'ticket', isC = type === 'card';
       var bf = document.getElementById('cropBoardingFields');
       var tf = document.getElementById('cropTicketFields');
+      var cf = document.getElementById('cropCardFields');
       var ic = document.getElementById('cropImageControls');
       var ca = document.getElementById('cropCardAppearance');
       var tip = document.getElementById('cropTicketImgPanel');
       if (bf) bf.style.display = isB ? 'flex' : 'none';
       if (tf) tf.style.display = isT ? 'flex' : 'none';
+      if (cf) cf.style.display = isC ? 'flex' : 'none';
       if (ic) ic.style.display = (isB || isT) ? 'none' : 'flex';
       if (ca) ca.style.display = (isB || isT) ? 'flex' : 'none';
       if (tip) tip.style.display = isT ? 'flex' : 'none';
@@ -1945,6 +1960,13 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   M.ticketCircleLogoImg = null;
   M.ticketCircleScale = 0;   // -20~20%
 
+  // Card-mode state (similar to ticket/boarding)
+  M.cardLogoType = 'circle'; // 'circle' | 'long'
+  M.cardLogoImg = null;    // long logo Image for card
+  M.cardLogoScale = 100;   // 80~120%
+  M.cardCircleLogoImg = null;
+  M.cardCircleScale = 0;   // -20~20%
+
   // ========================================================================
   // Load ticket template (Subtract.svg)
   // ========================================================================
@@ -2332,6 +2354,45 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.fillText(tv('cropTSeat'), 72 + tslW + 36, 562);
     }
 
+    // === Card overlays: logo ===
+    if (M.state.type === 'card') {
+      function cccol(a) { var v = APP.cardColor.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
+      function ccvid(id) { var e = document.getElementById(id); return e ? e.value : ''; }
+
+      // Logo area — same layout as ticket
+      if (M.cardLogoType === 'circle') {
+        // Circle logo at (120, 120), radius 48
+        wCtx.fillStyle = '#FFFFFF';
+        wCtx.beginPath(); wCtx.arc(120, 120, 48, 0, Math.PI*2); wCtx.fill();
+        if (M.cardCircleLogoImg) {
+          var ccs = 1 + (M.cardCircleScale || 0) / 100;
+          var ccsz = 96 * ccs, ccdx = 72 + (96 - ccsz) / 2, ccdy = 72 + (96 - ccsz) / 2;
+          wCtx.save(); wCtx.beginPath(); wCtx.arc(120, 120, 48, 0, Math.PI*2); wCtx.clip();
+          wCtx.drawImage(M.cardCircleLogoImg, ccdx, ccdy, ccsz, ccsz); wCtx.restore();
+        }
+        // Merchant name at (192, 120)
+        var cmn2 = ccvid('cropCCircleName2');
+        wCtx.fillStyle = cccol(0.9); wCtx.font = '400 48px "HarmonyOS Sans SC",sans-serif';
+        wCtx.textBaseline = 'middle';
+        wCtx.fillText(cmn2, 192, 120);
+        wCtx.textBaseline = 'alphabetic';
+      } else {
+        // Long logo: height 108, left-aligned at x=72, y=63
+        if (M.cardLogoImg) {
+          var cls = (M.cardLogoScale || 100) / 100;
+          var clh = 108 * cls;
+          var clw = clh * (M.cardLogoImg.naturalWidth / M.cardLogoImg.naturalHeight);
+          wCtx.drawImage(M.cardLogoImg, 72, 63 + (108 - clh) / 2, clw, clh);
+        } else {
+          // Placeholder when no logo uploaded
+          wCtx.fillStyle = 'rgba(255,255,255,0.15)';
+          wCtx.fillRect(72, 63, 522, 108);
+          wCtx.fillStyle = cccol(0.4); wCtx.font = '400 32px "HarmonyOS Sans SC",sans-serif';
+          wCtx.fillText('logo区域', 200, 125);
+        }
+      }
+    }
+
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
     cv.width = outW; cv.height = outH;
     cv.style.display = 'block';
@@ -2388,21 +2449,24 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       M.state.type = type;
       chipsNav.querySelectorAll('.chips-nav__btn').forEach(function (b) { b.classList.remove('active'); });
       btn.classList.add('active');
-      // Toggle boarding vs ticket vs image controls
+      // Toggle boarding vs ticket vs card controls
       var isBoarding = type === 'boarding';
       var isTicket = type === 'ticket';
+      var isCard = type === 'card';
       var bf = document.getElementById('cropBoardingFields');
       var tf = document.getElementById('cropTicketFields');
+      var cf = document.getElementById('cropCardFields');
       var ic = document.getElementById('cropImageControls');
       var ca = document.getElementById('cropCardAppearance');
       var tip = document.getElementById('cropTicketImgPanel');
       if (bf) bf.style.display = isBoarding ? 'flex' : 'none';
       if (tf) tf.style.display = isTicket ? 'flex' : 'none';
+      if (cf) cf.style.display = isCard ? 'flex' : 'none';
       if (ic) ic.style.display = (isBoarding || isTicket) ? 'none' : 'flex';
       if (tip) tip.style.display = isTicket ? 'flex' : 'none';
       // Color picker visible for boarding and ticket, hidden for card
       if (ca) ca.style.display = (type === 'boarding' || type === 'ticket') ? 'flex' : 'none';
-      // Boarding: hide upload zone (uses own logo control); Ticket: show upload zone for background image
+      // Boarding: hide upload zone (uses own logo control); Card & Ticket: show upload zone for background image
       APP.dom.uploadZone.parentNode.style.display = isBoarding ? 'none' : '';
       // Sync ticket image sliders when switching to ticket
       if (isTicket) {
@@ -2674,6 +2738,111 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         if (M.state.type === 'ticket' && APP.state.currentTab === 'crop') M.process();
       });
     });
+
+    // === Card-mode events ===
+    // Card logo type chips
+    var cLogoChips = document.getElementById('cropCLogoChips');
+    if (cLogoChips) {
+      cLogoChips.addEventListener('click', function(e) {
+        var btn = e.target.closest('.chips-nav__btn');
+        if (!btn) return;
+        cLogoChips.querySelectorAll('.chips-nav__btn').forEach(function(b){b.classList.remove('active');});
+        btn.classList.add('active');
+        M.cardLogoType = btn.dataset.clogo || 'circle';
+        var isLong = M.cardLogoType === 'long';
+        var cll = document.getElementById('cropCLongLogo');
+        var ccl = document.getElementById('cropCCircleLogo');
+        if (cll) cll.style.display = isLong ? '' : 'none';
+        if (ccl) ccl.style.display = isLong ? 'none' : '';
+        if (M.state.type === 'card') M.process();
+      });
+    }
+
+    // Card long logo upload + scale
+    var clInput = document.getElementById('cropCLogoInput');
+    var clBtn = document.getElementById('cropCLogoBtn');
+    var clName = document.getElementById('cropCLogoName');
+    var cclInput2 = document.getElementById('cropCCircleInput');
+    var cclBtn2 = document.getElementById('cropCCircleBtn');
+    var cclName2 = document.getElementById('cropCCircleName');
+    if (clBtn && clInput) {
+      clBtn.addEventListener('click', function() { clInput.click(); });
+      clInput.addEventListener('change', function() {
+        if (clInput.files && clInput.files[0]) {
+          var file = clInput.files[0];
+          if (file.size > 1*1024*1024) { APP.showToast('Logo不超过1MB'); return; }
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            APP.goldcard.setAvatar(e.target.result);
+            var img = new Image();
+            img.onload = function() {
+              M.cardLogoImg = img;
+              M.cardCircleLogoImg = img;
+              M.boardingCircleLogoImg = img;
+              M.ticketLogoImg = img;
+              M.ticketCircleLogoImg = img;
+              APP.goldcard.longLogoImg = img;
+              APP.state.uploadedImage = img;
+              if (M.state.type === 'card') M.process();
+            };
+            img.src = e.target.result;
+            if (clName) { clName.textContent = file.name; clName.style.color = 'var(--text-primary)'; clName.style.fontWeight = '700'; }
+            if (cclName2) { cclName2.textContent = file.name; cclName2.style.color = 'var(--text-primary)'; cclName2.style.fontWeight = '700'; }
+            var bn = document.getElementById('cropBLogoName'); if (bn) { bn.textContent = file.name; bn.style.color = 'var(--text-primary)'; bn.style.fontWeight = '700'; }
+            var bcn = document.getElementById('cropBCircleName'); if (bcn) { bcn.textContent = file.name; bcn.style.color = 'var(--text-primary)'; bcn.style.fontWeight = '700'; }
+            var tn = document.getElementById('cropTLogoName'); if (tn) { tn.textContent = file.name; tn.style.color = 'var(--text-primary)'; tn.style.fontWeight = '700'; }
+            var tcn = document.getElementById('cropTCircleName'); if (tcn) { tcn.textContent = file.name; tcn.style.color = 'var(--text-primary)'; tcn.style.fontWeight = '700'; }
+            var gn = document.getElementById('gcLongLogoName'); if (gn) { gn.textContent = file.name; gn.style.color = 'var(--text-primary)'; gn.style.fontWeight = '700'; }
+            var gan = document.getElementById('gcAvatarName'); if (gan) { gan.textContent = file.name; gan.style.color = 'var(--text-primary)'; gan.style.fontWeight = '700'; }
+          };
+          reader.readAsDataURL(file); clInput.value = '';
+        }
+      });
+    }
+    var clsSlider = document.getElementById('cropCLogoScale');
+    var clsv = document.getElementById('cropCLogoScaleVal');
+    if (clsSlider) clsSlider.addEventListener('input', function() { M.cardLogoScale = parseInt(clsSlider.value, 10); if (clsv) clsv.textContent = clsSlider.value + '%'; if (M.state.type === 'card') M.process(); });
+
+    // Card circle logo upload + scale
+    if (cclBtn2 && cclInput2) {
+      cclBtn2.addEventListener('click', function() { cclInput2.click(); });
+      cclInput2.addEventListener('change', function() {
+        if (cclInput2.files && cclInput2.files[0]) {
+          var file = cclInput2.files[0];
+          if (file.size > 512*1024) { APP.showToast('Logo不超过512KB'); return; }
+          var reader = new FileReader();
+          reader.onload = function(e) {
+            APP.goldcard.setAvatar(e.target.result);
+            var img = new Image();
+            img.onload = function() {
+              M.cardCircleLogoImg = img;
+              M.cardLogoImg = img;
+              M.boardingCircleLogoImg = img;
+              M.ticketLogoImg = img;
+              M.ticketCircleLogoImg = img;
+              APP.goldcard.longLogoImg = img;
+              APP.state.uploadedImage = img;
+              if (M.state.type === 'card') M.process();
+            };
+            img.src = e.target.result;
+            if (cclName2) { cclName2.textContent = file.name; cclName2.style.color = 'var(--text-primary)'; cclName2.style.fontWeight = '700'; }
+            if (clName) { clName.textContent = file.name; clName.style.color = 'var(--text-primary)'; clName.style.fontWeight = '700'; }
+            var bn = document.getElementById('cropBLogoName'); if (bn) { bn.textContent = file.name; bn.style.color = 'var(--text-primary)'; bn.style.fontWeight = '700'; }
+            var bcn = document.getElementById('cropBCircleName'); if (bcn) { bcn.textContent = file.name; bcn.style.color = 'var(--text-primary)'; bcn.style.fontWeight = '700'; }
+            var tn = document.getElementById('cropTLogoName'); if (tn) { tn.textContent = file.name; tn.style.color = 'var(--text-primary)'; tn.style.fontWeight = '700'; }
+            var tcn = document.getElementById('cropTCircleName'); if (tcn) { tcn.textContent = file.name; tcn.style.color = 'var(--text-primary)'; tcn.style.fontWeight = '700'; }
+            var gn = document.getElementById('gcLongLogoName'); if (gn) { gn.textContent = file.name; gn.style.color = 'var(--text-primary)'; gn.style.fontWeight = '700'; }
+            var gan = document.getElementById('gcAvatarName'); if (gan) { gan.textContent = file.name; gan.style.color = 'var(--text-primary)'; gan.style.fontWeight = '700'; }
+          };
+          reader.readAsDataURL(file); cclInput2.value = '';
+        }
+      });
+    }
+    var ccls = document.getElementById('cropCCircleScale');
+    var cclsv = document.getElementById('cropCCircleScaleVal');
+    if (ccls) ccls.addEventListener('input', function() { M.cardCircleScale = parseInt(ccls.value, 10); if (cclsv) cclsv.textContent = ccls.value + '%'; if (M.state.type === 'card') M.process(); });
+    var cclName2El = document.getElementById('cropCCircleName2');
+    if (cclName2El) cclName2El.addEventListener('input', function() { if (M.state.type === 'card') M.process(); });
 
     var radios = document.querySelectorAll('input[name="cropSize"]');
     for (var i = 0; i < radios.length; i++) {
