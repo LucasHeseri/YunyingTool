@@ -623,6 +623,10 @@ body {
           <div class="control-group"><div class="control-group__label"><span>标签一 标签 / 值 / 标签二 标签 / 值</span></div><div style="display:flex;gap:6px;"><input type="text" id="cropTPassLabel" value="标签一" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTPassenger" value="王小华" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"><input type="text" id="cropTSeatLabel" value="标签二" style="flex:1;padding:6px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;text-align:left;min-width:0;"><input type="text" id="cropTSeat" value="19c" style="flex:1;padding:6px 8px;border:1px solid var(--border);border-radius:6px;font-size:13px;font-family:inherit;min-width:0;"></div></div>
         <!-- 卡片编辑字段 -->
         <div id="cropCardFields" style="display:none;flex-direction:column;gap:16px;">
+          <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-secondary);cursor:pointer;padding:8px 12px;background:var(--bg-upload);border-radius:8px;">
+            <input type="checkbox" id="cropCLogoToggle" checked style="width:16px;height:16px;accent-color:var(--brand);">
+            <span>在卡片上显示logo</span>
+          </label>
           <div class="chips-nav" id="cropCLogoChips">
             <button class="chips-nav__btn active" data-clogo="circle">圆形logo</button>
             <button class="chips-nav__btn" data-clogo="long">长Logo</button>
@@ -1966,6 +1970,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   M.cardLogoScale = 100;   // 80~120%
   M.cardCircleLogoImg = null;
   M.cardCircleScale = 0;   // -20~20%
+  M.cardLogoEnabled = true; // toggle: show logo on card
 
   // ========================================================================
   // Load ticket template (Subtract.svg)
@@ -2040,6 +2045,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // ========================================================================
   M.showPlaceholder = function () {
     if (M.state.type === 'boarding' || M.state.type === 'ticket') { M.process(); return; }
+    // Card with logo but no background image: still render
+    if (M.state.type === 'card' && M.cardLogoEnabled && (M.cardCircleLogoImg || M.cardLogoImg)) { M.process(); return; }
     var tmpl = getTemplate();
     if (!tmpl) return;
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
@@ -2196,8 +2203,10 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     var img = APP.state.uploadedImage;
     var tmpl = getTemplate();
     var isTicket = M.state.type === 'ticket';
+    var isCard = M.state.type === 'card';
+    var hasCardLogo = isCard && M.cardLogoEnabled && (M.cardCircleLogoImg || M.cardLogoImg);
     if (!tmpl) return;
-    if (!img && !isTicket) return;
+    if (!img && !isTicket && !hasCardLogo) return;
 
     var hOffset = parseInt(APP.dom.cropHOffset.value, 10);
     var vOffset = parseInt(APP.dom.cropVOffset.value, 10);
@@ -2354,8 +2363,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       wCtx.fillText(tv('cropTSeat'), 72 + tslW + 36, 562);
     }
 
-    // === Card overlays: logo ===
-    if (M.state.type === 'card') {
+    // === Card overlays: logo (only when toggle is on) ===
+    if (M.state.type === 'card' && M.cardLogoEnabled) {
       function cccol(a) { var v = APP.cardColor.textDark ? 0 : 255; return 'rgba(' + v + ',' + v + ',' + v + ',' + a + ')'; }
       function ccvid(id) { var e = document.getElementById(id); return e ? e.value : ''; }
 
@@ -2477,7 +2486,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       }
       if (APP.state.currentTab === 'crop') {
         if (isBoarding || isTicket) M.process();
-        else if (APP.state.uploadedImage) M.process();
+        else if (APP.state.uploadedImage || M.cardLogoEnabled && (M.cardCircleLogoImg || M.cardLogoImg)) M.process();
         else M.showPlaceholder();
       }
     });
@@ -2567,6 +2576,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
               M.boardingCircleLogoImg = img;
               M.ticketLogoImg = img;
               M.ticketCircleLogoImg = img;
+              M.cardLogoImg = img;
+              M.cardCircleLogoImg = img;
               APP.goldcard.longLogoImg = img;
               if (M.state.type === 'boarding') M.process();
             };
@@ -2605,6 +2616,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
               APP.state.uploadedImage = img;
               M.ticketLogoImg = img;
               M.ticketCircleLogoImg = img;
+              M.cardLogoImg = img;
+              M.cardCircleLogoImg = img;
               APP.goldcard.longLogoImg = img;
               if (M.state.type === 'boarding') M.process();
             };
@@ -2674,6 +2687,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
               M.ticketCircleLogoImg = img;
               APP.state.uploadedImage = img;
               M.boardingCircleLogoImg = img;
+              M.cardLogoImg = img;
+              M.cardCircleLogoImg = img;
               APP.goldcard.longLogoImg = img;
               if (M.state.type === 'ticket') M.process();
             };
@@ -2712,6 +2727,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
               M.ticketLogoImg = img;
               APP.state.uploadedImage = img;
               M.boardingCircleLogoImg = img;
+              M.cardLogoImg = img;
+              M.cardCircleLogoImg = img;
               APP.goldcard.longLogoImg = img;
               if (M.state.type === 'ticket') M.process();
             };
@@ -2740,6 +2757,18 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     });
 
     // === Card-mode events ===
+    // Card logo display toggle
+    var cLogoToggle = document.getElementById('cropCLogoToggle');
+    if (cLogoToggle) {
+      cLogoToggle.addEventListener('change', function() {
+        M.cardLogoEnabled = this.checked;
+        if (M.state.type === 'card' && APP.state.currentTab === 'crop') {
+          if (APP.state.uploadedImage || M.cardCircleLogoImg || M.cardLogoImg) M.process();
+          else M.showPlaceholder();
+        }
+      });
+    }
+
     // Card logo type chips
     var cLogoChips = document.getElementById('cropCLogoChips');
     if (cLogoChips) {
@@ -2782,7 +2811,6 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
               M.ticketLogoImg = img;
               M.ticketCircleLogoImg = img;
               APP.goldcard.longLogoImg = img;
-              APP.state.uploadedImage = img;
               if (M.state.type === 'card') M.process();
             };
             img.src = e.target.result;
@@ -2821,7 +2849,6 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
               M.ticketLogoImg = img;
               M.ticketCircleLogoImg = img;
               APP.goldcard.longLogoImg = img;
-              APP.state.uploadedImage = img;
               if (M.state.type === 'card') M.process();
             };
             img.src = e.target.result;
