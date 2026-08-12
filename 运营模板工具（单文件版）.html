@@ -586,7 +586,6 @@ body {
       </div>
       <div id="ctrlCrop" style="display:none;">
         <div class="control-group">
-          <div class="control-group__label"><span>类型</span></div>
         <!-- 登机牌编辑字段 -->
         <div id="cropBoardingFields" style="display:none;flex-direction:column;gap:16px;">
           <div class="chips-nav" id="cropBLogoChips">
@@ -2038,7 +2037,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   M.showPlaceholder = function () {
     if (M.state.type === 'boarding' || M.state.type === 'ticket') { M.process(); return; }
     // Card with logo but no background image: still render
-    if (M.state.type === 'card' && M.cardLogoEnabled && M.cardCircleLogoImg) { M.process(); return; }
+    if (M.state.type === 'card' && M.cardLogoEnabled) { M.process(); return; }
     var tmpl = getTemplate();
     if (!tmpl) return;
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
@@ -2196,7 +2195,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     var tmpl = getTemplate();
     var isTicket = M.state.type === 'ticket';
     var isCard = M.state.type === 'card';
-    var hasCardLogo = isCard && M.cardLogoEnabled && M.cardCircleLogoImg;
+    var hasCardLogo = isCard && M.cardLogoEnabled;
     if (!tmpl) return;
     if (!img && !isTicket && !hasCardLogo) return;
 
@@ -2461,7 +2460,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       }
       if (APP.state.currentTab === 'crop') {
         if (isBoarding || isTicket) M.process();
-        else if (APP.state.uploadedImage || M.cardLogoEnabled && M.cardCircleLogoImg) M.process();
+        else if (APP.state.uploadedImage || M.cardLogoEnabled) M.process();
         else M.showPlaceholder();
       }
     });
@@ -2734,7 +2733,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       cLogoToggle.addEventListener('change', function() {
         M.cardLogoEnabled = this.checked;
         if (M.state.type === 'card' && APP.state.currentTab === 'crop') {
-          if (APP.state.uploadedImage || M.cardCircleLogoImg) M.process();
+          if (APP.state.uploadedImage || M.cardCircleLogoImg || M.cardLogoEnabled) M.process();
           else M.showPlaceholder();
         }
       });
