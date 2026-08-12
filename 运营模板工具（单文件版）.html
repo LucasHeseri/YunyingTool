@@ -4111,7 +4111,11 @@ var TICKET_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzI4IiBoZWlnaHQ
       M.textDark = APP.cardColor.textDark;
       textBtn.textContent = APP.cardColor.textDark ? '黑色文字' : '白色文字';
       if (APP.state.currentTab === 'goldcard') M.process();
-      if (APP.state.currentTab === 'crop' && APP.crop) APP.crop.process();
+      if (APP.state.currentTab === 'crop' && APP.crop) {
+        var cst = APP.crop.state;
+        if (cst.type === 'card' && !APP.state.uploadedImage) APP.crop.showPlaceholder();
+        else APP.crop.process();
+      }
     });
     APP.dom.previewCard.appendChild(textBtn);
 
