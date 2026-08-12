@@ -511,7 +511,7 @@ body {
             <span class="hm-slider__value" id="cropTZVal">100%</span>
           </div>
           <div class="hm-slider__track">
-            <input type="range" id="cropTZ" min="50" max="150" value="100" step="1">
+            <input type="range" id="cropTZ" min="20" max="200" value="100" step="1">
           </div>
         </div>
         <div class="hm-slider">
@@ -520,7 +520,7 @@ body {
             <span class="hm-slider__value" id="cropTHVal">0px</span>
           </div>
           <div class="hm-slider__track">
-            <input type="range" id="cropTH" min="-50" max="50" value="0" step="5">
+            <input type="range" id="cropTH" min="-100" max="100" value="0" step="5">
           </div>
         </div>
         <div class="hm-slider">
@@ -529,7 +529,7 @@ body {
             <span class="hm-slider__value" id="cropTVVal">0px</span>
           </div>
           <div class="hm-slider__track">
-            <input type="range" id="cropTV" min="-100" max="100" value="0" step="5">
+            <input type="range" id="cropTV" min="-200" max="200" value="0" step="5">
           </div>
         </div>
       </div>
@@ -646,15 +646,15 @@ body {
         <div id="cropImageControls" style="display:flex;flex-direction:column;gap:18px;margin-top:18px;">
           <div class="control-group">
             <div class="control-group__label"><span>图片缩放</span><span class="control-group__value" id="cropZoomVal">100%</span></div>
-            <input type="range" class="control-group__slider" id="cropZoom" min="50" max="150" value="100" step="1">
+            <input type="range" class="control-group__slider" id="cropZoom" min="20" max="200" value="100" step="1">
           </div>
           <div class="control-group">
             <div class="control-group__label"><span>水平偏移</span><span class="control-group__value" id="cropHOffsetVal">0px</span></div>
-            <input type="range" class="control-group__slider" id="cropHOffset" min="-50" max="50" value="0" step="5">
+            <input type="range" class="control-group__slider" id="cropHOffset" min="-100" max="100" value="0" step="5">
           </div>
           <div class="control-group">
             <div class="control-group__label"><span>垂直偏移</span><span class="control-group__value" id="cropVOffsetVal">0px</span></div>
-            <input type="range" class="control-group__slider" id="cropVOffset" min="-100" max="100" value="0" step="5">
+            <input type="range" class="control-group__slider" id="cropVOffset" min="-200" max="200" value="0" step="5">
           </div>
           <div class="control-group">
             <div class="control-group__label"><span>导出尺寸</span></div>
@@ -2250,6 +2250,9 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         wCtx.clip();
         wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
         wCtx.restore();
+      } else if (M.cardLogoEnabled) {
+        // No background image but logo enabled: draw template as card base
+        wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
       }
     }
 
