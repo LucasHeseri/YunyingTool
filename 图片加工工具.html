@@ -2036,8 +2036,6 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
   // ========================================================================
   M.showPlaceholder = function () {
     if (M.state.type === 'boarding' || M.state.type === 'ticket') { M.process(); return; }
-    // Card with logo but no background image: still render
-    if (M.state.type === 'card' && M.cardLogoEnabled) { M.process(); return; }
     var tmpl = getTemplate();
     if (!tmpl) return;
     var cv = APP.dom.previewCanvas, ctx = APP.ctx;
@@ -2045,6 +2043,27 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     cv.width = VIEW_W; cv.height = VIEW_H;
     ctx.clearRect(0, 0, VIEW_W, VIEW_H);
     ctx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
+
+    // Card logo overlay: draw at same resolution so toggle doesn't change preview size
+    if (M.state.type === 'card' && M.cardLogoEnabled) {
+      var ccol = APP.cardColor.textDark ? 'rgba(0,0,0,' : 'rgba(255,255,255,';
+      var mn = document.getElementById('cropCCircleName2');
+      // White circle at (120, 120), radius 48
+      ctx.fillStyle = '#FFFFFF';
+      ctx.beginPath(); ctx.arc(120, 120, 48, 0, Math.PI*2); ctx.fill();
+      if (M.cardCircleLogoImg) {
+        var cs = 1 + (M.cardCircleScale || 0) / 100;
+        var csz = 96 * cs, cdx = 72 + (96 - csz) / 2, cdy = 72 + (96 - csz) / 2;
+        ctx.save(); ctx.beginPath(); ctx.arc(120, 120, 48, 0, Math.PI*2); ctx.clip();
+        ctx.drawImage(M.cardCircleLogoImg, cdx, cdy, csz, csz); ctx.restore();
+      }
+      // Merchant name at (192, 120)
+      ctx.fillStyle = ccol + '0.9)'; ctx.font = '400 48px "HarmonyOS Sans SC",sans-serif';
+      ctx.textBaseline = 'middle';
+      ctx.fillText(mn ? mn.value : '中国国航', 192, 120);
+      ctx.textBaseline = 'alphabetic';
+    }
+
     var cw = APP.dom.previewCard.clientWidth - 32, ch = APP.dom.previewCard.clientHeight - 16;
     var s = Math.min(cw / VIEW_W, ch / VIEW_H, 1);
     cv.style.width  = Math.round(VIEW_W * s) + 'px';
@@ -2196,9 +2215,8 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
     var tmpl = getTemplate();
     var isTicket = M.state.type === 'ticket';
     var isCard = M.state.type === 'card';
-    var hasCardLogo = isCard && M.cardLogoEnabled;
     if (!tmpl) return;
-    if (!img && !isTicket && !hasCardLogo) return;
+    if (!img && !isTicket) return;
 
     var hOffset = parseInt(APP.dom.cropHOffset.value, 10);
     var vOffset = parseInt(APP.dom.cropVOffset.value, 10);
@@ -2251,9 +2269,6 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
         wCtx.clip();
         wCtx.drawImage(img, 0, 0, imgW, imgH, destX, destY, destW, destH);
         wCtx.restore();
-      } else if (M.cardLogoEnabled) {
-        // No background image but logo enabled: draw template as card base
-        wCtx.drawImage(tmpl, 0, 0, VIEW_W, VIEW_H);
       }
     }
 
@@ -2464,7 +2479,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       }
       if (APP.state.currentTab === 'crop') {
         if (isBoarding || isTicket) M.process();
-        else if (APP.state.uploadedImage || M.cardLogoEnabled) M.process();
+        else if (APP.state.uploadedImage) M.process();
         else M.showPlaceholder();
       }
     });
@@ -2737,7 +2752,7 @@ var CROP_TEMPLATE = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iOTg0IiBoZWlnaHQ9I
       cLogoToggle.addEventListener('change', function() {
         M.cardLogoEnabled = this.checked;
         if (M.state.type === 'card' && APP.state.currentTab === 'crop') {
-          if (APP.state.uploadedImage || M.cardCircleLogoImg || M.cardLogoEnabled) M.process();
+          if (APP.state.uploadedImage) M.process();
           else M.showPlaceholder();
         }
       });
